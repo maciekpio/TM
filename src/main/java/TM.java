@@ -2,9 +2,22 @@ import norswap.autumn.Autumn;
 import norswap.autumn.Grammar;
 import norswap.autumn.ParseOptions;
 import norswap.autumn.ParseResult;
+import norswap.autumn.actions.StackPush;
 import norswap.autumn.positions.LineMapString;
 
 public final class TM extends Grammar {
+
+    //RESERVED KEYWORDS AND OPERATORS
+
+    //public rule _fixed          = reserved("fixed");
+    public rule _else           = reserved("else");
+    public rule _if             = reserved("if");
+    public rule _return         = reserved("return");
+    public rule _while          = reserved("while");
+
+    public rule _false          = reserved("false")  .as_val(false);
+    public rule _true           = reserved("true")   .as_val(true);
+    public rule _null           = reserved("null")   .as_val(null);
 
     // Lexical
 
@@ -113,7 +126,15 @@ public final class TM extends Grammar {
     public rule compound_expr =
             seq(LPAREN, expr, RPAREN);
 
-    public rule iden = identifier(string);
+    //public rule iden = identifier(string);
+
+    public rule id_start = cpred(Character::isJavaIdentifierStart);
+    {           id_part  = cpred(c -> c != 0 && Character.isJavaIdentifierPart(c)); }
+
+    /** Rule for parsing Identifiers, ensuring we do not match keywords, and memoized. */
+    public rule iden = identifier(seq(id_start, id_part.at_least(0)))
+            //.push($ -> Identifier.mk($.str()))
+            .memo(32);
 
     public rule literal_expr = lazy(() ->
             choice(
@@ -153,6 +174,8 @@ public final class TM extends Grammar {
             )
     );
 
+    //OPERATIONS
+
     public rule operation = lazy(() -> choice(
             seq(ws.opt(), this.multiplication),
             seq(ws.opt(), this.division),
@@ -176,6 +199,23 @@ public final class TM extends Grammar {
 
     public rule let_def =
             seq(LET, iden, AS, value, SEMICOL);
+
+    //PRIORITIES
+
+    /**
+    StackPush binary_push =
+            $ -> BinaryExpression.mk($.$1(), $.$0(), $.$2());
+     */
+
+    public rule P = left_expression()
+            .operand(integer)
+            .infix(DIVID, $ -> new Div($.$0(), $.$1()))
+            .infix(TIMES, $ -> new Multi($.$0(), $.$1()));
+
+    public rule S = left_expression()
+            .operand(P)
+            .infix(PLUS, $ -> new Add($.$0(), $.$1()))
+            .infix(MINUS, $ -> new Sub($.$0(), $.$1()));
 
 
 
