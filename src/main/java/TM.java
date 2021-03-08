@@ -32,11 +32,23 @@ public final class TM extends Grammar {
     public rule COLON    = word(":");
     public rule COMMA    = word(",");
     public rule SEMICOL  = word(";");
-    public rule EQUAL    = word("=");
+
+
     public rule IF       = word("if");
     public rule WHILE    = word("while");
     public rule RETURN   = word("return");
     public rule LET      = word("let");
+
+    public rule AS       = word("=");
+    public rule PLUS     = word("+");
+    public rule MINUS    = word("-");
+    public rule TIMES    = word("*");
+    public rule DIVID    = word("/");
+    public rule OR       = word("||");
+    public rule AND      = word("&&");
+    public rule EQUAL    = word("==");
+    public rule DIFF     = word("!=");
+    public rule NOT      = word("!!");
 
     // Syntactic
 
@@ -49,6 +61,15 @@ public final class TM extends Grammar {
             word("false") .as_val(false),
             word("null")  .as_val(null)));
 
+    public rule pair =
+            seq(string, COLON, value);
+
+    public rule object =
+            seq(LBRACE, pair.sep(0, COMMA), RBRACE);
+
+    public rule array =
+            seq(LBRACKET, value.sep(0, COMMA), RBRACKET);
+
     public rule statement = lazy(() ->
             choice(
                     this.compound_state,
@@ -59,22 +80,24 @@ public final class TM extends Grammar {
                     this.expr_state
             ));
 
-    public rule pair =
-            seq(string, COLON, value);
+    public rule expr = lazy(() ->
+            choice(
+                    this.iden,
+                    this.compound_expr,
+                    this.literal_expr,
+                    this.fct_call_expr,
+                    this.total_binary_expr,
+                    this.total_unary_expr
+            )
+    );
 
-    public rule object =
-            seq(LBRACE, pair.sep(0, COMMA), RBRACE);
-
-    public rule array =
-            seq(LBRACKET, value.sep(0, COMMA), RBRACKET);
+    //STATEMENTS
 
     public rule compound_state =
             seq(LBRACE, statement, RBRACE);
 
     public rule expr_state =
             seq(expr, SEMICOL);
-
-    public rule expr;
 
     public rule while_state =
             seq(WHILE, LPAREN, expr, RPAREN, statement);
@@ -85,10 +108,74 @@ public final class TM extends Grammar {
     public rule return_state =
             seq(RETURN, LPAREN, value.opt(), RPAREN, SEMICOL);
 
-    public rule let_def =
-            seq(LET, identifier, EQUAL, value, SEMICOL);
+    //EXPRESSIONS
 
-    public rule identifier;
+    public rule compound_expr =
+            seq(LPAREN, expr, RPAREN);
+
+    public rule iden = identifier(string);
+
+    public rule literal_expr = lazy(() ->
+            choice(
+                    this.iden,
+                    this.string,
+                    this.number
+            )
+    );
+
+    public rule fct_call_expr =
+            seq(expr, LPAREN, seq(expr, seq(COMMA, expr).opt()).opt(), RPAREN);
+
+    //OPERATIONS EXPRESSIONS
+
+    public rule total_binary_expr =
+            seq(expr, this.binary_expr, expr);
+
+    public rule total_unary_expr =
+            seq(this.unary_expr, expr);
+
+    public rule binary_expr = lazy (() ->
+            choice(
+                    AS,
+                    PLUS,
+                    MINUS,
+                    OR,
+                    AND,
+                    EQUAL,
+                    DIFF
+            )
+    );
+
+    public rule unary_expr = lazy(() ->
+            choice(
+                    MINUS,
+                    NOT
+            )
+    );
+
+    public rule operation = lazy(() -> choice(
+            seq(ws.opt(), this.multiplication),
+            seq(ws.opt(), this.division),
+            seq(ws.opt(), this.addition),
+            seq(ws.opt(), this.subtraction)
+    ));
+
+    public rule addition = lazy(() -> seq(number, ws.opt(), PLUS, ws.opt(),
+            choice(this.operation, seq(number, ws.opt(), SEMICOL.opt(), this.operation.opt()))));
+
+    public rule subtraction = lazy(() -> seq(number, ws.opt(), MINUS, ws.opt(),
+            choice(this.operation, seq(number, ws.opt(), SEMICOL.opt(), this.operation.opt()))));
+
+    public rule multiplication = lazy(() -> seq(number, ws.opt(), TIMES, ws.opt(),
+            choice(this.operation, seq(number, ws.opt(), SEMICOL.opt(), this.operation.opt()))));
+
+    public rule division = lazy(() -> seq(number, ws.opt(), DIVID, ws.opt(),
+            choice(this.operation, seq(number, ws.opt(), SEMICOL.opt(), this.operation.opt()))));
+
+    //VARIABLES DEFINITION
+
+    public rule let_def =
+            seq(LET, iden, AS, value, SEMICOL);
 
 
 
