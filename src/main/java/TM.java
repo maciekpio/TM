@@ -5,6 +5,9 @@ import norswap.autumn.ParseResult;
 import norswap.autumn.actions.StackPush;
 import norswap.autumn.positions.LineMapString;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public final class TM extends Grammar {
 
     //RESERVED KEYWORDS AND OPERATORS
@@ -27,14 +30,22 @@ public final class TM extends Grammar {
             choice('0', digit.at_least(1));
 
     public rule number =
-            seq(opt('-'), integer).word();
+            seq(opt('-'), integer)
+            .push($ -> Integer.parseInt($.str()))
+            .word();
 
     public rule string_char = choice(
             seq(set('"', '#').not(), range('\u0000', '\u001F').not(), any)
             , seq('#', set("#/bfnrt"))
             );
+
+    public rule string_content =
+            string_char.at_least(0)
+                    .push($ -> $.str());
+
     public rule string =
-            seq('"', string_char.at_least(0), '"').word();
+            seq('"',string_content , '"')
+                    .word();
 
     public rule LBRACE   = word("{");
     public rule RBRACE   = word("}");
@@ -78,10 +89,15 @@ public final class TM extends Grammar {
             seq(string, COLON, value);
 
     public rule object =
-            seq(LBRACE, pair.sep(0, COMMA), RBRACE);
+            seq(LBRACE, pair.sep(0, COMMA), RBRACE)
+                    .push($ -> Arrays.stream($.$)
+                            .map(x -> (Object[]) x)
+                            .collect(Collectors.toMap(x -> (String) x[0], x -> x[1])));
+
 
     public rule array =
-            seq(LBRACKET, value.sep(0, COMMA), RBRACKET);
+            seq(LBRACKET, value.sep(0, COMMA), RBRACKET)
+                    .as_list(Object.class);
 
     public rule statement = lazy(() ->
             choice(
@@ -133,7 +149,7 @@ public final class TM extends Grammar {
 
     /** Rule for parsing Identifiers, ensuring we do not match keywords, and memoized. */
     public rule iden = identifier(seq(id_start, id_part.at_least(0)))
-            //.push($ -> Identifier.mk($.str()))
+            .push($ -> ($.str()))
             .memo(32);
 
     public rule literal_expr = lazy(() ->
@@ -207,8 +223,11 @@ public final class TM extends Grammar {
             $ -> BinaryExpression.mk($.$1(), $.$0(), $.$2());
      */
 
+    public rule not_expr = right_expression()
+            .right(integer);
+
     public rule P = left_expression()
-            .operand(integer)
+            .operand(not_expr)
             .infix(DIVID, $ -> new Div($.$0(), $.$1()))
             .infix(TIMES, $ -> new Multi($.$0(), $.$1()));
 
@@ -216,6 +235,18 @@ public final class TM extends Grammar {
             .operand(P)
             .infix(PLUS, $ -> new Add($.$0(), $.$1()))
             .infix(MINUS, $ -> new Sub($.$0(), $.$1()));
+
+    public rule eq_expr = left_expression()
+            .operand(S)
+            .infix(EQUAL, $ -> new BinaryEqual($.$0(), $.$1()));
+
+    public rule binary_and_expr = left_expression()
+            .operand(eq_expr)
+            .infix(AND, $ -> new BinaryAnd($.$0(), $.$1()));
+
+    public rule binary_or_expr = left_expression()
+            .operand(binary_and_expr)
+            .infix(OR, $ -> new BinaryOr($.$0(), $.$1()));
 
 
 
