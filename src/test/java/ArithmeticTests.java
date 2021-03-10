@@ -112,7 +112,50 @@ public class ArithmeticTests extends TestFixture {
         failure("return 5;");
     }
 
+    @Test
+    public void testValue(){
+        this.rule=arithmeticParser.value;
+        success("\"je\"");
+    }
 
+    @Test
+    public void testNotLine(){
+        this.rule=arithmeticParser.not_line;
+        success("5");
+        success(" ");
+        success("\r");
+
+        failure("\n");
+    }
+
+    @Test
+    public void testLineComment(){
+        this.rule=arithmeticParser.line_comment;
+        success("##je m'appele");
+        success("##");
+
+        failure("\n");
+        failure("#je");
+        failure("#je#");
+        failure("#*");
+        failure("*#");
+    }
+
+    @Test
+    public void testSpaceChar(){
+        this.rule=arithmeticParser.space_char;
+        success(" ");
+        success("\n");
+
+        //voir pq ca fail avec 2 espaces
+        failure("  ");
+        failure("5");
+        failure("#*");
+        failure("*#");
+        failure("##je m'appele");
+        failure("##");
+
+    }
 
     @Test
     public void testSum() {
