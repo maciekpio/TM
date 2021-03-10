@@ -50,20 +50,23 @@ public final class Arithmetic extends Grammar {
             .push($ -> Integer.parseInt($.str()))
             .word();
 
-    /**
-    public rule string_char = choice(
-            seq(set('"', '#').not(), range('\u0000', '\u001F').not(), any) //''
-            , seq('#', set("#/bfnrt"))
-            );
-    */
+    //public rule char_lit = choice(seq(set('"', '#'), range('\u0000', '\u001F')).not(), any);
 
-    public rule naked_char = choice(
-            seq(set('"', '#'), range('\u0000', '\u001F')).not(), any);
+    /**
+    public rule naked_char = choice(seq(set("'\\\n\r").not(), any));
 
     public rule string_char = seq("'", naked_char, "'");
+    */
+
+    public rule char_lit = choice(
+            seq(set('"', '#').not(), range('\u0000', '\u001F').not(), any)
+            , seq('#', set("#/bfnrt"))
+    );
+
+    public rule string_char = seq("'", char_lit, "'");
 
     public rule string_content =
-            string_char.at_least(0)
+            char_lit.at_least(0)
                     .push($ -> $.str());
 
     public rule string =
@@ -163,7 +166,7 @@ public final class Arithmetic extends Grammar {
             seq(IF, LPAREN, expr, RPAREN, statement);
 
     public rule return_state =
-            seq(RETURN, LPAREN, value.opt(), RPAREN, SEMICOL);
+            seq(RETURN, ws, LPAREN, value.opt(), RPAREN, SEMICOL);
 
     //EXPRESSIONS
 

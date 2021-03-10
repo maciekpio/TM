@@ -74,6 +74,7 @@ public class ArithmeticTests extends TestFixture {
         success("\"this is a number 123\"");
         success("\"this is not a fct {if (true){return false;}\"");
         success("\"\"");
+        success("\"je\"");
 
         failure("\"this is a test text");
         failure("this is a test text\"");
@@ -84,7 +85,8 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testStringChar(){
-        this.rule = arithmeticParser.string;
+        this.rule = arithmeticParser.string_char;
+
         success("'a'"); //Need to be fixed
 
         failure("\"this is a test text\"");
@@ -97,6 +99,17 @@ public class ArithmeticTests extends TestFixture {
         failure("this is a test text");
         failure("123");
         failure("if(true){return false;}");
+    }
+
+    @Test
+    public void testReturn(){
+        this.rule = arithmeticParser.return_state;
+        success("return (5);");
+        success("return ();");
+        success("return (\"je\");");
+        failure("return;");
+        failure("return ;");
+        failure("return 5;");
     }
 
 
