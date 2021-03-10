@@ -5,6 +5,15 @@ def nom_de_la_fonction (argument1, argument2, ...){
     return ();
 }
 
+//STRUCTURES
+
+struct nom_de_la_structure {
+    identifier1 = value1;
+    identifier2 = value2;
+    ...
+    identifierN = valueN;
+}
+
 //VARIABLES
 
 let nom_de_la_variable = something; //dynamic (integer, string, char, double, boolean)
