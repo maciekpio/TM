@@ -1,0 +1,5 @@
+.gradle
+.metals
+.classpath
+.project
+.settings
