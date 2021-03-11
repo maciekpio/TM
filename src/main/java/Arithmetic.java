@@ -2,7 +2,6 @@ import norswap.autumn.Autumn;
 import norswap.autumn.Grammar;
 import norswap.autumn.ParseOptions;
 import norswap.autumn.ParseResult;
-import norswap.autumn.actions.StackPush;
 import norswap.autumn.positions.LineMapString;
 
 import java.util.Arrays;
@@ -20,15 +19,15 @@ public final class Arithmetic extends Grammar {
             .push($ -> ($.str()))
             .memo(32);
 
-    public rule IF       = reserved("if");
-    public rule WHILE    = reserved("while");
-    public rule RETURN   = reserved("return");
-    public rule LET      = reserved("let");
-    public rule DEF      = reserved("def");
-    public rule STRUCT   = reserved("struct");
-    public rule FALSE    = reserved("false")  .as_val(false);
-    public rule TRUE     = reserved("true")   .as_val(true);
-    public rule NULL     = reserved("null")   .as_val(null);
+    public rule _if       = reserved("if");
+    public rule _while    = reserved("while");
+    public rule _return   = reserved("return");
+    public rule _let      = reserved("let");
+    public rule _def      = reserved("def");
+    public rule _struct   = reserved("struct");
+    public rule FALSE     = reserved("false")  .as_val(false);
+    public rule TRUE      = reserved("true")   .as_val(true);
+    public rule NULL      = reserved("null")   .as_val(null);
 
     /// Lexical ///
 
@@ -94,16 +93,24 @@ public final class Arithmetic extends Grammar {
     public rule DIFF     = word("!=");
     public rule NOT      = word("!!");
 
+    public rule IF       = word("if");
+    public rule WHILE    = word("while");
+    public rule RETURN   = word("return");
+    public rule LET      = word("let");
+    public rule DEF      = word("def");
+    public rule STRUCT   = word("struct");
+
     // Syntactic
 
     public rule value = lazy(() -> choice(
+            iden,
             string,
             number,
-            this.object,
             this.array,
-            word("true")  .as_val(true),
-            word("false") .as_val(false),
-            word("null")  .as_val(null)));
+            TRUE,
+            FALSE,
+            NULL
+    ));
 
     public rule pair =
             seq(string, COLON, value);
@@ -114,8 +121,8 @@ public final class Arithmetic extends Grammar {
                             .map(x -> (Object[]) x)
                             .collect(Collectors.toMap(x -> (String) x[0], x -> x[1])));
 
-    public rule struct = lazy(() ->
-            seq(STRUCT, iden, LBRACE, this.assignment_iden_expr.at_least(1), RBRACE)
+    public rule struct_definition = lazy(() ->
+            seq(STRUCT, ws, iden, ws.opt(), LBRACE, this.let_def_state.at_least(1), RBRACE)
     );
 
     public rule array =
@@ -123,100 +130,121 @@ public final class Arithmetic extends Grammar {
                     .as_list(Object.class);
 
     public rule fct_args = lazy(() ->
-            seq(seq(COMMA, iden), this.fct_args.opt())
+            seq(seq(ws.opt(), COMMA, iden), ws.opt(), this.fct_args.opt())
     );
 
     public rule fct_definition = lazy(() ->
-            seq(DEF, iden, LPAREN, seq(iden, fct_args.opt()).opt(), RPAREN, LBRACE, this.statement.opt(), this.return_state, RBRACE)
+            seq(DEF, ws, iden, ws.opt(), LPAREN, seq(iden, fct_args.opt()).opt(), RPAREN, LBRACE, this.statement_for_fct.opt(), this.return_state, RBRACE)
     );
+
+    //GLOBAL STATEMENTS
 
     public rule statement = lazy(() ->
             choice(
                     this.compound_state,
                     this.while_state,
                     this.if_state,
-                    this.return_state,
-                    this.let_def,
+                    this.let_def_state,
+                    this.expr_state,
+                    this.return_state
+            )
+    );
+
+    public rule statement_for_fct = lazy(() ->
+            choice(
+                    this.compound_state,
+                    this.while_state,
+                    this.if_state,
+                    this.let_def_state,
                     this.expr_state
-            ));
+            )
+    );
 
     public rule expr = lazy(() ->
             choice(
-                    this.literal_expr,
+                    value,
                     this.compound_expr,
                     this.fct_call_expr,
-                    this.assignment_iden_expr,
-                    this.total_binary_expr,
-                    this.total_unary_expr
+                    this.entire_binary_expr,
+                    this.entire_unary_expr
             )
     );
+
+    public rule compound_expr =
+            seq(LPAREN, expr, RPAREN);
 
     //STATEMENTS
 
     public rule compound_state =
             seq(LBRACE, statement, RBRACE);
 
-    public rule expr_state =
-            seq(expr, SEMICOL);
+    public rule expr_state = lazy(() ->
+            seq(expr, SEMICOL)
+    );
 
     public rule while_state =
-            seq(WHILE, LPAREN, expr, RPAREN, statement);
+            seq(WHILE, compound_expr, statement);
 
     public rule if_state =
-            seq(IF, LPAREN, expr, RPAREN, statement);
+            seq(IF, compound_expr, compound_state);
 
     public rule return_state =
-            seq(RETURN, ws, LPAREN, value.opt(), RPAREN, SEMICOL);
+            seq(RETURN, ws.opt(), LPAREN, value.opt(), RPAREN, SEMICOL);
 
     //EXPRESSIONS
 
-    public rule compound_expr =
-            seq(LPAREN, expr, RPAREN);
-
-    //public rule iden = identifier(string);
-
+    /**
+     * En fait ca revient au meme que value mais sans les boolean donc pas sur que ca serve au final
+     *              |
+     *              |
+     *              V
+     */
     public rule literal_expr = lazy(() ->
             choice(
-                    this.iden,
-                    this.string,
-                    this.number
+                    iden,
+                    string,
+                    number
             )
     );
 
-    public rule assignment_iden_expr = lazy(() ->
-            seq(iden, AS, value, SEMICOL)
+    public rule let_def_state = lazy(() ->
+            seq(LET, iden, ws.opt(), AS, value, ws.opt(), SEMICOL)
     );
 
-    public rule fct_call_expr =
-            seq(expr, LPAREN, seq(expr, seq(COMMA, expr).opt()).opt(), RPAREN);
+    public rule fct_call_args = lazy(() ->
+            seq(seq(ws.opt(), COMMA, expr), ws.opt(), this.fct_call_args.opt())
+    );
+
+    public rule fct_call_expr = lazy(() -> //Ex: init();
+            seq(compound_expr, LPAREN, seq(compound_expr, fct_call_args.opt()).opt(), RPAREN)
+    );
 
     //OPERATIONS EXPRESSIONS
 
-    public rule total_binary_expr = lazy (() ->
-            seq(expr, this.binary_expr, expr)
-    );
+    public rule boolean_binary_expr = lazy (() -> choice(
+            OR,
+            AND,
+            EQUAL,
+            DIFF
+    ));
 
-    public rule total_unary_expr = lazy (() ->
-            seq(this.unary_expr, expr)
-    );
-
-    public rule binary_expr = lazy (() ->
-            choice(
-                    AS,
-                    PLUS,
-                    MINUS,
-                    OR,
-                    AND,
-                    EQUAL,
-                    DIFF
-            )
-    );
+    public rule number_binary_expr = lazy(() -> choice(
+            PLUS,
+            MINUS,
+            TIMES,
+            DIVID
+    ));
 
     public rule unary_expr = lazy(() ->
-            choice(
-                    MINUS,
-                    NOT
-            )
+            choice(MINUS, NOT)
+    );
+
+    public rule entire_binary_expr = lazy (() ->
+            seq(compound_expr, choice(boolean_binary_expr, number_binary_expr), compound_expr)
+    );
+
+    public rule entire_unary_expr = lazy (() ->
+            seq(unary_expr, expr)
     );
 
     //OPERATIONS
@@ -240,17 +268,7 @@ public final class Arithmetic extends Grammar {
     public rule division = lazy(() -> seq(number, ws.opt(), DIVID, ws.opt(),
             choice(this.operation, seq(number, ws.opt(), SEMICOL.opt(), this.operation.opt()))));
 
-    //VARIABLES DEFINITION
-
-    public rule let_def =
-            seq(LET, iden, AS, value, SEMICOL);
-
     //PRIORITIES
-
-    /**
-    StackPush binary_push =
-            $ -> BinaryExpression.mk($.$1(), $.$0(), $.$2());
-     */
 
     public rule not_expr = right_expression()
             .right(integer);
