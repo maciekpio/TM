@@ -1,9 +1,9 @@
 import org.testng.annotations.Test;
 import norswap.autumn.TestFixture;
 
-public class ArithmeticTests extends TestFixture {
+public class TMTests extends TestFixture {
 
-    Arithmetic arithmeticParser = new Arithmetic();
+    TM TMParser = new TM();
 
     String structBasic = "struct struct_name {identifier1 = value1;}";
     String structWith3values = "struct struct_name {identifier1 = value1; identifier2 = value2; identifierN = valueN;}";
@@ -30,7 +30,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testIden(){
-        this.rule = arithmeticParser.iden;
+        this.rule = TMParser.iden;
         success("anIdentifier");
         success("super"); //not in reserved
         success("String"); //In our language, String is not reserved
@@ -46,7 +46,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testInteger(){
-        this.rule = arithmeticParser.integer;
+        this.rule = TMParser.integer;
         success("123");
         success("2147483647");
         success("0");
@@ -63,7 +63,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testNumber(){
-        this.rule = arithmeticParser.number;
+        this.rule = TMParser.number;
         success("123");
         success("2147483647"); //2^31 so it should success
         success("0");
@@ -82,7 +82,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testStringContent(){
-        this.rule = arithmeticParser.string_content;
+        this.rule = TMParser.string_content;
         success("this is a test text");
         success("123");
         success("if(true){return false;}");
@@ -91,7 +91,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testString(){
-        this.rule = arithmeticParser.string;
+        this.rule = TMParser.string;
         success("\"this is a test text\"");
         success("\"123\"");
         success("\"this is a number 123\"");
@@ -108,7 +108,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testStringChar(){
-        this.rule = arithmeticParser.string_char;
+        this.rule = TMParser.string_char;
 
         success("'a'"); //Need to be fixed
 
@@ -126,7 +126,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testReturn(){
-        this.rule = arithmeticParser.return_state;
+        this.rule = TMParser.return_state;
         success("return (5);");
         success("return ();");
         success("return ( ) ;");
@@ -146,7 +146,7 @@ public class ArithmeticTests extends TestFixture {
     public void testStruct(){
 
 
-        this.rule = arithmeticParser.struct_definition;
+        this.rule = TMParser.struct_definition;
         success(structBasic);
         success(structWith3values);
         success(structBackSlashN);
@@ -165,7 +165,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testLetDefinition(){
-        this.rule = arithmeticParser.let_def_state;
+        this.rule = TMParser.let_def_state;
         success("let anIdentifier = 123;");
         success("let anIdentifier = \"this is a string\";");
         success("let anIdentifier = -5;");
@@ -181,7 +181,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testFctArgs(){
-        this.rule=arithmeticParser.fct_args;
+        this.rule=TMParser.fct_args;
         success(", anIdentifier");
         success(", anIdentifier, anOther");
         success("   ,    anIden   ,   anOther   ");
@@ -198,7 +198,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testFctDefinition(){
-        this.rule=arithmeticParser.fct_definition;
+        this.rule=TMParser.fct_definition;
         success(fctBasicVoid);
         success(fctWith1Arg);
         success(fctComplex);
@@ -214,7 +214,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testValue(){
-        this.rule=arithmeticParser.value;
+        this.rule=TMParser.value;
         success("anIdentifier");
         success("\"this is a string\"");
         success("123");
@@ -231,19 +231,80 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testStatement(){
-        this.rule=arithmeticParser.statement;
+        this.rule=TMParser.statement;
         success("if (a&&b) {return ();}");
     }
 
+    //#TODO
     @Test
     public void testIfState(){
-        this.rule=arithmeticParser.if_state;
+        this.rule=TMParser.if_state;
         success("if ((boolean)==(true)) {return ();}");
+    }
+
+    //#TODO
+    @Test
+    public void testWhileState(){
+        this.rule=TMParser.while_state;
+    }
+
+    //#TODO
+    @Test
+    public void testState(){
+        this.rule=TMParser.statement;
+    }
+
+    //#TODO
+    @Test
+    public void testEntireUnaryExpr(){
+        this.rule=TMParser.entire_unary_expr;
+    }
+
+    //#TODO
+    @Test
+    public void testUnaryExpr(){
+        this.rule=TMParser.unary_expr;
+    }
+
+    //#TODO
+    @Test
+    public void testNotExpr(){
+        this.rule=TMParser.not_expr;
+    }
+
+    //#TODO
+    @Test
+    public void testP(){
+        this.rule=TMParser.P;
+    }
+
+    //#TODO
+    @Test
+    public void testS(){
+        this.rule=TMParser.S;
+    }
+
+    //#TODO
+    @Test
+    public void testEqExpr(){
+        this.rule=TMParser.eq_expr;
+    }
+
+    //#TODO
+    @Test
+    public void testBinaryAndExpr(){
+        this.rule=TMParser.binary_and_expr;
+    }
+
+    //#TODO
+    @Test
+    public void testBinaryOrExpr(){
+        this.rule=TMParser.binary_or_expr;
     }
 
     @Test
     public void testExpr(){
-        this.rule=arithmeticParser.expr;
+        this.rule=TMParser.expr;
         success("anIdentifier");
         success("123");
         success("\"this is a string\"");
@@ -258,7 +319,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testFctCallExpr(){
-        this.rule=arithmeticParser.fct_call_expr;
+        this.rule=TMParser.fct_call_expr;
         success("aFunction()");
         success("aFunction(arg1)");
         success("aFunction(arg1, arg2, arg3)");
@@ -267,7 +328,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testEntireBinaryExpr(){
-        this.rule=arithmeticParser.entire_binary_expr;
+        this.rule=TMParser.entire_binary_expr;
         success("(a)==(b)");
         success("(a)&&(b)");
         success("(a)||(b)");
@@ -287,7 +348,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testNotLine(){
-        this.rule=arithmeticParser.not_line;
+        this.rule=TMParser.not_line;
         success("5");
         success(" ");
         success("\r");
@@ -297,7 +358,7 @@ public class ArithmeticTests extends TestFixture {
 
     @Test
     public void testLineComment(){
-        this.rule=arithmeticParser.line_comment;
+        this.rule=TMParser.line_comment;
         success("##this is a comment");
         success("##");
         success("#####");
@@ -312,8 +373,22 @@ public class ArithmeticTests extends TestFixture {
     }
 
     @Test
+    public void testMultiComment(){
+        this.rule=TMParser.multi_comment;
+        success("#* yes *#");
+        success("#**#");
+        success("#* *#");
+        success("#*5*#");
+
+        failure("##");
+        failure("#");
+        failure("#*#");
+        failure("#*");
+        failure("#yes#");
+    }
+    @Test
     public void testSpaceChar(){
-        this.rule=arithmeticParser.space_char;
+        this.rule=TMParser.space_char;
         success(" ");
         success("\n");
 
@@ -329,11 +404,22 @@ public class ArithmeticTests extends TestFixture {
 
     }
 
+    @Test
+    public void testArrayDefinition(){
+        this.rule=TMParser.array_definition;
+        success("array matrix[5]");
+        success("array m[a]");
 
+        failure("array [5]");
+        failure("array m[\"je\"]");
+        failure("array matrix[]");
+        failure("array[5]");
+        failure("arraymatrix[5]");
+    }
 
     @Test
     public void testSum() {
-        this.rule = arithmeticParser.root;
+        this.rule = TMParser.root;
 //        success("1");
         success("1+1;");
         success("1 + 1;");

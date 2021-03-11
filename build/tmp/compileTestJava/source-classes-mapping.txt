@@ -1,4 +1,2 @@
-ArithmeticTests.java
- ArithmeticTests
-JSONTests.java
- JSONTests
+TMTests.java
+ TMTests

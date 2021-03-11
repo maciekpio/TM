@@ -7,7 +7,7 @@ import norswap.autumn.positions.LineMapString;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public final class Arithmetic extends Grammar {
+public final class TM extends Grammar {
 
     //IDENTIFIERS & RESERVED KEYWORDS AND OPERATORS
 
@@ -28,6 +28,7 @@ public final class Arithmetic extends Grammar {
     public rule FALSE     = reserved("false")  .as_val(false);
     public rule TRUE      = reserved("true")   .as_val(true);
     public rule NULL      = reserved("null")   .as_val(null);
+    public rule ARRAY    = reserved("array");
 
     /// Lexical ///
 
@@ -103,9 +104,9 @@ public final class Arithmetic extends Grammar {
     public rule RETURN   = word("return");
     public rule LET      = word("let");
     public rule DEF      = word("def");
-     */
-    //public rule STRUCT   = word("struct");
-
+    public rule STRUCT   = word("struct");
+    public rule ARRAY    = word("array");
+*/
     // Syntactic
 
     public rule value = lazy(() -> choice(
@@ -130,6 +131,9 @@ public final class Arithmetic extends Grammar {
     public rule struct_definition = lazy(() ->
             seq(STRUCT, ws, iden, ws.opt(), LBRACE, this.struct_def_variable.at_least(1), RBRACE)
     );
+
+    public rule array_definition =lazy(()->
+            seq(ARRAY, ws, iden, LBRACKET, choice(integer,iden), RBRACKET ));
 
     public rule array =
             seq(LBRACKET, value.sep(0, COMMA), RBRACKET)
@@ -333,6 +337,6 @@ public final class Arithmetic extends Grammar {
 
     public static void main (String[] args) {
         // failing parse example
-        new Arithmetic().parse( "{ \"test\" : // }");
+        new TM().parse( "{ \"test\" : // }");
     }
 }
