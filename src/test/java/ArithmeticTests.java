@@ -164,6 +164,22 @@ public class ArithmeticTests extends TestFixture {
     }
 
     @Test
+    public void testLetDefinition(){
+        this.rule = arithmeticParser.let_def_state;
+        success("let anIdentifier = 123;");
+        success("let anIdentifier = \"this is a string\";");
+        success("let anIdentifier = -5;");
+        success("let anIdentifier = (a)&&(b);");
+        success("let anIdentifier = anOtherIden;");
+        success("let anIdentifier = [0, 1, 2, 3];");
+
+        failure("anIdentifier = 123;");
+        failure("let anIdentifier = 123");
+        failure("let an, Identifier = 123, 124;");//Our language doesn't allow that
+        failure("let if = 123;");
+    }
+
+    @Test
     public void testFctArgs(){
         this.rule=arithmeticParser.fct_args;
         success(", anIdentifier");
@@ -233,11 +249,20 @@ public class ArithmeticTests extends TestFixture {
         success("\"this is a string\"");
         success("null");
         success("(anExpression)");
-        //success("aFunction(arg1, arg2)");//TODO il faut change les priorites du choice de expr
+        success("aFunction(arg1, arg2)");//TODO il faut change les priorites du choice de expr
         //success("(a)+(b)"); //TODO voit d'abord '(a)' comme une compound_expr au lieu de voir le tout comme une entire_binary_expr
         success("!!aBoolean");
 
         failure("()");
+    }
+
+    @Test
+    public void testFctCallExpr(){
+        this.rule=arithmeticParser.fct_call_expr;
+        success("aFunction()");
+        success("aFunction(arg1)");
+        success("aFunction(arg1, arg2, arg3)");
+        success("aFunction((a)&&(b))");
     }
 
     @Test

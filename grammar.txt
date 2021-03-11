@@ -48,6 +48,8 @@ NOT : !!
 let nom_du_tableau = [longueur_du_tableau]
 nom_du_tableau.index(INTEGER)
 
+array nom_du_tableau [longueur_du_tableau]
+
 //COMMENTAIRES
 
 # commentaires #
