@@ -287,6 +287,20 @@ public class ArithmeticTests extends TestFixture {
     }
 
     @Test
+    public void testMultiComment(){
+        this.rule=arithmeticParser.multi_comment;
+        success("#* yes *#");
+        success("#**#");
+        success("#* *#");
+        success("#*5*#");
+
+        failure("##");
+        failure("#");
+        failure("#*#");
+        failure("#*");
+        failure("#yes#");
+    }
+    @Test
     public void testSpaceChar(){
         this.rule=arithmeticParser.space_char;
         success(" ");
@@ -304,7 +318,17 @@ public class ArithmeticTests extends TestFixture {
 
     }
 
+    @Test
+    public void testArrayDefinition(){
+        this.rule=arithmeticParser.array_definition;
+        success("array matrix[5]");
+        success("array m[a]");
 
+        failure("array [5]");
+        failure("array m[\"je\"]");
+        failure("array matrix[]");
+        failure("array[5]");
+    }
 
     @Test
     public void testSum() {

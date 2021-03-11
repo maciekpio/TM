@@ -28,6 +28,7 @@ public final class Arithmetic extends Grammar {
     public rule FALSE     = reserved("false")  .as_val(false);
     public rule TRUE      = reserved("true")   .as_val(true);
     public rule NULL      = reserved("null")   .as_val(null);
+    public rule _array    = reserved("array");
 
     /// Lexical ///
 
@@ -99,6 +100,7 @@ public final class Arithmetic extends Grammar {
     public rule LET      = word("let");
     public rule DEF      = word("def");
     public rule STRUCT   = word("struct");
+    public rule ARRAY    = word("array");
 
     // Syntactic
 
@@ -124,6 +126,9 @@ public final class Arithmetic extends Grammar {
     public rule struct_definition = lazy(() ->
             seq(STRUCT, ws, iden, ws.opt(), LBRACE, this.let_def_state.at_least(1), RBRACE)
     );
+
+    public rule array_definition =lazy(()->
+            seq(ARRAY, ws, iden, LBRACKET, choice(integer,iden), RBRACKET ));
 
     public rule array =
             seq(LBRACKET, value.sep(0, COMMA), RBRACKET)
