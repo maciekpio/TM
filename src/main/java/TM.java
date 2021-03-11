@@ -7,7 +7,7 @@ import norswap.autumn.positions.LineMapString;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public final class Arithmetic extends Grammar {
+public final class TM extends Grammar {
 
     //IDENTIFIERS & RESERVED KEYWORDS AND OPERATORS
 
@@ -337,6 +337,6 @@ public final class Arithmetic extends Grammar {
 
     public static void main (String[] args) {
         // failing parse example
-        new Arithmetic().parse( "{ \"test\" : // }");
+        new TM().parse( "{ \"test\" : // }");
     }
 }

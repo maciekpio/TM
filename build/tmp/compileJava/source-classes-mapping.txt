@@ -1,4 +1,16 @@
-JSON.java
- JSON
-Arithmetic.java
- Arithmetic
+Multi.java
+ Multi
+Sub.java
+ Sub
+Add.java
+ Add
+BinaryEqual.java
+ BinaryEqual
+BinaryAnd.java
+ BinaryAnd
+Div.java
+ Div
+BinaryOr.java
+ BinaryOr
+TM.java
+ TM
