@@ -28,7 +28,7 @@ public final class Arithmetic extends Grammar {
     public rule FALSE     = reserved("false")  .as_val(false);
     public rule TRUE      = reserved("true")   .as_val(true);
     public rule NULL      = reserved("null")   .as_val(null);
-    public rule _array    = reserved("array");
+    public rule ARRAY    = reserved("array");
 
     /// Lexical ///
 
@@ -106,7 +106,7 @@ public final class Arithmetic extends Grammar {
     public rule DEF      = word("def");
     public rule STRUCT   = word("struct");
     public rule ARRAY    = word("array");
-
+*/
     // Syntactic
 
     public rule value = lazy(() -> choice(

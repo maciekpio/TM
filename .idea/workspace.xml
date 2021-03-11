@@ -31,12 +31,9 @@
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/Arithmetic.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/Arithmetic.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/test/ArithmeticTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/test/ArithmeticTests.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/grammar.txt" beforeDir="false" afterPath="$PROJECT_DIR$/grammar.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Arithmetic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Arithmetic.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/ArithmeticTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ArithmeticTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,33 +114,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ArithmeticTests.testReturn" type="TestNG" temporary="true" nameIsGenerated="true">
+    <configuration name="ArithmeticTests.testIfState" type="TestNG" temporary="true" nameIsGenerated="true">
       <module name="example.test" />
       <option name="SUITE_NAME" value="" />
       <option name="PACKAGE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
-      <option name="METHOD_NAME" value="testReturn" />
-      <option name="GROUP_NAME" value="" />
-      <option name="TEST_OBJECT" value="METHOD" />
-      <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
-      <option name="PARAMETERS" value="" />
-      <option name="OUTPUT_DIRECTORY" value="" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <option name="PROPERTIES_FILE" value="" />
-      <properties />
-      <listeners />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ArithmeticTests.testString" type="TestNG" temporary="true" nameIsGenerated="true">
-      <module name="example.test" />
-      <option name="SUITE_NAME" value="" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
-      <option name="METHOD_NAME" value="testString" />
+      <option name="METHOD_NAME" value="testIfState" />
       <option name="GROUP_NAME" value="" />
       <option name="TEST_OBJECT" value="METHOD" />
       <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
@@ -165,6 +141,27 @@
       <option name="PACKAGE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
       <option name="METHOD_NAME" value="testMultiComment" />
+      <option name="GROUP_NAME" value="" />
+      <option name="TEST_OBJECT" value="METHOD" />
+      <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
+      <option name="PARAMETERS" value="" />
+      <option name="OUTPUT_DIRECTORY" value="" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <option name="PROPERTIES_FILE" value="" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ArithmeticTests.testString" type="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="example.test" />
+      <option name="SUITE_NAME" value="" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
+      <option name="METHOD_NAME" value="testString" />
       <option name="GROUP_NAME" value="" />
       <option name="TEST_OBJECT" value="METHOD" />
       <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
@@ -221,19 +218,18 @@
     </configuration>
     <list>
       <item itemvalue="TestNG.All" />
-      <item itemvalue="TestNG.ArithmeticTests.testEntireBinaryExpr" />
-      <item itemvalue="TestNG.ArithmeticTests.testExpr" />
+      <item itemvalue="TestNG.ArithmeticTests.testString" />
       <item itemvalue="TestNG.ArithmeticTests.testArrayDefinition" />
       <item itemvalue="TestNG.ArithmeticTests.testStruct" />
       <item itemvalue="TestNG.ArithmeticTests.testMultiComment" />
+      <item itemvalue="TestNG.ArithmeticTests.testIfState" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="TestNG.ArithmeticTests.testMultiComment" />
+        <item itemvalue="TestNG.ArithmeticTests.testIfState" />
         <item itemvalue="TestNG.ArithmeticTests.testStruct" />
         <item itemvalue="TestNG.ArithmeticTests.testArrayDefinition" />
-        <item itemvalue="TestNG.ArithmeticTests.testExpr" />
-        <item itemvalue="TestNG.ArithmeticTests.testEntireBinaryExpr" />
       </list>
     </recent_temporary>
   </component>
@@ -354,25 +350,29 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1615374490088" />
-    <state width="1237" height="163" key="GridCell.Tab.0.bottom" timestamp="1615485489253">
+    <state width="1237" height="163" key="GridCell.Tab.0.bottom" timestamp="1615489140945">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1237" height="163" key="GridCell.Tab.0.bottom/0.0.1280.680/0.-1080.1920.1040@0.0.1280.680" timestamp="1615485489253" />
+    <state width="1237" height="163" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1615489140945" />
     <state width="1877" height="435" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1615478292517" />
-    <state width="1237" height="163" key="GridCell.Tab.0.center" timestamp="1615485489253">
+    <state width="1237" height="163" key="GridCell.Tab.0.center" timestamp="1615489140945">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1237" height="163" key="GridCell.Tab.0.center/0.0.1280.680/0.-1080.1920.1040@0.0.1280.680" timestamp="1615485489253" />
+    <state width="1237" height="163" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1615489140945" />
     <state width="1877" height="435" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1615478292517" />
-    <state width="1237" height="163" key="GridCell.Tab.0.left" timestamp="1615485489252">
+    <state width="1237" height="163" key="GridCell.Tab.0.left" timestamp="1615489140945">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1237" height="163" key="GridCell.Tab.0.left/0.0.1280.680/0.-1080.1920.1040@0.0.1280.680" timestamp="1615485489252" />
+    <state width="1237" height="163" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1615489140945" />
     <state width="1877" height="435" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1615478292517" />
-    <state width="1237" height="163" key="GridCell.Tab.0.right" timestamp="1615485489253">
+    <state width="1237" height="163" key="GridCell.Tab.0.right" timestamp="1615489140945">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1237" height="163" key="GridCell.Tab.0.right/0.0.1280.680/0.-1080.1920.1040@0.0.1280.680" timestamp="1615485489253" />
+    <state width="1237" height="163" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1615489140945" />
     <state width="1877" height="435" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1615478292517" />
     <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1615476280643">
       <screen x="0" y="0" width="1920" height="1040" />
