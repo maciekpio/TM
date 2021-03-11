@@ -34,6 +34,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/Arithmetic.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/Arithmetic.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/test/ArithmeticTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/test/ArithmeticTests.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/grammar.txt" beforeDir="false" afterPath="$PROJECT_DIR$/grammar.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Arithmetic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Arithmetic.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/ArithmeticTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ArithmeticTests.java" afterDir="false" />
     </list>
@@ -116,12 +117,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ArithmeticTests.testEntireBinaryExpr" type="TestNG" temporary="true" nameIsGenerated="true">
+    <configuration name="ArithmeticTests.testReturn" type="TestNG" temporary="true" nameIsGenerated="true">
       <module name="example.test" />
       <option name="SUITE_NAME" value="" />
       <option name="PACKAGE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
-      <option name="METHOD_NAME" value="testEntireBinaryExpr" />
+      <option name="METHOD_NAME" value="testReturn" />
       <option name="GROUP_NAME" value="" />
       <option name="TEST_OBJECT" value="METHOD" />
       <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
@@ -137,12 +138,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ArithmeticTests.testExpr" type="TestNG" temporary="true" nameIsGenerated="true">
+    <configuration name="ArithmeticTests.testString" type="TestNG" temporary="true" nameIsGenerated="true">
       <module name="example.test" />
       <option name="SUITE_NAME" value="" />
       <option name="PACKAGE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
-      <option name="METHOD_NAME" value="testExpr" />
+      <option name="METHOD_NAME" value="testString" />
       <option name="GROUP_NAME" value="" />
       <option name="TEST_OBJECT" value="METHOD" />
       <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
@@ -302,7 +303,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615397123924</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="more tests even more debug">
+      <created>1615478659266</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1615478659266</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -326,7 +334,8 @@
     <MESSAGE value="tests basics" />
     <MESSAGE value="tests basics 2" />
     <MESSAGE value="tests basics 3" />
-    <option name="LAST_COMMIT_MESSAGE" value="tests basics 3" />
+    <MESSAGE value="more tests even more debug" />
+    <option name="LAST_COMMIT_MESSAGE" value="more tests even more debug" />
   </component>
   <component name="WindowStateProjectService">
     <state x="576" y="195" key="#Gradle" timestamp="1615374414105">
@@ -385,10 +394,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="563" y="146" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1615453119880" />
-    <state x="730" y="229" key="Vcs.Push.Dialog.v2" timestamp="1615397133014">
+    <state x="730" y="229" key="Vcs.Push.Dialog.v2" timestamp="1615478671528">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="730" y="229" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1615397133014" />
+    <state x="730" y="229" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1615478671528" />
     <state x="777" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1615397117045">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

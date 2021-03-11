@@ -19,12 +19,12 @@ public final class Arithmetic extends Grammar {
             .push($ -> ($.str()))
             .memo(32);
 
-    public rule _if       = reserved("if");
-    public rule _while    = reserved("while");
-    public rule _return   = reserved("return");
-    public rule _let      = reserved("let");
-    public rule _def      = reserved("def");
-    public rule _struct   = reserved("struct");
+    public rule IF       = reserved("if");
+    public rule WHILE    = reserved("while");
+    public rule RETURN   = reserved("return");
+    public rule LET      = reserved("let");
+    public rule DEF      = reserved("def");
+    public rule STRUCT   = reserved("struct");
     public rule FALSE     = reserved("false")  .as_val(false);
     public rule TRUE      = reserved("true")   .as_val(true);
     public rule NULL      = reserved("null")   .as_val(null);
@@ -94,6 +94,11 @@ public final class Arithmetic extends Grammar {
     public rule DIFF     = word("!=");
     public rule NOT      = word("!!");
 
+    /**
+     *
+     * En fait ca empeche que (par ex) structstruct_name ne fail pas lors des tests
+     * donc on utilisera seulement les reserved() pour les mots qui doivent etre "decolles" du reste
+     *
     public rule IF       = word("if");
     public rule WHILE    = word("while");
     public rule RETURN   = word("return");
@@ -124,7 +129,7 @@ public final class Arithmetic extends Grammar {
                             .collect(Collectors.toMap(x -> (String) x[0], x -> x[1])));
 
     public rule struct_definition = lazy(() ->
-            seq(STRUCT, ws, iden, ws.opt(), LBRACE, this.let_def_state.at_least(1), RBRACE)
+            seq(STRUCT, ws, iden, ws.opt(), LBRACE, this.struct_def_variable.at_least(1), RBRACE)
     );
 
     public rule array_definition =lazy(()->
@@ -132,7 +137,7 @@ public final class Arithmetic extends Grammar {
 
     public rule array =
             seq(LBRACKET, value.sep(0, COMMA), RBRACKET)
-                    .as_list(Object.class);
+                    .as_list(Object.class);//[0, 1, 2]
 
     public rule fct_args = lazy(() ->
             seq(seq(ws.opt(), COMMA, iden), ws.opt(), this.fct_args.opt())
@@ -167,11 +172,11 @@ public final class Arithmetic extends Grammar {
 
     public rule expr = lazy(() ->
             choice(
-                    value,
-                    this.compound_expr,
                     this.fct_call_expr,
                     this.entire_binary_expr,
-                    this.entire_unary_expr
+                    this.entire_unary_expr,
+                    this.compound_expr,
+                    value
             )
     );
 
@@ -213,7 +218,11 @@ public final class Arithmetic extends Grammar {
     );
 
     public rule let_def_state = lazy(() ->
-            seq(LET, iden, ws.opt(), AS, value, ws.opt(), SEMICOL)
+            seq(LET, ws, iden, ws.opt(), AS, expr, ws.opt(), SEMICOL)
+    );
+
+    public rule struct_def_variable = lazy(() ->
+            seq(iden, ws.opt(), AS, value, ws.opt(), SEMICOL)
     );
 
     public rule fct_call_args = lazy(() ->
@@ -221,7 +230,7 @@ public final class Arithmetic extends Grammar {
     );
 
     public rule fct_call_expr = lazy(() -> //Ex: init();
-            seq(compound_expr, LPAREN, seq(compound_expr, fct_call_args.opt()).opt(), RPAREN)
+            seq(iden, ws.opt(), LPAREN, seq(expr, fct_call_args.opt()).opt(), RPAREN)
     );
 
     //OPERATIONS EXPRESSIONS
@@ -254,6 +263,10 @@ public final class Arithmetic extends Grammar {
 
     //OPERATIONS
 
+    /**
+     *
+
+
     public rule operation = lazy(() -> choice(
             seq(ws.opt(), this.multiplication),
             seq(ws.opt(), this.division),
@@ -272,6 +285,7 @@ public final class Arithmetic extends Grammar {
 
     public rule division = lazy(() -> seq(number, ws.opt(), DIVID, ws.opt(),
             choice(this.operation, seq(number, ws.opt(), SEMICOL.opt(), this.operation.opt()))));
+     */
 
     //PRIORITIES
 
