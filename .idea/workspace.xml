@@ -23,23 +23,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="35ac0443-1599-4b99-99a6-31b0c36e5f30" name="Default Changelist" comment="tests basics 3">
-      <change afterPath="$PROJECT_DIR$/.idea/Thiciek.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Arithmetic.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/JSON.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/test/ArithmeticTests.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/test/JSONTests.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileTestJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileTestJava/source-classes-mapping.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Arithmetic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TM.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/JSON.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/ArithmeticTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TMTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/JSONTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/test/TMTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/test/TMTests.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/classes/TMTests.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/classes/TMTests.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/packages/default-package.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/packages/default-package.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/TEST-TMTests.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/TEST-TMTests.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/TMTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TMTests.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -51,6 +43,16 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view />
+      </state>
+    </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -102,13 +104,13 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.TMTests.testInteger">
-    <configuration name="TMTests.testIden" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager" selected="Gradle.TMTests.testEntireUnaryExpr">
+    <configuration name="TMTests.testBinaryOrExpr" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;TMTests.testIden&quot;" />
+        <option name="scriptParameters" value="--tests &quot;TMTests.testBinaryOrExpr&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -123,12 +125,72 @@
       <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="TMTests.testInteger" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="TMTests.testEntireBinaryExpr" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;TMTests.testInteger&quot;" />
+        <option name="scriptParameters" value="--tests &quot;TMTests.testEntireBinaryExpr&quot;" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":cleanTest" />
+            <option value=":test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="TMTests.testEntireUnaryExpr" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--tests &quot;TMTests.testEntireUnaryExpr&quot;" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":cleanTest" />
+            <option value=":test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="TMTests.testIfState" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--tests &quot;TMTests.testIfState&quot;" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":cleanTest" />
+            <option value=":test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="TMTests.testSum" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--tests &quot;TMTests.testSum&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -161,69 +223,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ArithmeticTests.testArrayDefinition" type="TestNG" temporary="true" nameIsGenerated="true">
-      <module name="example.test" />
-      <option name="SUITE_NAME" value="" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
-      <option name="METHOD_NAME" value="testArrayDefinition" />
-      <option name="GROUP_NAME" value="" />
-      <option name="TEST_OBJECT" value="METHOD" />
-      <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
-      <option name="PARAMETERS" value="" />
-      <option name="OUTPUT_DIRECTORY" value="" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <option name="PROPERTIES_FILE" value="" />
-      <properties />
-      <listeners />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ArithmeticTests.testIfState" type="TestNG" temporary="true" nameIsGenerated="true">
-      <module name="example.test" />
-      <option name="SUITE_NAME" value="" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
-      <option name="METHOD_NAME" value="testIfState" />
-      <option name="GROUP_NAME" value="" />
-      <option name="TEST_OBJECT" value="METHOD" />
-      <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
-      <option name="PARAMETERS" value="" />
-      <option name="OUTPUT_DIRECTORY" value="" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <option name="PROPERTIES_FILE" value="" />
-      <properties />
-      <listeners />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ArithmeticTests.testMultiComment" type="TestNG" temporary="true" nameIsGenerated="true">
-      <module name="example.test" />
-      <option name="SUITE_NAME" value="" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
-      <option name="METHOD_NAME" value="testMultiComment" />
-      <option name="GROUP_NAME" value="" />
-      <option name="TEST_OBJECT" value="METHOD" />
-      <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
-      <option name="PARAMETERS" value="" />
-      <option name="OUTPUT_DIRECTORY" value="" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <option name="PROPERTIES_FILE" value="" />
-      <properties />
-      <listeners />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration default="true" type="TestNG">
       <option name="SUITE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="" />
@@ -243,20 +242,20 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Gradle.TMTests.testBinaryOrExpr" />
+      <item itemvalue="Gradle.TMTests.testEntireUnaryExpr" />
+      <item itemvalue="Gradle.TMTests.testIfState" />
+      <item itemvalue="Gradle.TMTests.testSum" />
+      <item itemvalue="Gradle.TMTests.testEntireBinaryExpr" />
       <item itemvalue="TestNG.All" />
-      <item itemvalue="TestNG.ArithmeticTests.testArrayDefinition" />
-      <item itemvalue="TestNG.ArithmeticTests.testIfState" />
-      <item itemvalue="TestNG.ArithmeticTests.testMultiComment" />
-      <item itemvalue="Gradle.TMTests.testIden" />
-      <item itemvalue="Gradle.TMTests.testInteger" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.TMTests.testInteger" />
-        <item itemvalue="Gradle.TMTests.testIden" />
-        <item itemvalue="TestNG.ArithmeticTests.testIfState" />
-        <item itemvalue="TestNG.ArithmeticTests.testArrayDefinition" />
-        <item itemvalue="TestNG.ArithmeticTests.testMultiComment" />
+        <item itemvalue="Gradle.TMTests.testEntireUnaryExpr" />
+        <item itemvalue="Gradle.TMTests.testBinaryOrExpr" />
+        <item itemvalue="Gradle.TMTests.testEntireBinaryExpr" />
+        <item itemvalue="Gradle.TMTests.testSum" />
+        <item itemvalue="Gradle.TMTests.testIfState" />
       </list>
     </recent_temporary>
   </component>

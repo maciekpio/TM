@@ -258,12 +258,32 @@ public class TMTests extends TestFixture {
     @Test
     public void testEntireUnaryExpr(){
         this.rule=TMParser.entire_unary_expr;
+        success("-5");
+        success("!!5");
+        success("!!True");
+        success("-a");
+        success("--5");
+        success("!! 5");
+        success("- 5");
+
+        failure("!5");
+        failure("!!");
+        failure("-");
     }
 
     //#TODO
     @Test
     public void testUnaryExpr(){
         this.rule=TMParser.unary_expr;
+        success("-");
+        success("!!");
+
+        failure("! !");
+        failure("--");
+        failure("-!");
+        failure("!-");
+        failure("?");
+        failure("!!!");
     }
 
     //#TODO
@@ -294,12 +314,22 @@ public class TMTests extends TestFixture {
     @Test
     public void testBinaryAndExpr(){
         this.rule=TMParser.binary_and_expr;
+        success("&&");
+
+        failure("& &");
+        failure("&");
+        failure("\"&&\"");
     }
 
     //#TODO
     @Test
     public void testBinaryOrExpr(){
         this.rule=TMParser.binary_or_expr;
+        success("||");
+
+        failure("| |");
+        failure("|");
+        failure("\"||\"");
     }
 
     @Test
@@ -336,7 +366,7 @@ public class TMTests extends TestFixture {
         success("(a)*(b)");
         success("(a)/(b)");
         success("(a)+(b)");
-        success("(a)-(b)");
+        success("(2)-(5)");
         success("(\"string1\")+(\"string2\")"); //It can be used as a concat
         success("(aBoolean)==(true)");
 
@@ -386,6 +416,7 @@ public class TMTests extends TestFixture {
         failure("#*");
         failure("#yes#");
     }
+
     @Test
     public void testSpaceChar(){
         this.rule=TMParser.space_char;
