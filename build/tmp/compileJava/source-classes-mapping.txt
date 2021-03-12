@@ -1,7 +1,7 @@
+Node.java
+ Node
 Multi.java
  Multi
-Sub.java
- Sub
 Add.java
  Add
 BinaryEqual.java
@@ -10,7 +10,9 @@ BinaryAnd.java
  BinaryAnd
 Div.java
  Div
-BinaryOr.java
- BinaryOr
 TM.java
  TM
+BinaryOr.java
+ BinaryOr
+Sub.java
+ Sub

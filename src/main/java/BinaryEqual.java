@@ -1,9 +1,13 @@
-public class BinaryEqual {
-    int x;
-    int y;
+public class BinaryEqual extends Node {
+    public BinaryEqual(double left, double right){
+        super.l = new Node(left);
+        super.r = new Node(right);
+        super.value = "==";
+    }
 
-    public BinaryEqual(int x, int y){
-        this.x=x;
-        this.y=y;
+    public BinaryEqual(boolean left, boolean right){
+        super.l = new Node(left);
+        super.r = new Node(right);
+        super.value = "==";
     }
 }

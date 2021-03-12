@@ -64,6 +64,9 @@ public class TMTests extends TestFixture {
     @Test
     public void testNumber(){
         this.rule = TMParser.number;
+        successExpect("-42", -42);
+
+
         success("123");
         success("2147483647"); //2^31 so it should success
         success("0");
@@ -296,12 +299,14 @@ public class TMTests extends TestFixture {
     @Test
     public void testP(){
         this.rule=TMParser.P;
+        //successExpect();
     }
 
     //#TODO
     @Test
     public void testS(){
         this.rule=TMParser.S;
+        successExpect("1+1", 2);
     }
 
     //#TODO
@@ -468,5 +473,11 @@ public class TMTests extends TestFixture {
         // Failure
         failure("1 1");
         failure("1 +-+- 1");
+    }
+
+    @Test
+    public void testAdd() {
+        this.rule = TMParser.S;
+        successExpect("1+1", new Add(1,1));
     }
 }

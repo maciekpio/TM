@@ -1,9 +1,7 @@
-public class Add {
-    int x;
-    int y;
-
-    public Add(int x, int y){
-        this.x=x;
-        this.y=y;
+public class Add extends Node {
+    public Add(double left, double right){
+        super.l = new Node(left);
+        super.r = new Node(right);
+        super.value = '+';
     }
 }
