@@ -1,9 +1,7 @@
-public class BinaryAnd {
-    int x;
-    int y;
-
-    public BinaryAnd(int x, int y){
-        this.x=x;
-        this.y=y;
+public class BinaryAnd extends Node {
+    public BinaryAnd(boolean left, boolean right){
+        super.l = new Node(left);
+        super.r = new Node(right);
+        super.value = "&&";
     }
 }

@@ -299,12 +299,12 @@ public final class TM extends Grammar {
 
     public rule S = left_expression()
             .operand(P)
-            .infix(PLUS, $ -> new Add($.$0(), $.$1()))
+            .infix(PLUS, $ -> new Add($.$0(), $.$1()))//1+2*3
             .infix(MINUS, $ -> new Sub($.$0(), $.$1()));
 
     public rule eq_expr = left_expression()
             .operand(S)
-            .infix(EQUAL, $ -> new BinaryEqual($.$0(), $.$1()));
+            .infix(EQUAL, $ -> new BinaryEqual((Boolean) $.$0(), $.$1()));
 
     public rule binary_and_expr = left_expression()
             .operand(eq_expr)

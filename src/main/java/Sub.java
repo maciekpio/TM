@@ -1,9 +1,7 @@
-public class Sub {
-    int x;
-    int y;
-
-    public Sub(int x, int y){
-        this.x=x;
-        this.y=y;
+public class Sub extends Node {
+    public Sub(double left, double right){
+        super.l = new Node(left);
+        super.r = new Node(right);
+        super.value = '-';
     }
 }

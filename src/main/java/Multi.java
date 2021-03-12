@@ -1,9 +1,7 @@
-public class Multi {
-    int x;
-    int y;
-
-    public Multi(int x, int y){
-        this.x=x;
-        this.y=y;
+public class Multi extends Node {
+    public Multi(double left, double right){
+        super.l = new Node(left);
+        super.r = new Node(right);
+        super.value = '*';
     }
 }

@@ -1,9 +1,7 @@
-public class Div {
-    int x;
-    int y;
-
-    public Div(int x, int y){
-        this.x=x;
-        this.y=y;
+public class Div extends Node {
+    public Div(double left, double right){
+        super.l = new Node(left);
+        super.r = new Node(right);
+        super.value = '/';
     }
 }

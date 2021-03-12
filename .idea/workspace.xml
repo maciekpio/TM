@@ -22,26 +22,42 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="35ac0443-1599-4b99-99a6-31b0c36e5f30" name="Default Changelist" comment="tests basics 3">
-      <change afterPath="$PROJECT_DIR$/.idea/Thiciek.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="35ac0443-1599-4b99-99a6-31b0c36e5f30" name="Default Changelist" comment="merge mp to tw">
+      <change afterPath="$PROJECT_DIR$/src/main/java/Negative.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Node.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Not.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Arithmetic.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/JSON.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/test/ArithmeticTests.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/test/JSONTests.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Add.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/Add.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/BinaryAnd.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/BinaryAnd.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/BinaryEqual.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/BinaryEqual.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/BinaryOr.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/BinaryOr.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Div.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/Div.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Multi.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/Multi.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Sub.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/Sub.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/TM.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/TM.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/test/TMTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/test/TMTests.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/classes/TMTests.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/classes/TMTests.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/css/base-style.css" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/css/base-style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/js/report.js" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/js/report.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/packages/default-package.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/packages/default-package.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/TEST-TMTests.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/TEST-TMTests.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileTestJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileTestJava/source-classes-mapping.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Arithmetic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TM.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/JSON.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/ArithmeticTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TMTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/JSONTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Add.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Add.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BinaryAnd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BinaryAnd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BinaryEqual.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BinaryEqual.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BinaryOr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BinaryOr.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Div.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Div.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Multi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Multi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Sub.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Sub.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/TM.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TM.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/TMTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TMTests.java" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -51,6 +67,16 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view />
+      </state>
+    </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -90,31 +116,25 @@
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
     <property name="show.unlinked.gradle.project.popup" value="true" />
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Gradle.TMTests.testInteger">
-    <configuration name="TMTests.testIden" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager" selected="Gradle.TMTests.testAdd">
+    <configuration name="TM" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="TM" />
+      <module name="example.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TMTests.testAdd" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;TMTests.testIden&quot;" />
+        <option name="scriptParameters" value="--tests &quot;TMTests.testAdd&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
         <option name="taskNames">
           <list>
-            <option value=":cleanTest" />
             <option value=":test" />
           </list>
         </option>
@@ -143,74 +163,49 @@
       <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
       <method v="2" />
     </configuration>
+    <configuration name="TMTests.testNumber" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--tests &quot;TMTests.testNumber&quot;" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="TMTests.testS" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--tests &quot;TMTests.testS&quot;" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
     <configuration name="All" type="TestNG">
       <option name="SUITE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="" />
       <option name="GROUP_NAME" value="" />
       <option name="TEST_OBJECT" value="CLASS" />
-      <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
-      <option name="PARAMETERS" value="" />
-      <option name="OUTPUT_DIRECTORY" value="" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <option name="PROPERTIES_FILE" value="" />
-      <properties />
-      <listeners />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ArithmeticTests.testArrayDefinition" type="TestNG" temporary="true" nameIsGenerated="true">
-      <module name="example.test" />
-      <option name="SUITE_NAME" value="" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
-      <option name="METHOD_NAME" value="testArrayDefinition" />
-      <option name="GROUP_NAME" value="" />
-      <option name="TEST_OBJECT" value="METHOD" />
-      <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
-      <option name="PARAMETERS" value="" />
-      <option name="OUTPUT_DIRECTORY" value="" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <option name="PROPERTIES_FILE" value="" />
-      <properties />
-      <listeners />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ArithmeticTests.testIfState" type="TestNG" temporary="true" nameIsGenerated="true">
-      <module name="example.test" />
-      <option name="SUITE_NAME" value="" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
-      <option name="METHOD_NAME" value="testIfState" />
-      <option name="GROUP_NAME" value="" />
-      <option name="TEST_OBJECT" value="METHOD" />
-      <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
-      <option name="PARAMETERS" value="" />
-      <option name="OUTPUT_DIRECTORY" value="" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <option name="PROPERTIES_FILE" value="" />
-      <properties />
-      <listeners />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ArithmeticTests.testMultiComment" type="TestNG" temporary="true" nameIsGenerated="true">
-      <module name="example.test" />
-      <option name="SUITE_NAME" value="" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="ArithmeticTests" />
-      <option name="METHOD_NAME" value="testMultiComment" />
-      <option name="GROUP_NAME" value="" />
-      <option name="TEST_OBJECT" value="METHOD" />
       <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
       <option name="PARAMETERS" value="" />
       <option name="OUTPUT_DIRECTORY" value="" />
@@ -243,24 +238,24 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="TestNG.All" />
-      <item itemvalue="TestNG.ArithmeticTests.testArrayDefinition" />
-      <item itemvalue="TestNG.ArithmeticTests.testIfState" />
-      <item itemvalue="TestNG.ArithmeticTests.testMultiComment" />
-      <item itemvalue="Gradle.TMTests.testIden" />
+      <item itemvalue="Application.TM" />
       <item itemvalue="Gradle.TMTests.testInteger" />
+      <item itemvalue="Gradle.TMTests.testS" />
+      <item itemvalue="Gradle.TMTests.testAdd" />
+      <item itemvalue="Gradle.TMTests.testNumber" />
+      <item itemvalue="TestNG.All" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.TMTests.testAdd" />
+        <item itemvalue="Application.TM" />
+        <item itemvalue="Gradle.TMTests.testNumber" />
+        <item itemvalue="Gradle.TMTests.testS" />
         <item itemvalue="Gradle.TMTests.testInteger" />
-        <item itemvalue="Gradle.TMTests.testIden" />
-        <item itemvalue="TestNG.ArithmeticTests.testIfState" />
-        <item itemvalue="TestNG.ArithmeticTests.testArrayDefinition" />
-        <item itemvalue="TestNG.ArithmeticTests.testMultiComment" />
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -321,7 +316,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615478659266</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="merge mp to tw">
+      <created>1615492347987</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1615492347987</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -329,13 +331,12 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
@@ -346,6 +347,45 @@
     <MESSAGE value="tests basics 2" />
     <MESSAGE value="tests basics 3" />
     <MESSAGE value="more tests even more debug" />
-    <option name="LAST_COMMIT_MESSAGE" value="more tests even more debug" />
+    <MESSAGE value="merge mp to tw" />
+    <option name="LAST_COMMIT_MESSAGE" value="merge mp to tw" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1615536916386">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1615536916386" />
+    <state width="1877" height="452" key="GridCell.Tab.0.bottom" timestamp="1615502321043">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="452" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
+    <state width="1877" height="452" key="GridCell.Tab.0.center" timestamp="1615502321043">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="452" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
+    <state width="1877" height="452" key="GridCell.Tab.0.left" timestamp="1615502321043">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="452" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
+    <state width="1877" height="452" key="GridCell.Tab.0.right" timestamp="1615502321043">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="452" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1615502321043">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
+    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1615502321043">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
+    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1615502321043">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
+    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1615502321043">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
   </component>
 </project>
