@@ -2,17 +2,21 @@ Node.java
  Node
 Multi.java
  Multi
+Negative.java
+ Negative
 Add.java
  Add
 BinaryEqual.java
  BinaryEqual
+Not.java
+ Not
 BinaryAnd.java
  BinaryAnd
 Div.java
  Div
-TM.java
- TM
-BinaryOr.java
- BinaryOr
 Sub.java
  Sub
+BinaryOr.java
+ BinaryOr
+TM.java
+ TM

@@ -25,9 +25,9 @@ public final class TM extends Grammar {
     public rule LET      = reserved("let");
     public rule DEF      = reserved("def");
     public rule STRUCT   = reserved("struct");
-    public rule FALSE     = reserved("false")  .as_val(false);
-    public rule TRUE      = reserved("true")   .as_val(true);
-    public rule NULL      = reserved("null")   .as_val(null);
+    public rule FALSE    = reserved("false")  .as_val(false);
+    public rule TRUE     = reserved("true")   .as_val(true);
+    public rule NULL     = reserved("null")   .as_val(null);
     public rule ARRAY    = reserved("array");
 
     /// Lexical ///
@@ -45,9 +45,12 @@ public final class TM extends Grammar {
     public rule integer =
             choice('0', digit.at_least(1));
 
+    public rule fractional =
+            seq('.', digit.at_least(1));
+
     public rule number =
-            seq(opt('-'), integer)
-            .push($ -> Integer.parseInt($.str()))
+            seq(opt('-'), integer, fractional.opt())
+            .push($ -> Double.parseDouble($.str()))
             .word();
 
     //public rule char_lit = choice(seq(set('"', '#'), range('\u0000', '\u001F')).not(), any);
@@ -176,6 +179,17 @@ public final class TM extends Grammar {
                     this.entire_binary_expr,
                     this.entire_unary_expr,
                     this.compound_expr,
+                    //this.operation,
+                    value
+            )
+    );
+
+    public rule expr_bis = lazy(() ->
+            choice(
+                    this.fct_call_expr,
+                    //this.entire_binary_expr,
+                    this.entire_unary_expr,
+                    this.compound_expr,
                     value
             )
     );
@@ -202,20 +216,6 @@ public final class TM extends Grammar {
             seq(RETURN, ws.opt(), LPAREN, value.opt(), RPAREN, SEMICOL);
 
     //EXPRESSIONS
-
-    /**
-     * En fait ca revient au meme que value mais sans les boolean donc pas sur que ca serve au final
-     *              |
-     *              |
-     *              V
-     */
-    public rule literal_expr = lazy(() ->
-            choice(
-                    iden,
-                    string,
-                    number
-            )
-    );
 
     public rule let_def_state = lazy(() ->
             seq(LET, ws, iden, ws.opt(), AS, expr, ws.opt(), SEMICOL)
@@ -254,7 +254,9 @@ public final class TM extends Grammar {
     );
 
     public rule entire_binary_expr = lazy (() ->
-            seq(compound_expr, choice(boolean_binary_expr, number_binary_expr), compound_expr)
+            seq(expr_bis, choice(boolean_binary_expr, number_binary_expr), expr_bis)
+            .push($ -> new Add($.$0(), $.$1()), LOOKBACK(1))
+            .at_least(0)
     );
 
     public rule entire_unary_expr = lazy (() ->
@@ -263,43 +265,46 @@ public final class TM extends Grammar {
 
     //OPERATIONS
 
-    /**
-     *
-
-
     public rule operation = lazy(() -> choice(
             seq(ws.opt(), this.multiplication),
+            seq(ws.opt(), this.add_test),
             seq(ws.opt(), this.division),
             seq(ws.opt(), this.addition),
             seq(ws.opt(), this.subtraction)
+
     ));
 
+    public rule add_test =
+            seq(integer,
+                    seq(str("+"), integer)
+                            .push($ -> new Add($.$0(), $.$1()))
+                            .at_least(0));
+
     public rule addition = lazy(() -> seq(number, ws.opt(), PLUS, ws.opt(),
-            choice(this.operation, seq(number, ws.opt(), SEMICOL.opt(), this.operation.opt()))));
+            choice(this.operation, seq(number, ws.opt(), this.operation.opt())))
+            .push($ -> new Add($.$0(), $.$1()), LOOKBACK(1))
+            .at_least(0)
+    );
 
     public rule subtraction = lazy(() -> seq(number, ws.opt(), MINUS, ws.opt(),
-            choice(this.operation, seq(number, ws.opt(), SEMICOL.opt(), this.operation.opt()))));
+            choice(this.operation, seq(number, ws.opt(), this.operation.opt()))));
 
     public rule multiplication = lazy(() -> seq(number, ws.opt(), TIMES, ws.opt(),
-            choice(this.operation, seq(number, ws.opt(), SEMICOL.opt(), this.operation.opt()))));
+            choice(this.operation, seq(number, ws.opt(), this.operation.opt()))));
 
     public rule division = lazy(() -> seq(number, ws.opt(), DIVID, ws.opt(),
-            choice(this.operation, seq(number, ws.opt(), SEMICOL.opt(), this.operation.opt()))));
-     */
+            choice(this.operation, seq(number, ws.opt(), this.operation.opt()))));
 
     //PRIORITIES
 
-    public rule not_expr = right_expression()
-            .right(integer);
-
     public rule P = left_expression()
-            .operand(not_expr)
+            .operand(number)
             .infix(DIVID, $ -> new Div($.$0(), $.$1()))
             .infix(TIMES, $ -> new Multi($.$0(), $.$1()));
 
     public rule S = left_expression()
             .operand(P)
-            .infix(PLUS, $ -> new Add($.$0(), $.$1()))//1+2*3
+            .infix(PLUS, $ -> new Add($.$0(), $.$1()))//1+2
             .infix(MINUS, $ -> new Sub($.$0(), $.$1()));
 
     public rule eq_expr = left_expression()
@@ -316,7 +321,12 @@ public final class TM extends Grammar {
 
 
 
-    public rule root = seq(ws, value);
+    public rule root = lazy(() -> choice(
+            fct_definition,
+            fct_call_expr,
+            statement,
+            let_def_state
+    ));
 
     @Override public rule root() {
         return root;

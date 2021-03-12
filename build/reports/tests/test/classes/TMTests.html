@@ -41,11 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<<<<<<< HEAD
-<div class="counter">0.177s</div>
-=======
-<div class="counter">0.039s</div>
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
+<div class="counter">0.078s</div>
 <p>duration</p>
 </div>
 </td>
@@ -70,6 +66,9 @@
 <li>
 <a href="#tab1">Tests</a>
 </li>
+<li>
+<a href="#tab2">Standard error</a>
+</li>
 </ul>
 <div id="tab0" class="tab">
 <h2>Failed tests</h2>
@@ -78,17 +77,49 @@
 <h3 class="failures">testAdd</h3>
 <span class="code">
 <pre>java.lang.AssertionError: Exception thrown at position 1:4
-class java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+class java.lang.IndexOutOfBoundsException: Amount [3invalid for stack size [2]
 
 Parser trace:
-    at    1:1   in S
+    at    1:1   in root
+    at    1:1   in choice(fct_definition, fct_call_expr, statement, let_def_state)
+    at    1:1   in statement
+    at    1:1   in choice(compound_state, while_state, if_state, let_def_state, expr_state, return_state)
+    at    1:1   in expr_state
+    at    1:1   in sequence(expr, SEMICOL)
+    at    1:1   in expr
+    at    1:1   in choice(fct_call_expr, entire_binary_expr, entire_unary_expr, compound_expr, value)
+    at    1:1   in entire_binary_expr
+    at    1:1   in repeat(push(sequence(expr_bis, choice(boolean_binary_expr, number_binary_expr), expr_bis)), 0)
+    at    1:1   in push(sequence(expr_bis, choice(boolean_binary_expr, number_binary_expr), expr_bis))
 
-Thrown: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
-	at norswap.autumn.actions.ActionContext.$0(ActionContext.java:245)
-	at TM.lambda$new$29(TM.java:302)
-	at norswap.autumn.actions.StackPush.apply(StackPush.java:14)
-	at norswap.autumn.parsers.LeftExpression.lambda$doparse$0(LeftExpression.java:102)
-	at norswap.autumn.parsers.LeftExpression.doparse(LeftExpression.java:119)
+Thrown: java.lang.IndexOutOfBoundsException: Amount [3invalid for stack size [2]
+	at norswap.autumn.util.ArrayStack.pop(ArrayStack.java:189)
+	at norswap.autumn.SideEffectingArrayStack.lambda$pop$6(SideEffectingArrayStack.java:79)
+	at norswap.autumn.SideEffect.apply(SideEffect.java:44)
+	at norswap.autumn.Log.apply(Log.java:30)
+	at norswap.autumn.SideEffectingArrayStack.pop(SideEffectingArrayStack.java:78)
+	at norswap.autumn.SideEffectingArrayStack.popFrom(SideEffectingArrayStack.java:96)
+	at norswap.autumn.parsers.Collect.doparse(Collect.java:106)
+	at norswap.autumn.Parser.parse(Parser.java:117)
+	at norswap.autumn.parsers.Repeat.doparse(Repeat.java:50)
+	at norswap.autumn.Parser.parse(Parser.java:117)
+	at norswap.autumn.parsers.LazyParser.doparse(LazyParser.java:57)
+	at norswap.autumn.Parser.parse(Parser.java:117)
+	at norswap.autumn.parsers.Choice.doparse(Choice.java:41)
+	at norswap.autumn.Parser.parse(Parser.java:117)
+	at norswap.autumn.parsers.LazyParser.doparse(LazyParser.java:57)
+	at norswap.autumn.Parser.parse(Parser.java:117)
+	at norswap.autumn.parsers.Sequence.doparse(Sequence.java:41)
+	at norswap.autumn.Parser.parse(Parser.java:117)
+	at norswap.autumn.parsers.LazyParser.doparse(LazyParser.java:57)
+	at norswap.autumn.Parser.parse(Parser.java:117)
+	at norswap.autumn.parsers.Choice.doparse(Choice.java:41)
+	at norswap.autumn.Parser.parse(Parser.java:117)
+	at norswap.autumn.parsers.LazyParser.doparse(LazyParser.java:57)
+	at norswap.autumn.Parser.parse(Parser.java:117)
+	at norswap.autumn.parsers.Choice.doparse(Choice.java:41)
+	at norswap.autumn.Parser.parse(Parser.java:117)
+	at norswap.autumn.parsers.LazyParser.doparse(LazyParser.java:57)
 	at norswap.autumn.Parser.parse(Parser.java:117)
 	at norswap.autumn.Parse.run(Parse.java:242)
 	at norswap.autumn.Autumn.parse(Autumn.java:52)
@@ -99,7 +130,7 @@ Thrown: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for leng
 	at norswap.autumn.TestFixture.success(TestFixture.java:367)
 	at norswap.autumn.TestFixture.successExpect(TestFixture.java:391)
 	at norswap.autumn.TestFixture.successExpect(TestFixture.java:406)
-	at TMTests.testAdd(TMTests.java:450)
+	at TMTests.testAdd(TMTests.java:482)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -155,7 +186,7 @@ Thrown: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for leng
 	at java.base/java.lang.Thread.run(Thread.java:834)
 
 ------
-	at TMTests.testAdd(TMTests.java:450)
+	at TMTests.testAdd(TMTests.java:482)
 </pre>
 </span>
 </div>
@@ -171,17 +202,19 @@ Thrown: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for leng
 </tr>
 </thead>
 <tr>
-<<<<<<< HEAD
-<td class="success">testEntireUnaryExpr</td>
-<td class="success">0.177s</td>
-<td class="success">passed</td>
-=======
 <td class="failures">testAdd</td>
-<td class="failures">0.039s</td>
+<td class="failures">0.078s</td>
 <td class="failures">failed</td>
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
 </tr>
 </table>
+</div>
+<div id="tab2" class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>Parse failed, but value stack is not empty: [1.0, 2.0]
+Parse failed, but value stack is not empty: [1.0, 2.0]
+</pre>
+</span>
 </div>
 </div>
 <div id="footer">
@@ -191,11 +224,7 @@ Thrown: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for leng
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<<<<<<< HEAD
-<a href="http://www.gradle.org">Gradle 6.8.2</a> at 12 mars 2021 à 09:48:06</p>
-=======
-<a href="http://www.gradle.org">Gradle 6.8.3</a> at 12 mars 2021 à 09:22:27</p>
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
+<a href="http://www.gradle.org">Gradle 6.8.3</a> at 12 mars 2021 à 14:15:29</p>
 </div>
 </div>
 </body>

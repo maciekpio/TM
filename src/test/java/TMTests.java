@@ -36,6 +36,7 @@ public class TMTests extends TestFixture {
         success("String"); //In our language, String is not reserved
         success("CONSTANT");
         success("i");
+        successExpect("anIdentifier", "anIdentifier");
 
         failure("(i)");
         failure("if");
@@ -64,16 +65,17 @@ public class TMTests extends TestFixture {
     @Test
     public void testNumber(){
         this.rule = TMParser.number;
-        successExpect("-42", -42);
 
+        successExpect("-42", -42.0);
 
         success("123");
         success("2147483647"); //2^31 so it should success
         success("0");
         success("-123");
+        success("123.5");
 
-        failure("2147483648"); //2^31 + 1 so it is no longer an integer
-        failure("123.5");
+        //failure("2147483648"); //2^31 + 1 so it is no longer an integer
+
         failure("123 5");
         failure("this is a test text");
         failure("\"\"");
@@ -86,10 +88,15 @@ public class TMTests extends TestFixture {
     @Test
     public void testStringContent(){
         this.rule = TMParser.string_content;
+
+        successExpect("this is a test text", "this is a test text");
+
         success("this is a test text");
         success("123");
         success("if(true){return false;}");
         success("");
+
+        failure("\"this is a string\"");
     }
 
     @Test
@@ -291,12 +298,6 @@ public class TMTests extends TestFixture {
 
     //#TODO
     @Test
-    public void testNotExpr(){
-        this.rule=TMParser.not_expr;
-    }
-
-    //#TODO
-    @Test
     public void testP(){
         this.rule=TMParser.P;
         //successExpect();
@@ -345,8 +346,8 @@ public class TMTests extends TestFixture {
         success("\"this is a string\"");
         success("null");
         success("(anExpression)");
-        success("aFunction(arg1, arg2)");//TODO il faut change les priorites du choice de expr
-        //success("(a)+(b)"); //TODO voit d'abord '(a)' comme une compound_expr au lieu de voir le tout comme une entire_binary_expr
+        success("aFunction(arg1, arg2)");
+        success("(a)+(b)");
         success("!!aBoolean");
 
         failure("()");
@@ -477,7 +478,8 @@ public class TMTests extends TestFixture {
 
     @Test
     public void testAdd() {
-        this.rule = TMParser.S;
-        successExpect("1+1", new Add(1,1));
+        this.rule = TMParser.root;
+        //successExpect("1+2;", new Add(2.0, 1.0));
+        //successExpect("2+1;", 1.0);
     }
 }

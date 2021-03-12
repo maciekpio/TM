@@ -22,23 +22,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-<<<<<<< HEAD
-    <list default="true" id="35ac0443-1599-4b99-99a6-31b0c36e5f30" name="Default Changelist" comment="tests basics 3">
+    <list default="true" id="35ac0443-1599-4b99-99a6-31b0c36e5f30" name="Default Changelist" comment="merge new node class">
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/test/TMTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/test/TMTests.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/classes/TMTests.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/classes/TMTests.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/packages/default-package.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/packages/default-package.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test-results/test/TEST-TMTests.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/TEST-TMTests.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" afterDir="false" />
-=======
-    <list default="true" id="35ac0443-1599-4b99-99a6-31b0c36e5f30" name="Default Changelist" comment="merge mp to tw">
-      <change afterPath="$PROJECT_DIR$/src/main/java/Negative.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Node.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Not.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/Add.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/Add.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/BinaryAnd.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/BinaryAnd.class" afterDir="false" />
@@ -50,24 +35,13 @@
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/TM.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/TM.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/test/TMTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/test/TMTests.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/reports/tests/test/classes/TMTests.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/classes/TMTests.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/css/base-style.css" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/css/base-style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/css/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/reports/tests/test/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/js/report.js" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/js/report.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/reports/tests/test/packages/default-package.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/tests/test/packages/default-package.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/test-results/test/TEST-TMTests.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/TEST-TMTests.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileTestJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileTestJava/source-classes-mapping.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Add.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Add.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BinaryAnd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BinaryAnd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BinaryEqual.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BinaryEqual.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BinaryOr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BinaryOr.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Div.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Div.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Multi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Multi.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Sub.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Sub.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Node.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/TM.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TM.java" afterDir="false" />
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
       <change beforePath="$PROJECT_DIR$/src/test/java/TMTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TMTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -128,41 +102,13 @@
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
     <property name="show.unlinked.gradle.project.popup" value="true" />
   </component>
-<<<<<<< HEAD
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Gradle.TMTests.testEntireUnaryExpr">
-    <configuration name="TMTests.testBinaryOrExpr" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-=======
   <component name="RunManager" selected="Gradle.TMTests.testAdd">
-    <configuration name="TM" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="TM" />
-      <module name="example.main" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="TMTests.testAdd" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-<<<<<<< HEAD
-        <option name="scriptParameters" value="--tests &quot;TMTests.testBinaryOrExpr&quot;" />
-=======
         <option name="scriptParameters" value="--tests &quot;TMTests.testAdd&quot;" />
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
         <option name="taskDescriptions">
           <list />
         </option>
@@ -176,18 +122,17 @@
       <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="TMTests.testEntireBinaryExpr" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="TMTests.testDiv" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;TMTests.testEntireBinaryExpr&quot;" />
+        <option name="scriptParameters" value="--tests &quot;TMTests.testDiv&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
         <option name="taskNames">
           <list>
-            <option value=":cleanTest" />
             <option value=":test" />
           </list>
         </option>
@@ -196,50 +141,36 @@
       <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
       <method v="2" />
     </configuration>
-<<<<<<< HEAD
-    <configuration name="TMTests.testEntireUnaryExpr" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-=======
+    <configuration name="TMTests.testExpr" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--tests &quot;TMTests.testExpr&quot;" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
     <configuration name="TMTests.testNumber" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-<<<<<<< HEAD
-        <option name="scriptParameters" value="--tests &quot;TMTests.testEntireUnaryExpr&quot;" />
-=======
         <option name="scriptParameters" value="--tests &quot;TMTests.testNumber&quot;" />
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
         <option name="taskDescriptions">
           <list />
         </option>
         <option name="taskNames">
           <list>
-<<<<<<< HEAD
-            <option value=":cleanTest" />
-=======
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
-            <option value=":test" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
-      <method v="2" />
-<<<<<<< HEAD
-    </configuration>
-    <configuration name="TMTests.testIfState" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;TMTests.testIfState&quot;" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":cleanTest" />
             <option value=":test" />
           </list>
         </option>
@@ -248,52 +179,12 @@
       <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="TMTests.testSum" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="TMTests.testStringContent" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;TMTests.testSum&quot;" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":cleanTest" />
-            <option value=":test" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="All" type="TestNG">
-      <option name="SUITE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="" />
-      <option name="GROUP_NAME" value="" />
-      <option name="TEST_OBJECT" value="CLASS" />
-      <option name="VM_PARAMETERS" value="-ea -Dtestng.dtd.http=true" />
-      <option name="PARAMETERS" value="" />
-      <option name="OUTPUT_DIRECTORY" value="" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <option name="PROPERTIES_FILE" value="" />
-      <properties />
-      <listeners />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-=======
-    </configuration>
-    <configuration name="TMTests.testS" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;TMTests.testS&quot;" />
+        <option name="scriptParameters" value="--tests &quot;TMTests.testStringContent&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -325,7 +216,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
     <configuration default="true" type="TestNG">
       <option name="SUITE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="" />
@@ -345,36 +235,20 @@
       </method>
     </configuration>
     <list>
-<<<<<<< HEAD
-      <item itemvalue="Gradle.TMTests.testBinaryOrExpr" />
-      <item itemvalue="Gradle.TMTests.testEntireUnaryExpr" />
-      <item itemvalue="Gradle.TMTests.testIfState" />
-      <item itemvalue="Gradle.TMTests.testSum" />
-      <item itemvalue="Gradle.TMTests.testEntireBinaryExpr" />
-=======
-      <item itemvalue="Application.TM" />
-      <item itemvalue="Gradle.TMTests.testInteger" />
-      <item itemvalue="Gradle.TMTests.testS" />
-      <item itemvalue="Gradle.TMTests.testAdd" />
       <item itemvalue="Gradle.TMTests.testNumber" />
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
       <item itemvalue="TestNG.All" />
+      <item itemvalue="Gradle.TMTests.testDiv" />
+      <item itemvalue="Gradle.TMTests.testStringContent" />
+      <item itemvalue="Gradle.TMTests.testExpr" />
+      <item itemvalue="Gradle.TMTests.testAdd" />
     </list>
     <recent_temporary>
       <list>
-<<<<<<< HEAD
-        <item itemvalue="Gradle.TMTests.testEntireUnaryExpr" />
-        <item itemvalue="Gradle.TMTests.testBinaryOrExpr" />
-        <item itemvalue="Gradle.TMTests.testEntireBinaryExpr" />
-        <item itemvalue="Gradle.TMTests.testSum" />
-        <item itemvalue="Gradle.TMTests.testIfState" />
-=======
         <item itemvalue="Gradle.TMTests.testAdd" />
-        <item itemvalue="Application.TM" />
+        <item itemvalue="Gradle.TMTests.testDiv" />
+        <item itemvalue="Gradle.TMTests.testExpr" />
+        <item itemvalue="Gradle.TMTests.testStringContent" />
         <item itemvalue="Gradle.TMTests.testNumber" />
-        <item itemvalue="Gradle.TMTests.testS" />
-        <item itemvalue="Gradle.TMTests.testInteger" />
->>>>>>> 825f95359d8d7d80bd089849a51c4a946de59828
       </list>
     </recent_temporary>
   </component>
@@ -446,7 +320,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615492347987</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="merge new node class">
+      <created>1615539318233</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1615539318233</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -471,44 +352,80 @@
     <MESSAGE value="tests basics 3" />
     <MESSAGE value="more tests even more debug" />
     <MESSAGE value="merge mp to tw" />
-    <option name="LAST_COMMIT_MESSAGE" value="merge mp to tw" />
+    <MESSAGE value="merge new node class" />
+    <option name="LAST_COMMIT_MESSAGE" value="merge new node class" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="765" y="226" key="#com.intellij.ide.util.MemberChooser" timestamp="1615546182578">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="765" y="226" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1615546182578" />
     <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1615536916386">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1615536916386" />
-    <state width="1877" height="452" key="GridCell.Tab.0.bottom" timestamp="1615502321043">
+    <state width="1877" height="344" key="GridCell.Tab.0.bottom" timestamp="1615554472343">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="452" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
-    <state width="1877" height="452" key="GridCell.Tab.0.center" timestamp="1615502321043">
+    <state width="1877" height="344" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1615554472343" />
+    <state width="1877" height="344" key="GridCell.Tab.0.center" timestamp="1615554472343">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="452" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
-    <state width="1877" height="452" key="GridCell.Tab.0.left" timestamp="1615502321043">
+    <state width="1877" height="344" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1615554472343" />
+    <state width="1877" height="344" key="GridCell.Tab.0.left" timestamp="1615554472343">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="452" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
-    <state width="1877" height="452" key="GridCell.Tab.0.right" timestamp="1615502321043">
+    <state width="1877" height="344" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1615554472343" />
+    <state width="1877" height="344" key="GridCell.Tab.0.right" timestamp="1615554472343">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="452" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1615502321043">
+    <state width="1877" height="344" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1615554472343" />
+    <state width="1877" height="355" key="GridCell.Tab.1.bottom" timestamp="1615547698212">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
-    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1615502321043">
+    <state width="1877" height="355" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1615547698212" />
+    <state width="1877" height="355" key="GridCell.Tab.1.center" timestamp="1615547698212">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
-    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1615502321043">
+    <state width="1877" height="355" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1615547698212" />
+    <state width="1877" height="355" key="GridCell.Tab.1.left" timestamp="1615547698212">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
-    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1615502321043">
+    <state width="1877" height="355" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1615547698212" />
+    <state width="1877" height="355" key="GridCell.Tab.1.right" timestamp="1615547698212">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1615502321043" />
+    <state width="1877" height="355" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1615547698212" />
+    <state x="184" y="85" key="MergeDialog" timestamp="1615539632188">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="184" y="85" key="MergeDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1615539632188" />
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1615539342422">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1615539342422" />
+    <state x="777" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1615539653587">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="777" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1615539653587" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/TM.java</url>
+          <line>18</line>
+          <properties>
+            <option name="lambda-ordinal" value="0" />
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="norswap.autumn.actions.ActionContext" memberName="$" />
+      </pinned-members>
+    </pin-to-top-manager>
   </component>
 </project>
