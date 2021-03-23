@@ -15,13 +15,21 @@ repositories {
     jcenter()
 }
 
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://autumn.jfrog.io/artifactory/gradle")
+    }
+    mavenLocal()
+}
+
 dependencies {
     // Use TestNG framework, also requires calling test.useTestNG() below
-    testImplementation 'org.testng:testng:7.3.0'
+    testImplementation('org.testng:testng:7.3.0')
 
-    implementation 'com.norswap:utils:2.1.2'
-    implementation 'com.norswap:autumn:1.0.6'
-    implementation 'com.norswap:uranium:1.0.3-ALPHA'
+    implementation('com.norswap:utils:2.1.9')
+    implementation('com.norswap:autumn:1.2.0')
+    implementation("com.norswap:uranium:1.0.9-ALPHA")
 }
 
 tasks.named('test') {
