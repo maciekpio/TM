@@ -1,15 +1,11 @@
 import ast.*;
-import norswap.autumn.Autumn;
 import norswap.autumn.Grammar;
-import norswap.autumn.ParseOptions;
-import norswap.autumn.ParseResult;
-import norswap.autumn.positions.LineMapString;
 
 public final class ArithmeticGrammar extends Grammar {
     // ==== LEXICAL ===========================================================
 
     public rule line_comment =
-            seq("//", seq(not("\n"), any).at_least(0));
+            seq("##", seq(not("\n"), any).at_least(0));
 
     public rule ws_item = choice(
             set(" \t\n\r;"),
@@ -20,35 +16,40 @@ public final class ArithmeticGrammar extends Grammar {
         id_part = choice(alphanum, '_');
     }
 
-    public rule STAR = word("*");
-    public rule SLASH = word("/");
-    public rule PERCENT = word("%");
+    public rule TIMES = word("*");
+    public rule DIVID = word("/");
+    public rule MODULO = word("%");
     public rule PLUS = word("+");
     public rule MINUS = word("-");
-    public rule COLON = word(":");
-    public rule EQUALS_EQUALS = word("==");
-    public rule EQUALS = word("=");
-    public rule BANG_EQUAL = word("!=");
+    public rule SEMICOLON = word(";");
+    public rule EQUAL = word("==");
+    public rule AS = word("=");
+    public rule DIFF = word("!=");
     public rule LANGLE_EQUAL = word("<=");
     public rule RANGLE_EQUAL = word(">=");
     public rule LANGLE = word("<");
     public rule RANGLE = word(">");
-    public rule AMP_AMP = word("&&");
-    public rule BAR_BAR = word("||");
+    public rule AND = word("&&");
+    public rule OR = word("||");
     public rule LPAREN = word("(");
     public rule RPAREN = word(")");
 
-    public rule _var = reserved("var");
+    public rule _let = reserved("let");
     public rule _if = reserved("if");
     public rule _else = reserved("else");
     public rule _true = reserved("true").push($ -> new BooleanNode($.span(), true));
     public rule _false = reserved("false").push($ -> new BooleanNode($.span(), false));
 
-    public rule number =
-            seq(opt('-'), choice('0', digit.at_least(1)));
+    public rule fractional =
+            seq('.', digit.at_least(1));
 
     public rule integer =
-            number.push($ -> new IntLiteralNode($.span(), Long.parseLong($.str())))
+            this.number.push($ -> new IntLiteralNode($.span(), Long.parseLong($.str())))
+                    .word();
+
+    public rule number =
+            seq(opt('-'), integer, fractional.opt())
+                    .push($ -> Double.parseDouble($.str()))
                     .word();
 
     public rule string_char = choice(
@@ -73,26 +74,23 @@ public final class ArithmeticGrammar extends Grammar {
     public rule reference =
             identifier.push($ -> new ReferenceNode($.span(), $.$[0]));
 
-    public rule simple_type =
-            identifier.push($ -> new SimpleTypeNode($.span(), $.$[0]));
-
     public rule basic_expression = choice(
             reference,
             integer,
             string);
 
     public rule mult_op = choice(
-            STAR.as_val(BinaryOperator.MULTIPLY),
-            SLASH.as_val(BinaryOperator.DIVIDE),
-            PERCENT.as_val(BinaryOperator.REMAINDER));
+            TIMES.as_val(BinaryOperator.MULTIPLY),
+            DIVID.as_val(BinaryOperator.DIVIDE),
+            MODULO.as_val(BinaryOperator.REMAINDER));
 
     public rule add_op = choice(
             PLUS.as_val(BinaryOperator.ADD),
             MINUS.as_val(BinaryOperator.SUBTRACT));
 
     public rule cmp_op = choice(
-            EQUALS_EQUALS.as_val(BinaryOperator.EQUALITY),
-            BANG_EQUAL.as_val(BinaryOperator.NOT_EQUALS),
+            EQUAL.as_val(BinaryOperator.EQUALITY),
+            DIFF.as_val(BinaryOperator.NOT_EQUALS),
             LANGLE_EQUAL.as_val(BinaryOperator.LOWER_EQUAL),
             RANGLE_EQUAL.as_val(BinaryOperator.GREATER_EQUAL),
             LANGLE.as_val(BinaryOperator.LOWER),
@@ -115,17 +113,17 @@ public final class ArithmeticGrammar extends Grammar {
 
     public rule and_expression = left_expression()
             .operand(order_expr)
-            .infix(AMP_AMP.as_val(BinaryOperator.AND),
+            .infix(AND.as_val(BinaryOperator.AND),
                     $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 
     public rule or_expression = left_expression()
             .operand(and_expression)
-            .infix(BAR_BAR.as_val(BinaryOperator.OR),
+            .infix(OR.as_val(BinaryOperator.OR),
                     $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 
     public rule assignment_expression = right_expression()
             .operand(or_expression)
-            .infix(EQUALS,
+            .infix(AS,
                     $ -> new AssignmentNode($.span(), $.$[0], $.$[1]));
 
     public rule expression = seq(assignment_expression);
@@ -149,7 +147,7 @@ public final class ArithmeticGrammar extends Grammar {
             this.expression));
 
     public rule var_decl =
-            seq(_var, identifier, COLON, simple_type, EQUALS, expression)
+            seq(_let, identifier, AS, expression)
                     .push($ -> new VarDeclarationNode($.span(), $.$[0], $.$[1], $.$[2]));
 
     public rule if_stmt =
