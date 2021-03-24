@@ -54,7 +54,7 @@ array nom_du_tableau [longueur_du_tableau]
 
 //COMMENTAIRES
 
-# commentaires #
+"##" commentaires
 
 //OPERATIONS
 
