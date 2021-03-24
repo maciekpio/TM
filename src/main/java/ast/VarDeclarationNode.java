@@ -9,11 +9,17 @@ public final class VarDeclarationNode extends DeclarationNode
     public final TypeNode type;
     public final ExpressionNode initializer;
 
-    public VarDeclarationNode (Span span, Object name, Object type, Object initializer) {
+    public VarDeclarationNode (Span span, Object name, Object initializer) {
         super(span);
         this.name = Util.cast(name, String.class);
-        this.type = Util.cast(type, TypeNode.class);
         this.initializer = Util.cast(initializer, ExpressionNode.class);
+        System.out.println("VarDeclarationNode");
+        System.out.println(initializer.getClass().toString());
+        /*
+          Find the type of the value used in the variable
+          this.type = Util.cast(type, TypeNode.class);
+         */
+        this.type = Util.cast(initializer.getClass(), TypeNode.class);
     }
 
     @Override public String name () {

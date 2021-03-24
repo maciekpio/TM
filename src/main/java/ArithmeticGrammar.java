@@ -33,10 +33,16 @@ public final class ArithmeticGrammar extends Grammar {
     public rule OR = word("||");
     public rule LPAREN = word("(");
     public rule RPAREN = word(")");
+    public rule LBRACE = word("{");
+    public rule RBRACE = word("}");
+    public rule COMMA = word(",");
 
     public rule _let = reserved("let");
     public rule _if = reserved("if");
     public rule _else = reserved("else");
+    public rule _while = reserved("while");
+    public rule _def = reserved("def");
+    public rule _return = reserved("return");
     public rule _true = reserved("true").push($ -> new BooleanNode($.span(), true));
     public rule _false = reserved("false").push($ -> new BooleanNode($.span(), false));
 
@@ -140,19 +146,48 @@ public final class ArithmeticGrammar extends Grammar {
                 return true;
             });
 
-    public rule statement = lazy(() -> choice(
-            this.var_decl,
-            this.if_stmt,
-            this.expression_stmt,
-            this.expression));
+    public rule expression_semicolon = lazy(() -> choice(
+            seq(this.expression_stmt, SEMICOLON),
+            seq(this.expression, SEMICOLON)
+    ));
 
-    public rule var_decl =
-            seq(_let, identifier, AS, expression)
-                    .push($ -> new VarDeclarationNode($.span(), $.$[0], $.$[1], $.$[2]));
+    /**
+     * Here is the main way for the root
+     */
+    public rule statement = lazy(() -> choice(
+            this.let_decl,
+            this.fct_def,
+            this.if_stmt,
+            this.while_stmt,
+            this.expression_semicolon
+    ));
+
+    public rule brace_statement =
+            seq(LBRACE, statement, RBRACE);
+
+    public rule let_decl =
+            seq(_let, identifier, AS, expression, SEMICOLON)
+                    .push($ -> new VarDeclarationNode($.span(), $.$[0], $.$[1]));
 
     public rule if_stmt =
-            seq(_if, paren_expression, statement, seq(_else, statement).or_push_null())
+            seq(_if, paren_expression, brace_statement, seq(_else, statement).or_push_null())
                     .push($ -> new IfNode($.span(), $.$[0], $.$[1], $.$[2]));
+
+    public rule while_stmt =
+            seq(_while, paren_expression, brace_statement);//TODO .push
+
+    public rule return_stmt =
+            seq(_return, paren_expression, SEMICOLON);
+
+    public rule fct_def = lazy(() ->
+            seq(_def, ws, identifier,
+                    LPAREN, seq(identifier, this.fct_args.opt()).opt(), RPAREN,
+                    LBRACE, this.statement, this.return_stmt, RBRACE)//TODO .push
+    );
+
+    public rule fct_args = lazy(() ->
+            seq(seq(ws.opt(), COMMA, identifier), ws.opt(), this.fct_args.opt())
+    );
 
     public rule root =
             seq(ws, statement.at_least(1))
