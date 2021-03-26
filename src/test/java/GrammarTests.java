@@ -1,4 +1,4 @@
-import ast.BinaryExpressionNode;
+import ast.*;
 import norswap.autumn.ParseResult;
 import org.testng.annotations.Test;
 import norswap.autumn.AutumnTestFixture;

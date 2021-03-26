@@ -1,6 +1,8 @@
 import ast.*;
 import norswap.autumn.Grammar;
 
+import static ast.UnaryOperator.NOT;
+
 public final class ArithmeticGrammar extends Grammar {
     // ==== LEXICAL ===========================================================
 
@@ -31,11 +33,15 @@ public final class ArithmeticGrammar extends Grammar {
     public rule RANGLE = word(">");
     public rule AND = word("&&");
     public rule OR = word("||");
+    public rule BANGBANG = word("!!");
     public rule LPAREN = word("(");
     public rule RPAREN = word(")");
     public rule LBRACE = word("{");
     public rule RBRACE = word("}");
+    public rule LBRACKET = word("[");
+    public rule RBRACKET = word("]");
     public rule COMMA = word(",");
+    public rule DOT = word(".");
 
     public rule _let = reserved("let");
     public rule _if = reserved("if");
@@ -43,6 +49,10 @@ public final class ArithmeticGrammar extends Grammar {
     public rule _while = reserved("while");
     public rule _def = reserved("def");
     public rule _return = reserved("return");
+    public rule _struct = reserved("struct");
+    public rule _attr = reserved("attr");
+    public rule _array = reserved("array");
+    public rule _index = reserved("index");
     public rule _true = reserved("true").push($ -> new BooleanNode($.span(), true));
     public rule _false = reserved("false").push($ -> new BooleanNode($.span(), false));
 
@@ -85,6 +95,20 @@ public final class ArithmeticGrammar extends Grammar {
             integer,
             string);
 
+    public rule suffix_expression = left_expression()
+            .left(basic_expression)
+            .suffix(seq(DOT, identifier),
+                    $ -> new AttributeAccessNode($.span(), $.$[0], $.$[1]))
+            .suffix(seq(DOT, _index, lazy(() -> this.paren_expression)),
+                    $ -> new ArrayAccessNode($.span(), $.$[0], $.$[1]))
+            .suffix(this.fct_call_args,
+                    $ -> new FctCallNode($.span(), $.$[0], $.$[1]));
+
+    public rule prefix_expression = right_expression()
+            .operand(suffix_expression)
+            .prefix(BANGBANG.as_val(NOT),
+                    $ -> new UnaryExpressionNode($.span(), $.$[0], $.$[1]));
+
     public rule mult_op = choice(
             TIMES.as_val(BinaryOperator.MULTIPLY),
             DIVID.as_val(BinaryOperator.DIVIDE),
@@ -103,7 +127,7 @@ public final class ArithmeticGrammar extends Grammar {
             RANGLE.as_val(BinaryOperator.GREATER));
 
     public rule mult_expr = left_expression()
-            .operand(basic_expression)
+            .operand(prefix_expression)
             .infix(mult_op,
                     $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 
@@ -140,7 +164,7 @@ public final class ArithmeticGrammar extends Grammar {
 
     public rule expression_stmt =
             expression.filter($ -> {
-                if (!($.$[0] instanceof AssignmentNode))
+                if (!($.$[0] instanceof AssignmentNode || $.$[0] instanceof FctCallNode))
                     return false;
                 $.push(new ExpressionStatementNode($.span(), $.$[0]));
                 return true;
@@ -156,14 +180,23 @@ public final class ArithmeticGrammar extends Grammar {
      */
     public rule statement = lazy(() -> choice(
             this.let_decl,
-            this.fct_def,
+            this.array_decl,
+            this.fct_decl,
+            this.struct_decl,
+            this.if_stmt,
+            this.while_stmt,
+            this.expression_semicolon
+    ));
+
+    public rule fct_statements = lazy(() -> choice(
+            this.let_decl,
             this.if_stmt,
             this.while_stmt,
             this.expression_semicolon
     ));
 
     public rule brace_statement =
-            seq(LBRACE, statement, RBRACE);
+            seq(LBRACE, fct_statements, RBRACE);
 
     public rule let_decl =
             seq(_let, identifier, AS, expression, SEMICOLON)
@@ -174,20 +207,63 @@ public final class ArithmeticGrammar extends Grammar {
                     .push($ -> new IfNode($.span(), $.$[0], $.$[1], $.$[2]));
 
     public rule while_stmt =
-            seq(_while, paren_expression, brace_statement);//TODO .push
+            seq(_while, paren_expression, brace_statement)
+                    .push($ -> new WhileNode($.span(), $.$[0], $.$[1]));
 
     public rule return_stmt =
-            seq(_return, paren_expression, SEMICOLON);
+            seq(_return, expression.or_push_null(), SEMICOLON)
+                    .push($ -> new ReturnNode($.span(), $.$[0]));
 
-    public rule fct_def = lazy(() ->
+    public rule fct_block =
+            fct_statements.at_least(0)
+                    .as_list(StatementNode.class);
+
+    public rule expressions = lazy(() ->
+            expression.sep(0, COMMA).as_list(ExpressionNode.class)
+    );
+
+    public rule fct_call_arg =
+            seq(identifier)
+                    .push($ -> new ParameterNode($.span(), $.$[0]));
+
+    public rule fct_decl_args =
+            fct_call_arg.sep(0, COMMA)
+                    .as_list(ParameterNode.class);
+
+    public rule fct_decl = lazy(() ->
             seq(_def, ws, identifier,
-                    LPAREN, seq(identifier, this.fct_args.opt()).opt(), RPAREN,
-                    LBRACE, this.statement, this.return_stmt, RBRACE)//TODO .push
+                    LPAREN, fct_decl_args, RPAREN,
+                    LBRACE, fct_block, return_stmt, RBRACE)
+                    .push($ -> new FctDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]))
     );
 
-    public rule fct_args = lazy(() ->
-            seq(seq(ws.opt(), COMMA, identifier), ws.opt(), this.fct_args.opt())
+    public rule fct_call_args =
+            seq(LPAREN, expressions.opt(), RPAREN);
+
+    public rule struct_decl_attribute =
+            seq(_attr, identifier, SEMICOLON)
+                    .push($ -> new AttributeDeclarationNode($.span(), $.$[0])
     );
+
+    public rule struct_decl = lazy(() ->
+            seq(_struct, ws, identifier, ws.opt(), LBRACE, struct_decl_attribute.at_least(1).as_list(DeclarationNode.class), RBRACE)
+                    .push($ -> new StructDeclarationNode($.span(), $.$[0], $.$[1]))
+    );
+
+    /**
+     * TODO
+     * Basically the same thing that "expressions" but it will be a counter in the future
+     */
+    public rule array_content_expressions = lazy(() ->
+            expression.sep(0, COMMA).as_list(ArrayContentExpressionNode.class)
+    );
+
+    public rule array_decl_values_decl =
+            seq(AS, LBRACKET, array_content_expressions, RBRACKET);
+
+    public rule array_decl =
+            seq(_array, ws, identifier, LBRACKET, expression, RBRACKET, array_decl_values_decl.or_push_null(), SEMICOLON)
+                    .push($ -> new ArrayDeclarationNode($.span(), $.$[0], $.$[1]));
 
     public rule root =
             seq(ws, statement.at_least(1))
