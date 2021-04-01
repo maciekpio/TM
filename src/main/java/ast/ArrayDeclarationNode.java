@@ -3,17 +3,15 @@ package ast;
 import norswap.autumn.positions.Span;
 import norswap.utils.Util;
 
-import java.util.List;
-
 public final class ArrayDeclarationNode extends DeclarationNode
 {
     public final String name;
-    public final List<ExpressionNode> array_init;
+    public final ArrayLengthNode array_length;
 
-    public ArrayDeclarationNode (Span span, Object name, Object array_init) {
+    public ArrayDeclarationNode (Span span, Object name, Object array_length) {
         super(span);
         this.name = Util.cast(name, String.class);
-        this.array_init = Util.cast(array_init, List.class);
+        this.array_length = Util.cast(array_length, ArrayLengthNode.class);
     }
 
     @Override public String name () {
@@ -21,10 +19,10 @@ public final class ArrayDeclarationNode extends DeclarationNode
     }
 
     @Override public String contents () {
-        return "var " + name;
+        return "array " + name;
     }
 
     @Override public String declaredThing () {
-        return "variable";
+        return "array";
     }
 }

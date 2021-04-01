@@ -1,10 +1,22 @@
 import ast.*;
+import scopes.*;
+import types.*;
 import norswap.uranium.Attribute;
 import norswap.uranium.Reactor;
 import norswap.uranium.Rule;
 import norswap.utils.visitors.ReflectiveFieldWalker;
 import norswap.utils.visitors.Walker;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.IntStream;
+
+import static norswap.utils.Util.cast;
+import static ast.BinaryOperator.*;
+import static java.lang.String.format;
+import static norswap.utils.Vanilla.list;
+import static norswap.utils.Vanilla.forEachIndexed;
 import static norswap.utils.visitors.WalkVisitType.POST_VISIT;
 import static norswap.utils.visitors.WalkVisitType.PRE_VISIT;
 
@@ -42,22 +54,19 @@ public final class SemanticAnalysis {
         // TODO Add your rules here
         // expressions
         walker.register(IntLiteralNode.class,           PRE_VISIT,  analysis::intLiteral);
-        //walker.register(FloatLiteralNode.class,         PRE_VISIT,  analysis::floatLiteral);
+        walker.register(FloatLiteralNode.class,         PRE_VISIT,  analysis::floatLiteral);
         walker.register(StringLiteralNode.class,        PRE_VISIT,  analysis::stringLiteral);
         walker.register(ReferenceNode.class,            PRE_VISIT,  analysis::reference);
-        //walker.register(ConstructorNode.class,          PRE_VISIT,  analysis::constructor);
-        //walker.register(ArrayLiteralNode.class,         PRE_VISIT,  analysis::arrayLiteral);
+        walker.register(ConstructorNode.class,          PRE_VISIT,  analysis::constructor);
+        //walker.register(ArrayLiteralNode.class,       PRE_VISIT,  analysis::arrayLiteral);
         walker.register(ParenthesizedNode.class,        PRE_VISIT,  analysis::parenthesized);
-        //walker.register(FieldAccessNode.class,          PRE_VISIT,  analysis::fieldAccess);
-        //walker.register(ArrayAccessNode.class,          PRE_VISIT,  analysis::arrayAccess);
-        //walker.register(FunCallNode.class,              PRE_VISIT,  analysis::funCall);
-        //walker.register(UnaryExpressionNode.class,      PRE_VISIT,  analysis::unaryExpression);
+        walker.register(AttributeAccessNode.class,      PRE_VISIT,  analysis::attrAccess);
+        walker.register(ArrayPullNode.class,            PRE_VISIT,  analysis::arrayPull);
+        //walker.register(ArrayPushNode.class,          PRE_VISIT,  analysis::arrayPush);
+        walker.register(FctCallNode.class,              PRE_VISIT,  analysis::fctCall);
+        walker.register(UnaryExpressionNode.class,      PRE_VISIT,  analysis::unaryExpression);
         walker.register(BinaryExpressionNode.class,     PRE_VISIT,  analysis::binaryExpression);
         walker.register(AssignmentNode.class,           PRE_VISIT,  analysis::assignment);
-        //faut il creer des rules pour tous les nodes qui exiqtent chez nous???
-        //surement
-        //pourquoi??
-        //tu poses trop de questions...
 
         // types
         walker.register(SimpleTypeNode.class,           PRE_VISIT,  analysis::simpleType);
@@ -65,22 +74,22 @@ public final class SemanticAnalysis {
 
         // declarations & scopes
         walker.register(RootNode.class,                 PRE_VISIT,  analysis::root);
-        //walker.register(BlockNode.class,                PRE_VISIT,  analysis::block);
+        walker.register(BlockNode.class,                PRE_VISIT,  analysis::block);
         walker.register(VarDeclarationNode.class,       PRE_VISIT,  analysis::varDecl);
-        //walker.register(FieldDeclarationNode.class,     PRE_VISIT,  analysis::fieldDecl);
-        //walker.register(ParameterNode.class,            PRE_VISIT,  analysis::parameter);
-        //walker.register(FunDeclarationNode.class,       PRE_VISIT,  analysis::funDecl);
-        //walker.register(StructDeclarationNode.class,    PRE_VISIT,  analysis::structDecl);
+        walker.register(AttributeDeclarationNode.class, PRE_VISIT,  analysis::attrDecl);
+        walker.register(ParameterNode.class,            PRE_VISIT,  analysis::parameter);
+        walker.register(FctDeclarationNode.class,       PRE_VISIT,  analysis::fctDecl);
+        walker.register(StructDeclarationNode.class,    PRE_VISIT,  analysis::structDecl);
 
         walker.register(RootNode.class,                 POST_VISIT, analysis::popScope);
-        //walker.register(BlockNode.class,                POST_VISIT, analysis::popScope);
-        //walker.register(FunDeclarationNode.class,       POST_VISIT, analysis::popScope);
+        walker.register(BlockNode.class,                POST_VISIT, analysis::popScope);
+        walker.register(FctDeclarationNode.class,       POST_VISIT, analysis::popScope);
 
         // statements
         walker.register(ExpressionStatementNode.class,  PRE_VISIT,  node -> {});
         walker.register(IfNode.class,                   PRE_VISIT,  analysis::ifStmt);
-        //walker.register(WhileNode.class,                PRE_VISIT,  analysis::whileStmt);
-        //walker.register(ReturnNode.class,               PRE_VISIT,  analysis::returnStmt);
+        walker.register(WhileNode.class,                PRE_VISIT,  analysis::whileStmt);
+        walker.register(ReturnNode.class,               PRE_VISIT,  analysis::returnStmt);
 
         // Fallback rules
         walker.registerFallback(PRE_VISIT, node -> {
@@ -102,9 +111,9 @@ public final class SemanticAnalysis {
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void floatLiteral (FloatLiteralNode node) {
+    private void floatLiteral (FloatLiteralNode node) {
         R.set(node, "type", FloatType.INSTANCE);
-    }*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
@@ -114,7 +123,7 @@ public final class SemanticAnalysis {
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void reference (ReferenceNode node)
+    private void reference (ReferenceNode node)
     {
         final Scope scope = this.scope;
 
@@ -156,11 +165,11 @@ public final class SemanticAnalysis {
                     .by(Rule::copyFirst);
             }
         });
-    }*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void constructor (ConstructorNode node)
+    private void constructor (ConstructorNode node)
     {
         R.rule()
         .using(node.ref, "decl")
@@ -177,9 +186,9 @@ public final class SemanticAnalysis {
 
             StructDeclarationNode structDecl = (StructDeclarationNode) decl;
 
-            Attribute[] dependencies = new Attribute[structDecl.fields.size() + 1];
+            Attribute[] dependencies = new Attribute[structDecl.attributes.size() + 1];
             dependencies[0] = decl.attr("declared");
-            forEachIndexed(structDecl.fields, (i, field) ->
+            forEachIndexed(structDecl.attributes, (i, field) ->
                 dependencies[i + 1] = field.attr("type"));
 
             R.rule(node, "type")
@@ -191,7 +200,7 @@ public final class SemanticAnalysis {
                 rr.set(0, new FunType(structType, params));
             });
         });
-    }*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
@@ -264,7 +273,7 @@ public final class SemanticAnalysis {
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void fieldAccess (FieldAccessNode node)
+    private void attrAccess(AttributeAccessNode node)
     {
         R.rule()
         .using(node.stem, "type")
@@ -272,7 +281,7 @@ public final class SemanticAnalysis {
             Type type = r.get(0);
 
             if (type instanceof ArrayType) {
-                if (node.fieldName.equals("length"))
+                if (node.attrName.equals("length"))
                     R.rule(node, "type")
                     .by(rr -> rr.set(0, IntType.INSTANCE));
                 else
@@ -290,9 +299,9 @@ public final class SemanticAnalysis {
 
             StructDeclarationNode decl = ((StructType) type).node;
 
-            for (DeclarationNode field: decl.fields)
+            for (DeclarationNode field: decl.attributes)
             {
-                if (!field.name().equals(node.fieldName)) continue;
+                if (!field.name().equals(node.attrName)) continue;
 
                 R.rule(node, "type")
                 .using(field, "type")
@@ -302,14 +311,14 @@ public final class SemanticAnalysis {
             }
 
             String description = format("Trying to access missing field %s on struct %s",
-                    node.fieldName, decl.name);
+                    node.attrName, decl.name);
             r.errorFor(description, node, node.attr("type"));
         });
-    }*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void arrayAccess (ArrayAccessNode node)
+    private void arrayPull (ArrayPullNode node)
     {
         R.rule()
         .using(node.index, "type")
@@ -328,11 +337,32 @@ public final class SemanticAnalysis {
             else
                 r.error("Trying to index a non-array expression of type " + type, node);
         });
-    }*/
+    }
+
+    private void arrayPush (ArrayPushNode node)
+    {
+        R.rule()
+                .using(node.index, "type")
+                .by(r -> {
+                    Type type = r.get(0);
+                    if (!(type instanceof IntType))
+                        r.error("Indexing an array using a non-int-valued expression.", node.index);
+                });
+
+        R.rule(node, "type")
+                .using(node.array, "type")
+                .by(r -> {
+                    Type type = r.get(0);
+                    if (type instanceof ArrayType)
+                        r.set(0, ((ArrayType) type).componentType);
+                    else
+                        r.error("Trying to index a non-array expression of type " + type, node);
+                });
+    }
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void funCall (FunCallNode node)
+    private void fctCall (FctCallNode node)
     {
         this.inferenceContext = node;
 
@@ -376,11 +406,11 @@ public final class SemanticAnalysis {
                         node.arguments.get(i));
             }
         });
-    }*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void unaryExpression (UnaryExpressionNode node)
+    private void unaryExpression (UnaryExpressionNode node)
     {
         assert node.operator == UnaryOperator.NOT; // only one for now
         R.set(node, "type", BoolType.INSTANCE);
@@ -392,7 +422,7 @@ public final class SemanticAnalysis {
             if (!(opType instanceof BoolType))
                 r.error("trying to negate type: " + opType, node);
         });
-    }*/
+    }
 
     // endregion
     // =============================================================================================
@@ -407,7 +437,7 @@ public final class SemanticAnalysis {
             Type left  = r.get(0);
             Type right = r.get(1);
 
-            if (node.operator == ADD && (left instanceof StringType || right instanceof StringType))
+            if (node.operator == PLUS && (left instanceof StringType || right instanceof StringType))
                 r.set(0, StringType.INSTANCE);
             else if (isArithmetic(node.operator))
                 binaryArithmetic(r, node, left, right);
@@ -423,7 +453,7 @@ public final class SemanticAnalysis {
     // ---------------------------------------------------------------------------------------------
 
     private boolean isArithmetic (BinaryOperator op) {
-        return op == ADD || op == MULTIPLY || op == SUBTRACT || op == DIVIDE || op == REMAINDER;
+        return op == PLUS || op == TIMES || op == MINUS || op == DIVID || op == MODULO;
     }
 
     private boolean isComparison (BinaryOperator op) {
@@ -435,7 +465,7 @@ public final class SemanticAnalysis {
     }
 
     private boolean isEquality (BinaryOperator op) {
-        return op == EQUALITY || op == NOT_EQUALS;
+        return op == EQUAL || op == DIFF;
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -516,8 +546,8 @@ public final class SemanticAnalysis {
             r.set(0, r.get(1)); // the type of the assignment is the right-side type
 
             if (node.left instanceof ReferenceNode
-            ||  node.left instanceof FieldAccessNode
-            ||  node.left instanceof ArrayAccessNode) {
+            ||  node.left instanceof AttributeAccessNode
+            ||  node.left instanceof ArrayPullNode) {
                 if (!isAssignableTo(right, left))
                     r.errorFor("Trying to assign a value to a non-compatible lvalue.", node);
             }
@@ -653,7 +683,7 @@ public final class SemanticAnalysis {
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void block (BlockNode node) {
+    private void block (BlockNode node) {
         scope = new Scope(node, scope);
         R.set(node, "scope", scope);
 
@@ -661,7 +691,7 @@ public final class SemanticAnalysis {
         R.rule(node, "returns")
         .using(deps)
         .by(r -> r.set(0, deps.length != 0 && Arrays.stream(deps).anyMatch(r::get)));
-    }*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
@@ -692,39 +722,34 @@ public final class SemanticAnalysis {
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void fieldDecl (FieldDeclarationNode node)
+    private void attrDecl (AttributeDeclarationNode node)
     {
-        R.rule(node, "type")
-        .using(node.type, "value")
-        .by(Rule::copyFirst);
-    }*/
+        R.rule(node, "type");
+    }
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void parameter (ParameterNode node)
+    private void parameter (ParameterNode node)
     {
         scope.declare(node.name, node); // scope pushed by FunDeclarationNode
 
-        R.rule(node, "type")
-        .using(node.type, "value")
-        .by(Rule::copyFirst);
-    }*/
+        R.rule(node, "type");
+    }
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void funDecl (FunDeclarationNode node)
+    private void fctDecl (FctDeclarationNode node)
     {
         scope.declare(node.name, node);
         scope = new Scope(node, scope);
         R.set(node, "scope", scope);
 
-        Attribute[] dependencies = new Attribute[node.parameters.size() + 1];
+        /*Attribute[] dependencies = new Attribute[node.parameters.size() + 1];
         dependencies[0] = node.returnType.attr("value");
         forEachIndexed(node.parameters, (i, param) ->
             dependencies[i + 1] = param.attr("type"));
 
         R.rule(node, "type")
-        .using(dependencies)
         .by (r -> {
             Type[] paramTypes = new Type[node.parameters.size()];
             for (int i = 0; i < paramTypes.length; ++i)
@@ -733,23 +758,23 @@ public final class SemanticAnalysis {
         });
 
         R.rule()
-        .using(node.block.attr("returns"), node.returnType.attr("value"))
+        .using(node.fct_return.attr("returns"), node.returnType.attr("value"))
         .by(r -> {
             boolean returns = r.get(0);
             Type returnType = r.get(1);
             if (!returns && !(returnType instanceof VoidType))
                 r.error("Missing return in function.", node);
             // NOTE: The returned value presence & type is checked in returnStmt().
-        });
-    }*/
+        });*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void structDecl (StructDeclarationNode node) {
+    private void structDecl (StructDeclarationNode node) {
         scope.declare(node.name, node);
         R.set(node, "type", TypeType.INSTANCE);
         R.set(node, "declared", new StructType(node));
-    }*/
+    }
 
     // endregion
     // =============================================================================================
@@ -775,7 +800,7 @@ public final class SemanticAnalysis {
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void whileStmt (WhileNode node) {
+    private void whileStmt (WhileNode node) {
         R.rule()
         .using(node.condition, "type")
         .by(r -> {
@@ -785,15 +810,15 @@ public final class SemanticAnalysis {
                     node.condition);
             }
         });
-    }*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void returnStmt (ReturnNode node)
+    private void returnStmt (ReturnNode node)
     {
         R.set(node, "returns", true);
 
-        FunDeclarationNode function = currentFunction();
+        /*FctDeclarationNode function = currentFunction();
         if (function == null) // top-level return
             return;
 
@@ -818,22 +843,22 @@ public final class SemanticAnalysis {
                         "Incompatible return type, expected %s but got %s", formal, actual),
                         node.expression);
                 }
-            });
-    }*/
+            });*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private FunDeclarationNode currentFunction()
+    private FctDeclarationNode currentFunction()
     {
         Scope scope = this.scope;
         while (scope != null) {
             SighNode node = scope.node;
-            if (node instanceof FunDeclarationNode)
-                return (FunDeclarationNode) node;
+            if (node instanceof FctDeclarationNode)
+                return (FctDeclarationNode) node;
             scope = scope.parent;
         }
         return null;
-    }*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 

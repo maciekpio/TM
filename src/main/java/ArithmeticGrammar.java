@@ -27,10 +27,10 @@ public final class ArithmeticGrammar extends Grammar {
     public rule EQUAL = word("==");
     public rule AS = word("=");
     public rule DIFF = word("!=");
-    public rule LANGLE_EQUAL = word("<=");
+    public rule LOWER_EQUAL = word("<=");
     public rule RANGLE_EQUAL = word(">=");
-    public rule LANGLE = word("<");
-    public rule RANGLE = word(">");
+    public rule LOWER = word("<");
+    public rule GREATER = word(">");
     public rule AND = word("&&");
     public rule OR = word("||");
     public rule BANGBANG = word("!!");
@@ -52,20 +52,22 @@ public final class ArithmeticGrammar extends Grammar {
     public rule _struct = reserved("struct");
     public rule _attr = reserved("attr");
     public rule _array = reserved("array");
-    public rule _index = reserved("index");
+    public rule _pull = reserved("pull");
+    public rule _push = reserved("push");
     public rule _true = reserved("true").push($ -> new BooleanNode($.span(), true));
     public rule _false = reserved("false").push($ -> new BooleanNode($.span(), false));
 
-    public rule fractional =
-            seq('.', digit.at_least(1));
+    public rule number =
+            seq(opt('-'), choice('0', digit.at_least(1)));
 
     public rule integer =
-            this.number.push($ -> new IntLiteralNode($.span(), Long.parseLong($.str())))
+            number
+                    .push($ -> new IntLiteralNode($.span(), Long.parseLong($.str())))
                     .word();
 
-    public rule number =
-            seq(opt('-'), integer, fractional.opt())
-                    .push($ -> Double.parseDouble($.str()))
+    public rule fractional =
+            seq(number, '.', digit.at_least(1))
+                    .push($ -> new FloatLiteralNode($.span(), Double.parseDouble($.str())))
                     .word();
 
     public rule string_char = choice(
@@ -93,14 +95,17 @@ public final class ArithmeticGrammar extends Grammar {
     public rule basic_expression = choice(
             reference,
             integer,
+            fractional,
             string);
 
     public rule suffix_expression = left_expression()
             .left(basic_expression)
             .suffix(seq(DOT, identifier),
                     $ -> new AttributeAccessNode($.span(), $.$[0], $.$[1]))
-            .suffix(seq(DOT, _index, lazy(() -> this.paren_expression)),
-                    $ -> new ArrayAccessNode($.span(), $.$[0], $.$[1]))
+            .suffix(seq(DOT, _pull, lazy(() -> this.paren_expression)),
+                    $ -> new ArrayPullNode($.span(), $.$[0], $.$[1]))
+            .suffix(seq(DOT, _push, lazy(() -> this.paren_expression)),
+                    $ -> new ArrayPushNode($.span(), $.$[0], $.$[1]))
             .suffix(this.fct_call_args,
                     $ -> new FctCallNode($.span(), $.$[0], $.$[1]));
 
@@ -110,21 +115,21 @@ public final class ArithmeticGrammar extends Grammar {
                     $ -> new UnaryExpressionNode($.span(), $.$[0], $.$[1]));
 
     public rule mult_op = choice(
-            TIMES.as_val(BinaryOperator.MULTIPLY),
-            DIVID.as_val(BinaryOperator.DIVIDE),
-            MODULO.as_val(BinaryOperator.REMAINDER));
+            TIMES.as_val(BinaryOperator.TIMES),
+            DIVID.as_val(BinaryOperator.DIVID),
+            MODULO.as_val(BinaryOperator.MODULO));
 
     public rule add_op = choice(
-            PLUS.as_val(BinaryOperator.ADD),
-            MINUS.as_val(BinaryOperator.SUBTRACT));
+            PLUS.as_val(BinaryOperator.PLUS),
+            MINUS.as_val(BinaryOperator.MINUS));
 
     public rule cmp_op = choice(
-            EQUAL.as_val(BinaryOperator.EQUALITY),
-            DIFF.as_val(BinaryOperator.NOT_EQUALS),
-            LANGLE_EQUAL.as_val(BinaryOperator.LOWER_EQUAL),
+            EQUAL.as_val(BinaryOperator.EQUAL),
+            DIFF.as_val(BinaryOperator.DIFF),
+            LOWER_EQUAL.as_val(BinaryOperator.LOWER_EQUAL),
             RANGLE_EQUAL.as_val(BinaryOperator.GREATER_EQUAL),
-            LANGLE.as_val(BinaryOperator.LOWER),
-            RANGLE.as_val(BinaryOperator.GREATER));
+            LOWER.as_val(BinaryOperator.LOWER),
+            GREATER.as_val(BinaryOperator.GREATER));
 
     public rule mult_expr = left_expression()
             .operand(prefix_expression)
@@ -245,6 +250,17 @@ public final class ArithmeticGrammar extends Grammar {
                     .push($ -> new AttributeDeclarationNode($.span(), $.$[0])
     );
 
+    /**
+     * struct person {
+     *     attr firstname;
+     *     attr lastname;
+     * }
+     * person TW = new person;
+     * person MP = new person;
+     *
+     * TW.firstname = Thibault;
+     */
+
     public rule struct_decl = lazy(() ->
             seq(_struct, ws, identifier, ws.opt(), LBRACE, struct_decl_attribute.at_least(1).as_list(DeclarationNode.class), RBRACE)
                     .push($ -> new StructDeclarationNode($.span(), $.$[0], $.$[1]))
@@ -254,15 +270,28 @@ public final class ArithmeticGrammar extends Grammar {
      * TODO
      * Basically the same thing that "expressions" but it will be a counter in the future
      */
+
+    /**
     public rule array_content_expressions = lazy(() ->
             expression.sep(0, COMMA).as_list(ArrayContentExpressionNode.class)
     );
 
     public rule array_decl_values_decl =
-            seq(AS, LBRACKET, array_content_expressions, RBRACKET);
+            seq(AS, LBRACKET, array_content_expressions, RBRACKET)
+            .push($ -> new ArrayLiteralNode($.span(), $.$[0]));
+
 
     public rule array_decl =
             seq(_array, ws, identifier, LBRACKET, expression, RBRACKET, array_decl_values_decl.or_push_null(), SEMICOLON)
+                    .push($ -> new ArrayDeclarationNode($.span(), $.$[0], $.$[1]));
+     */
+
+    public rule array_length =
+            seq(LBRACKET, expression, RBRACKET)
+            .push($ -> new ArrayLengthNode($.span(), $.$[0]));
+
+    public rule array_decl =
+            seq(_array, ws, identifier, array_length, SEMICOLON)
                     .push($ -> new ArrayDeclarationNode($.span(), $.$[0], $.$[1]));
 
     public rule root =

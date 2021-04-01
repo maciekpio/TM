@@ -2,13 +2,13 @@ package ast;
 
 public enum BinaryOperator
 {
-    MULTIPLY("*"),
-    DIVIDE("/"),
-    REMAINDER("%"),
-    ADD("+"),
-    SUBTRACT("-"),
-    EQUALITY("=="),
-    NOT_EQUALS("!="),
+    TIMES("*"),
+    DIVID("/"),
+    MODULO("%"),
+    PLUS("+"),
+    MINUS("-"),
+    EQUAL("=="),
+    DIFF("!="),
     GREATER(">"),
     LOWER("<"),
     GREATER_EQUAL(">="),
