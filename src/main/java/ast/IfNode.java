@@ -6,16 +6,16 @@ import norswap.utils.Util;
 public final class IfNode extends StatementNode
 {
     public final ExpressionNode condition;
-    public final SighNode trueStatement;
-    public final SighNode falseStatement;
+    public final BlockNode trueStatement;
+    public final BlockNode falseStatement;
 
     public IfNode (Span span, Object condition, Object trueStatement, Object falseStatement) {
         super(span);
         this.condition = Util.cast(condition, ExpressionNode.class);
-        this.trueStatement = Util.cast(trueStatement, SighNode.class);
+        this.trueStatement = Util.cast(trueStatement, BlockNode.class);
         this.falseStatement = falseStatement == null
             ? null
-            : Util.cast(falseStatement, SighNode.class);
+            : Util.cast(falseStatement, BlockNode.class);
     }
 
     @Override public String contents ()

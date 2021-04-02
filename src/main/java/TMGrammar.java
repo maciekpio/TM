@@ -23,7 +23,7 @@ public final class TMGrammar extends Grammar {
     public rule MODULO = word("%");
     public rule PLUS = word("+");
     public rule MINUS = word("-");
-    public rule SEMICOLON = word(";");
+    //public rule SEMICOLON = word(";");
     public rule EQUAL = word("==");
     public rule AS = word("=");
     public rule DIFF = word("!=");
@@ -52,10 +52,12 @@ public final class TMGrammar extends Grammar {
     public rule _struct = reserved("struct");
     public rule _attr = reserved("attr");
     public rule _array = reserved("array");
-    public rule _pull = reserved("pull");
-    public rule _push = reserved("push");
+    public rule _get = reserved("get");
+    public rule _put = reserved("put");
     public rule _true = reserved("true").push($ -> new BooleanNode($.span(), true));
     public rule _false = reserved("false").push($ -> new BooleanNode($.span(), false));
+    //public rule _print = reserved("print");
+    //public rule _rprint = reserved("rprint");
 
     public rule number =
             seq(opt('-'), choice('0', digit.at_least(1)));
@@ -102,11 +104,11 @@ public final class TMGrammar extends Grammar {
             .left(basic_expression)
             .suffix(seq(DOT, identifier),
                     $ -> new AttributeAccessNode($.span(), $.$[0], $.$[1]))
-            .suffix(seq(DOT, _pull, lazy(() -> this.paren_expression)),
+            .suffix(seq(DOT, _get, lazy(() -> this.paren_expression)),
                     $ -> new ArrayPullNode($.span(), $.$[0], $.$[1]))
-            .suffix(seq(DOT, _push, lazy(() -> this.paren_expression)),
+            .suffix(seq(DOT, _put, lazy(() -> this.paren_put_expression)),
                     $ -> new ArrayPushNode($.span(), $.$[0], $.$[1]))
-            .suffix(this.fct_call_args,
+            .suffix(lazy(() -> this.fct_call_args),
                     $ -> new FctCallNode($.span(), $.$[0], $.$[1]));
 
     public rule prefix_expression = right_expression()
@@ -167,6 +169,18 @@ public final class TMGrammar extends Grammar {
             seq(LPAREN, this.expression, RPAREN)
                     .push($ -> new ParenthesizedNode($.span(), $.$[0])));
 
+    public rule put_expressions = lazy(() ->
+            seq(this.expression, COMMA, this.expression)
+    );
+
+    /**
+     * array matrix[5]
+     * matrix.put("this is an object", 0)
+     */
+    public rule paren_put_expression = lazy(() ->
+            seq(LPAREN, this.put_expressions, RPAREN)
+                    .push($ -> new PutParametersNode($.span(), $.$[0], $.$[1])));
+
     public rule expression_stmt =
             expression.filter($ -> {
                 if (!($.$[0] instanceof AssignmentNode || $.$[0] instanceof FctCallNode))
@@ -175,9 +189,9 @@ public final class TMGrammar extends Grammar {
                 return true;
             });
 
-    public rule expression_semicolon = lazy(() -> choice(
-            seq(this.expression_stmt, SEMICOLON),
-            seq(this.expression, SEMICOLON)
+    public rule expression_choice = lazy(() -> choice(
+            this.expression_stmt,
+            this.expression
     ));
 
     /**
@@ -190,25 +204,36 @@ public final class TMGrammar extends Grammar {
             this.struct_decl,
             this.if_stmt,
             this.while_stmt,
-            this.expression_semicolon
+            this.expression_choice
+    ));
+
+    public rule block_statements = lazy(() -> choice(
+            this.let_decl,
+            this.array_decl,
+            this.if_stmt,
+            this.while_stmt,
+            this.expression_choice,
+            this.return_stmt
     ));
 
     public rule fct_statements = lazy(() -> choice(
             this.let_decl,
+            this.array_decl,
             this.if_stmt,
             this.while_stmt,
-            this.expression_semicolon
+            this.expression_choice
     ));
 
     public rule brace_statement =
-            seq(LBRACE, fct_statements, RBRACE);
+            seq(LBRACE, block_statements.at_least(0), RBRACE)
+                    .as_list(StatementNode.class).push($ -> new BlockNode($.span(), $.$[0]));
 
     public rule let_decl =
-            seq(_let, identifier, AS, expression, SEMICOLON)
+            seq(_let, identifier, AS, expression)
                     .push($ -> new VarDeclarationNode($.span(), $.$[0], $.$[1]));
 
     public rule if_stmt =
-            seq(_if, paren_expression, brace_statement, seq(_else, statement).or_push_null())
+            seq(_if, paren_expression, brace_statement, seq(_else, brace_statement).or_push_null())
                     .push($ -> new IfNode($.span(), $.$[0], $.$[1], $.$[2]));
 
     public rule while_stmt =
@@ -216,12 +241,12 @@ public final class TMGrammar extends Grammar {
                     .push($ -> new WhileNode($.span(), $.$[0], $.$[1]));
 
     public rule return_stmt =
-            seq(_return, expression.or_push_null(), SEMICOLON)
+            seq(_return, LPAREN, expression.or_push_null(), RPAREN)
                     .push($ -> new ReturnNode($.span(), $.$[0]));
 
     public rule fct_block =
             fct_statements.at_least(0)
-                    .as_list(StatementNode.class);
+                    .as_list(StatementNode.class).push($ -> new BlockNode($.span(), $.$[0]));
 
     public rule expressions = lazy(() ->
             expression.sep(0, COMMA).as_list(ExpressionNode.class)
@@ -242,11 +267,11 @@ public final class TMGrammar extends Grammar {
                     .push($ -> new FctDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]))
     );
 
-    public rule fct_call_args =
-            seq(LPAREN, expressions.opt(), RPAREN);
+    public rule fct_call_args = lazy(() ->
+            seq(LPAREN, expressions.opt(), RPAREN));
 
     public rule struct_decl_attribute =
-            seq(_attr, identifier, SEMICOLON)
+            seq(_attr, identifier)
                     .push($ -> new AttributeDeclarationNode($.span(), $.$[0])
     );
 
@@ -282,7 +307,7 @@ public final class TMGrammar extends Grammar {
 
 
     public rule array_decl =
-            seq(_array, ws, identifier, LBRACKET, expression, RBRACKET, array_decl_values_decl.or_push_null(), SEMICOLON)
+            seq(_array, ws, identifier, LBRACKET, expression, RBRACKET, array_decl_values_decl.or_push_null())
                     .push($ -> new ArrayDeclarationNode($.span(), $.$[0], $.$[1]));
      */
 
@@ -291,7 +316,7 @@ public final class TMGrammar extends Grammar {
             .push($ -> new ArrayLengthNode($.span(), $.$[0]));
 
     public rule array_decl =
-            seq(_array, ws, identifier, array_length, SEMICOLON)
+            seq(_array, ws, identifier, array_length)
                     .push($ -> new ArrayDeclarationNode($.span(), $.$[0], $.$[1]));
 
     public rule root =

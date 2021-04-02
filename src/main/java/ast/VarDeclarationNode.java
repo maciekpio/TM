@@ -13,13 +13,28 @@ public final class VarDeclarationNode extends DeclarationNode
         super(span);
         this.name = Util.cast(name, String.class);
         this.initializer = Util.cast(initializer, ExpressionNode.class);
-        System.out.println("VarDeclarationNode");
-        System.out.println(initializer.getClass().toString());
+
         /*
           Find the type of the value used in the variable
           this.type = Util.cast(type, TypeNode.class);
          */
-        this.type = Util.cast(initializer.getClass(), TypeNode.class);
+        Class typeClass = initializer.getClass();
+        String typeName;
+        if(typeClass.equals(IntLiteralNode.class)){
+            typeName = "Integer";
+        }else if (typeClass.equals(FloatLiteralNode.class)){
+            typeName = "Float";
+        }else if (typeClass.equals(StringLiteralNode.class)){
+            typeName = "String";
+        }else {
+            typeName = "None";
+            System.out.println("ERROR, typeName == None\n" +
+                    "Context : " + VarDeclarationNode.class.toString());
+        }
+
+        SimpleTypeNode simpleTypeNode = new SimpleTypeNode(span, typeName);
+        this.type = Util.cast(simpleTypeNode, TypeNode.class);
+
     }
 
     @Override public String name () {
