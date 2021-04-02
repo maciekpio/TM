@@ -1,11 +1,9 @@
-import ast.*;
-import norswap.autumn.ParseResult;
 import org.testng.annotations.Test;
 import norswap.autumn.AutumnTestFixture;
 
 public class GrammarTests extends AutumnTestFixture {
 
-    ArithmeticGrammar arithmeticParser = new ArithmeticGrammar();
+    TMGrammar arithmeticParser = new TMGrammar();
 
     @Test
     public void testSum() {

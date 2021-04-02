@@ -19,7 +19,7 @@ public final class Test
         String file = "kitchensink.si";
         String path = Paths.get("examples/", file).toAbsolutePath().toString();
         String src = IO.slurp(path);
-        ArithmeticGrammar grammar = new ArithmeticGrammar();
+        TMGrammar grammar = new TMGrammar();
         ParseOptions options = ParseOptions.builder().recordCallStack(true).get();
         ParseResult result = Autumn.parse(grammar.root, src, options);
         LineMap lineMap = new LineMapString(path, src);
@@ -30,7 +30,7 @@ public final class Test
 
         SighNode tree = cast(result.topValue());
         Reactor reactor = new Reactor();
-        Walker<SighNode> walker = SemanticAnalysis.createWalker(reactor);
+        Walker<SighNode> walker = TMSemantic.createWalker(reactor);
         walker.walk(tree);
         reactor.run();
 

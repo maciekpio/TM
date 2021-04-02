@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 
 
 public class SemanticTest extends UraniumTestFixture {
-    private final ArithmeticGrammar grammar = new ArithmeticGrammar();
+    private final TMGrammar grammar = new TMGrammar();
     private final AutumnTestFixture autumnFixture = new AutumnTestFixture();
 
     {
@@ -32,7 +32,7 @@ public class SemanticTest extends UraniumTestFixture {
     // ---------------------------------------------------------------------------------------------
 
     @Override protected void configureSemanticAnalysis (Reactor reactor, Object ast) {
-        Walker<SighNode> walker = SemanticAnalysis.createWalker(reactor);
+        Walker<SighNode> walker = TMSemantic.createWalker(reactor);
         walker.walk(((SighNode) ast));
     }
 

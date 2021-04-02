@@ -3,7 +3,7 @@ import norswap.autumn.Grammar;
 
 import static ast.UnaryOperator.NOT;
 
-public final class ArithmeticGrammar extends Grammar {
+public final class TMGrammar extends Grammar {
     // ==== LEXICAL ===========================================================
 
     public rule line_comment =

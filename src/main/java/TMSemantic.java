@@ -20,7 +20,7 @@ import static norswap.utils.Vanilla.forEachIndexed;
 import static norswap.utils.visitors.WalkVisitType.POST_VISIT;
 import static norswap.utils.visitors.WalkVisitType.PRE_VISIT;
 
-public final class SemanticAnalysis {
+public final class TMSemantic {
     // =============================================================================================
     // region [Initialization]
     // =============================================================================================
@@ -35,7 +35,7 @@ public final class SemanticAnalysis {
 
     // ---------------------------------------------------------------------------------------------
 
-    private SemanticAnalysis(Reactor reactor) {
+    private TMSemantic(Reactor reactor) {
         this.R = reactor;
     }
 
@@ -49,7 +49,7 @@ public final class SemanticAnalysis {
         ReflectiveFieldWalker<SighNode> walker = new ReflectiveFieldWalker<>(
                 SighNode.class, PRE_VISIT, POST_VISIT);
 
-        SemanticAnalysis analysis = new SemanticAnalysis(reactor);
+        TMSemantic analysis = new TMSemantic(reactor);
 
         // TODO Add your rules here
         // expressions
