@@ -50,9 +50,9 @@ public final class SemanticAnalysisTests extends UraniumTestFixture
         successInput("\"hello\"");
         successInput("true");
         successInput("false");
-        /*successInput("!!true");
+        successInput("!!true");
         successInput("!!false");
-        successInput("!!!!true");*/
+        successInput("!!!!true");
     }
 
     // ---------------------------------------------------------------------------------------------

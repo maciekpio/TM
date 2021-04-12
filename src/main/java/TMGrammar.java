@@ -1,8 +1,6 @@
 import ast.*;
 import norswap.autumn.Grammar;
 
-import static ast.UnaryOperator.NOT;
-
 public final class TMGrammar extends Grammar {
     // ==== LEXICAL ===========================================================
 
@@ -116,7 +114,7 @@ public final class TMGrammar extends Grammar {
 
     public rule prefix_expression = right_expression()
             .operand(choice(suffix_expression))
-            .prefix(BANGBANG.as_val(NOT),
+            .prefix(BANGBANG.as_val(UnaryOperator.NOT),
                     $ -> new UnaryExpressionNode($.span(), $.$[0], $.$[1]));
 
     public rule mult_op = choice(
