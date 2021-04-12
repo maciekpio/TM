@@ -53,6 +53,7 @@ public final class TMSemantic {
 
         // TODO Add your rules here
         // expressions
+        walker.register(BooleanNode.class,              PRE_VISIT,  analysis::boolLiteral);
         walker.register(IntLiteralNode.class,           PRE_VISIT,  analysis::intLiteral);
         walker.register(FloatLiteralNode.class,         PRE_VISIT,  analysis::floatLiteral);
         walker.register(StringLiteralNode.class,        PRE_VISIT,  analysis::stringLiteral);
@@ -107,6 +108,12 @@ public final class TMSemantic {
 
     private void intLiteral (IntLiteralNode node) {
         R.set(node, "type", IntType.INSTANCE);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    private void boolLiteral (BooleanNode node) {
+        R.set(node, "type", BoolType.INSTANCE);
     }
 
     // ---------------------------------------------------------------------------------------------

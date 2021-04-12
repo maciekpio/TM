@@ -293,26 +293,6 @@ public final class TMGrammar extends Grammar {
                     .push($ -> new StructDeclarationNode($.span(), $.$[0], $.$[1]))
     );
 
-    /**
-     * TODO
-     * Basically the same thing that "expressions" but it will be a counter in the future
-     */
-
-    /**
-    public rule array_content_expressions = lazy(() ->
-            expression.sep(0, COMMA).as_list(ArrayContentExpressionNode.class)
-    );
-
-    public rule array_decl_values_decl =
-            seq(AS, LBRACKET, array_content_expressions, RBRACKET)
-            .push($ -> new ArrayLiteralNode($.span(), $.$[0]));
-
-
-    public rule array_decl =
-            seq(_array, ws, identifier, LBRACKET, expression, RBRACKET, array_decl_values_decl.or_push_null())
-                    .push($ -> new ArrayDeclarationNode($.span(), $.$[0], $.$[1]));
-     */
-
     public rule array_length =
             seq(LBRACKET, expression, RBRACKET)
             .push($ -> new ArrayLengthNode($.span(), $.$[0]));
