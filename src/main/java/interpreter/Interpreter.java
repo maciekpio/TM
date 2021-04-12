@@ -58,7 +58,7 @@ public final class Interpreter
         visitor.register(ArrayLiteralNode.class,         this::arrayLiteral);
         visitor.register(ParenthesizedNode.class,        this::parenthesized);
         visitor.register(AttributeAccessNode.class,      this::attrAccess);
-        visitor.register(ArrayPullNode.class,          this::arrayAccess);
+        visitor.register(ArrayGetNode.class,          this::arrayAccess);
         visitor.register(FctCallNode.class,              this::fctCall);
         visitor.register(UnaryExpressionNode.class,      this::unaryExpression);
         visitor.register(BinaryExpressionNode.class,     this::binaryExpression);
@@ -234,8 +234,8 @@ public final class Interpreter
             return rvalue;
         }
 
-        if (node.left instanceof ArrayPullNode) {
-            ArrayPullNode arrayAccess = (ArrayPullNode) node.left;
+        if (node.left instanceof ArrayGetNode) {
+            ArrayGetNode arrayAccess = (ArrayGetNode) node.left;
             Object[] array = getNonNullArray(arrayAccess.array);
             int index = getIndex(arrayAccess.index);
             return array[index] = get(node.right);
@@ -287,7 +287,7 @@ public final class Interpreter
 
     // ---------------------------------------------------------------------------------------------
 
-    private Object arrayAccess (ArrayPullNode node)
+    private Object arrayAccess (ArrayGetNode node)
     {
         Object[] array = getNonNullArray(node.array);
         return array[getIndex(node.index)];

@@ -62,7 +62,7 @@ public final class TMSemantic {
         //walker.register(ArrayLiteralNode.class,       PRE_VISIT,  analysis::arrayLiteral);
         walker.register(ParenthesizedNode.class,        PRE_VISIT,  analysis::parenthesized);
         walker.register(AttributeAccessNode.class,      PRE_VISIT,  analysis::attrAccess);
-        walker.register(ArrayPullNode.class,            PRE_VISIT,  analysis::arrayPull);
+        walker.register(ArrayGetNode.class,            PRE_VISIT,  analysis::arrayGet);
         //walker.register(ArrayPushNode.class,          PRE_VISIT,  analysis::arrayPush);
         walker.register(FctCallNode.class,              PRE_VISIT,  analysis::fctCall);
         walker.register(UnaryExpressionNode.class,      PRE_VISIT,  analysis::unaryExpression);
@@ -325,7 +325,7 @@ public final class TMSemantic {
 
     // ---------------------------------------------------------------------------------------------
 
-    private void arrayPull (ArrayPullNode node)
+    private void arrayGet (ArrayGetNode node)
     {
         R.rule()
         .using(node.index, "type")
@@ -346,7 +346,7 @@ public final class TMSemantic {
         });
     }
 
-    private void arrayPush (ArrayPushNode node)
+    private void arrayPut (ArrayPutNode node)
     {
         R.rule()
                 .using(node.index, "type")
@@ -498,7 +498,7 @@ public final class TMSemantic {
     // ---------------------------------------------------------------------------------------------
 
     private static String arithmeticError (BinaryExpressionNode node, Object left, Object right) {
-        return format("trying to %s %s with %s", node.operator.name().toLowerCase(), left, right);
+        return format("Trying to %s %s with %s", node.operator.name().toLowerCase(), left, right);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -554,7 +554,7 @@ public final class TMSemantic {
 
             if (node.left instanceof ReferenceNode
             ||  node.left instanceof AttributeAccessNode
-            ||  node.left instanceof ArrayPullNode) {
+            ||  node.left instanceof ArrayGetNode) {
                 if (!isAssignableTo(right, left))
                     r.errorFor("Trying to assign a value to a non-compatible lvalue.", node);
             }

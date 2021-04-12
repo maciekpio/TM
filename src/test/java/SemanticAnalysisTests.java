@@ -90,8 +90,109 @@ public final class SemanticAnalysisTests extends UraniumTestFixture
         successInput("2.0 % 3");
         successInput("3.0 % 2");
 
-        failureInput("2 + true");
-        failureInput("true + 2");
+        failureInputWith("2 + true", "Trying to plus int with Bool");
+        failureInputWith("true + 2", "Trying to plus Bool with Int");
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    @Test public void testOtherBinary() {
+        successInput("true && false");
+        successInput("false && true");
+        successInput("true && true");
+        successInput("true || false");
+        successInput("false || true");
+        successInput("false || false");
+
+        failureInputWith("false || 1",
+                "Attempting to perform binary logic on non-boolean type: Int");
+        failureInputWith("2 || true",
+                "Attempting to perform binary logic on non-boolean type: Int");
+
+        successInput("1 + \"a\"");
+        successInput("\"a\" + 1");
+        successInput("\"a\" + true");
+
+        successInput("1 == 1");
+        successInput("1 == 2");
+        successInput("1.0 == 1.0");
+        successInput("1.0 == 2.0");
+        successInput("true == true");
+        successInput("false == false");
+        successInput("true == false");
+        successInput("1 == 1.0");
+
+        failureInputWith("true == 1", "Trying to compare incomparable types Bool and Int");
+        failureInputWith("2 == false", "Trying to compare incomparable types Int and Bool");
+
+        successInput("\"hi\" == \"hi\"");
+
+        successInput("1 != 1");
+        successInput("1 != 2");
+        successInput("1.0 != 1.0");
+        successInput("1.0 != 2.0");
+        successInput("true != true");
+        successInput("false != false");
+        successInput("true != false");
+        successInput("1 != 1.0");
+
+        failureInputWith("true != 1", "Trying to compare incomparable types Bool and Int");
+        failureInputWith("2 != false", "Trying to compare incomparable types Int and Bool");
+
+        successInput("\"hi\" != \"hi\"");
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    @Test public void testArrayStructAccess() {
+        successInput("return [1][0]");
+        successInput("return [1.0][0]");
+        successInput("return [1, 2][1]");
+
+        failureInputWith("return [1][true]", "Indexing an array using a non-Int-valued expression");
+
+        // TODO make this legal?
+        // successInput("[].length", 0L);
+
+        successInput("return [1].length");
+        successInput("return [1, 2].length");
+
+        successInput("var array: Int[] = null; return array[0]");
+        successInput("var array: Int[] = null; return array.length");
+
+        successInput("var x: Int[] = [0, 1]; x[0] = 3; return x[0]");
+        successInput("var x: Int[] = []; x[0] = 3; return x[0]");
+        successInput("var x: Int[] = null; x[0] = 3");
+
+        successInput(
+                "struct P { var x: Int; var y: Int }" +
+                        "return $P(1, 2).y");
+
+        successInput(
+                "struct P { var x: Int; var y: Int }" +
+                        "var p: P = null;" +
+                        "return p.y");
+
+        successInput(
+                "struct P { var x: Int; var y: Int }" +
+                        "var p: P = $P(1, 2);" +
+                        "p.y = 42;" +
+                        "return p.y");
+
+        successInput(
+                "struct P { var x: Int; var y: Int }" +
+                        "var p: P = null;" +
+                        "p.y = 42");
+
+        failureInputWith(
+                "struct P { var x: Int; var y: Int }" +
+                        "return $P(1, true)",
+                "argument 1: expected Int but got Bool");
+
+        failureInputWith(
+                "struct P { var x: Int; var y: Int }" +
+                        "return $P(1, 2).z",
+                "Trying to access missing field z on struct P");
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -100,7 +201,6 @@ public final class SemanticAnalysisTests extends UraniumTestFixture
         successInput("print(\"a\")");
         successInput("print(\"a\" + 1)");
         successInput("print(\"a\") print(\"b\")");
-
         successInput("print(\"a\") print(\"b\")");
     }
 

@@ -106,9 +106,9 @@ public final class TMGrammar extends Grammar {
             .suffix(seq(DOT, identifier),
                     $ -> new AttributeAccessNode($.span(), $.$[0], $.$[1]))
             .suffix(seq(DOT, _get, lazy(() -> this.paren_expression)),
-                    $ -> new ArrayPullNode($.span(), $.$[0], $.$[1]))
+                    $ -> new ArrayGetNode($.span(), $.$[0], $.$[1]))
             .suffix(seq(DOT, _put, lazy(() -> this.paren_put_expression)),
-                    $ -> new ArrayPushNode($.span(), $.$[0], $.$[1]))
+                    $ -> new ArrayPutNode($.span(), $.$[0], $.$[1]))
             .suffix(lazy(() -> this.fct_call_args),
                     $ -> new FctCallNode($.span(), $.$[0], $.$[1]));
 
