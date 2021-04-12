@@ -24,4 +24,15 @@ public final class BinaryExpressionNode extends ExpressionNode
             ? candidate
             : String.format("(?) %s (?)", operator.string);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        BinaryExpressionNode o;
+        try{
+            o = (BinaryExpressionNode) obj;
+        } catch (ClassCastException e){
+            return false;
+        }
+        return this.left.equals(o.left) && this.right.equals(o.right) && this.operator.equals(o.operator);
+    }
 }

@@ -14,4 +14,15 @@ public class BooleanNode extends ExpressionNode
     @Override public String contents() {
         return String.valueOf(value);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        BooleanNode o;
+        try{
+            o = (BooleanNode) obj;
+        } catch (ClassCastException e){
+            return false;
+        }
+        return this.value == o.value;
+    }
 }

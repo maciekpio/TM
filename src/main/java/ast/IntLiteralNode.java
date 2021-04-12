@@ -14,4 +14,15 @@ public final class IntLiteralNode extends ExpressionNode
     @Override public String contents() {
         return String.valueOf(value);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        IntLiteralNode o;
+        try{
+            o = (IntLiteralNode) obj;
+        } catch (ClassCastException e){
+            return false;
+        }
+        return this.value == (o.value);
+    }
 }

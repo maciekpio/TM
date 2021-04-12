@@ -56,6 +56,7 @@ public final class TMGrammar extends Grammar {
     public rule _put = reserved("put");
     public rule _true = reserved("true").push($ -> new BooleanNode($.span(), true));
     public rule _false = reserved("false").push($ -> new BooleanNode($.span(), false));
+    public rule _null = reserved("null").as_val(null);
     //public rule _print = reserved("print");
     //public rule _rprint = reserved("rprint");
 
@@ -96,8 +97,10 @@ public final class TMGrammar extends Grammar {
 
     public rule basic_expression = choice(
             reference,
-            integer,
+            _true,
+            _false,
             fractional,
+            integer,
             string);
 
     public rule suffix_expression = left_expression()
@@ -112,7 +115,7 @@ public final class TMGrammar extends Grammar {
                     $ -> new FctCallNode($.span(), $.$[0], $.$[1]));
 
     public rule prefix_expression = right_expression()
-            .operand(suffix_expression)
+            .operand(choice(suffix_expression))
             .prefix(BANGBANG.as_val(NOT),
                     $ -> new UnaryExpressionNode($.span(), $.$[0], $.$[1]));
 
@@ -145,6 +148,7 @@ public final class TMGrammar extends Grammar {
 
     public rule order_expr = left_expression()
             .operand(choice(add_expr, _true, _false))
+            //.operand(choice(add_expr))
             .infix(cmp_op,
                     $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 

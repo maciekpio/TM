@@ -2,7 +2,7 @@ package ast;
 
 public enum UnaryOperator
 {
-    NOT("!");
+    NOT("!!");
 
     public final String string;
 
