@@ -230,9 +230,10 @@ public final class TMGrammar extends Grammar {
             seq(LBRACE, block_statements.at_least(0), RBRACE)
                     .as_list(StatementNode.class).push($ -> new BlockNode($.span(), $.$[0]));
 
-    public rule let_decl =
-            seq(_let, identifier, AS, expression)
-                    .push($ -> new VarDeclarationNode($.span(), $.$[0], $.$[1]));
+    public rule let_decl = lazy(() ->
+            seq(_let, identifier, AS, choice(expression, paren_expression))
+                    .push($ -> new VarDeclarationNode($.span(), $.$[0], $.$[1]))
+    );
 
     public rule if_stmt =
             seq(_if, paren_expression, brace_statement, seq(_else, brace_statement).or_push_null())

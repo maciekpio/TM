@@ -21,4 +21,9 @@ public final class UnaryExpressionNode extends ExpressionNode
                 ? candidate
                 : operator.string + "(?)";
     }
+
+    @Override
+    public String getType() {
+        return "Bool";
+    }
 }

@@ -21,4 +21,9 @@ public final class FctCallNode extends ExpressionNode
         String args = arguments.size() == 0 ? "()" : "(...)";
         return function.contents() + args;
     }
+
+    @Override
+    public String getType() {
+        return "function";//TODO
+    }
 }

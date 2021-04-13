@@ -15,4 +15,9 @@ public class ConstructorNode extends ExpressionNode
     @Override public String contents () {
         return "$" + ref.name;
     }
+
+    @Override
+    public String getType() {
+        return "constructor";//TODO
+    }
 }

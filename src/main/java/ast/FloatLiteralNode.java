@@ -12,4 +12,9 @@ public final class FloatLiteralNode extends ExpressionNode {
     @Override public String contents() {
         return String.valueOf(value);
     }
+
+    @Override
+    public String getType() {
+        return "Float";
+    }
 }

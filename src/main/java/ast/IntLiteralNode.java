@@ -25,4 +25,9 @@ public final class IntLiteralNode extends ExpressionNode
         }
         return this.value == (o.value);
     }
+
+    @Override
+    public String getType(){
+        return "Int";
+    }
 }

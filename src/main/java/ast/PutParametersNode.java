@@ -16,4 +16,9 @@ public class PutParametersNode extends ExpressionNode{
     @Override public String contents() {
         return String.format("(%s)", indexExpression.contents());
     }
+
+    @Override
+    public String getType() {
+        return "putParameters";
+    }
 }

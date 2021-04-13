@@ -29,6 +29,7 @@ public final class RootScope extends Scope
     public final SyntheticDeclarationNode String = decl("String", TYPE);
     public final SyntheticDeclarationNode Void   = decl("Void",   TYPE);
     public final SyntheticDeclarationNode Type   = decl("Type",   TYPE);
+    public final SyntheticDeclarationNode None   = decl("None",   TYPE);
 
     // root scope variables
     public final SyntheticDeclarationNode _true  = decl("true",  VARIABLE);
@@ -37,6 +38,7 @@ public final class RootScope extends Scope
 
     // root scope functions
     public final SyntheticDeclarationNode print = decl("print", FUNCTION);
+    public final SyntheticDeclarationNode rprint = decl("rprint", FUNCTION);
 
     // ---------------------------------------------------------------------------------------------
 
@@ -49,6 +51,7 @@ public final class RootScope extends Scope
         reactor.set(String, "type",       TypeType.INSTANCE);
         reactor.set(Void,   "type",       TypeType.INSTANCE);
         reactor.set(Type,   "type",       TypeType.INSTANCE);
+        reactor.set(None,   "type",       TypeType.INSTANCE);
 
         reactor.set(Bool,   "declared",   BoolType.INSTANCE);
         reactor.set(Int,    "declared",    IntType.INSTANCE);
@@ -56,12 +59,14 @@ public final class RootScope extends Scope
         reactor.set(String, "declared", StringType.INSTANCE);
         reactor.set(Void,   "declared",   VoidType.INSTANCE);
         reactor.set(Type,   "declared",   TypeType.INSTANCE);
+        reactor.set(None,   "declared",   TypeType.INSTANCE);
 
         reactor.set(_true,  "type",       BoolType.INSTANCE);
         reactor.set(_false, "type",       BoolType.INSTANCE);
         reactor.set(_null,  "type",       NullType.INSTANCE);
 
         reactor.set(print,  "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
+        reactor.set(rprint,  "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -17,4 +17,9 @@ public final class ArrayGetNode extends ExpressionNode
     @Override public String contents() {
         return String.format("%s[%s]", array.contents(), index.contents());
     }
+
+    @Override
+    public String getType() {
+        return "array.get";//TODO
+    }
 }

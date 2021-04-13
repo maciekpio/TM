@@ -15,4 +15,9 @@ public final class ReferenceNode extends ExpressionNode
     @Override public String contents() {
         return name;
     }
+
+    @Override
+    public String getType() {
+        return "Type";//TODO
+    }
 }

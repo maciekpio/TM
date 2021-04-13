@@ -15,4 +15,9 @@ public final class ArrayLengthNode extends ExpressionNode
     @Override public String contents () {
         return "array_length " + array_length;
     }
+
+    @Override
+    public String getType() {
+        return array_length.getType();
+    }
 }

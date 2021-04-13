@@ -15,4 +15,9 @@ public final class ArrayContentExpressionNode extends ExpressionNode
     @Override public String contents () {
         return "array_content " + array_content;
     }
+
+    @Override
+    public String getType() {
+        return array_content.getType();
+    }
 }

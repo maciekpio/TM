@@ -76,7 +76,7 @@ public final class TMSemantic {
         // declarations & scopes
         walker.register(RootNode.class,                 PRE_VISIT,  analysis::root);
         walker.register(BlockNode.class,                PRE_VISIT,  analysis::block);
-        walker.register(VarDeclarationNode.class,       PRE_VISIT,  analysis::varDecl);
+        walker.register(VarDeclarationNode.class,       PRE_VISIT,  analysis::letDecl);
         walker.register(AttributeDeclarationNode.class, PRE_VISIT,  analysis::attrDecl);
         walker.register(ParameterNode.class,            PRE_VISIT,  analysis::parameter);
         walker.register(FctDeclarationNode.class,       PRE_VISIT,  analysis::fctDecl);
@@ -549,14 +549,16 @@ public final class TMSemantic {
         .by(r -> {
             Type left  = r.get(0);
             Type right = r.get(1);
+            System.out.println("assignement of " + left.toString() + " with " + right.toString());
 
             r.set(0, r.get(1)); // the type of the assignment is the right-side type
 
             if (node.left instanceof ReferenceNode
             ||  node.left instanceof AttributeAccessNode
             ||  node.left instanceof ArrayGetNode) {
-                if (!isAssignableTo(right, left))
+                if (!isAssignableTo(right, left) && !left.toString().equals("Type")) {
                     r.errorFor("Trying to assign a value to a non-compatible lvalue.", node);
+                }
             }
             else
                 r.errorFor("Trying to assign to an non-lvalue expression.", node.left);
@@ -702,9 +704,11 @@ public final class TMSemantic {
 
     // ---------------------------------------------------------------------------------------------
 
-    private void varDecl (VarDeclarationNode node)
+    private void letDecl(VarDeclarationNode node)
     {
         this.inferenceContext = node;
+
+        System.out.println(this.inferenceContext.contents());
 
         scope.declare(node.name, node);
         R.set(node, "scope", scope);
@@ -720,10 +724,12 @@ public final class TMSemantic {
             Type actual = r.get(1);
 
             if (!isAssignableTo(actual, expected))
-                r.error(format(
-                    "incompatible initializer type provided for variable `%s`: expected %s but got %s",
-                    node.name, expected, actual),
-                    node.initializer);
+                if(!expected.toString().equals("Type")){
+                    r.error(format(
+                            "incompatible initializer type provided for variable `%s`: expected %s but got %s",
+                            node.name, expected, actual),
+                            node.initializer);
+                }
         });
     }
 

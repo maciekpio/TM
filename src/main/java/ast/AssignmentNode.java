@@ -27,4 +27,9 @@ public class AssignmentNode extends ExpressionNode
             ? candidate
             : "(?) = (?)";
     }
+
+    @Override
+    public String getType() {
+        return "as";
+    }
 }

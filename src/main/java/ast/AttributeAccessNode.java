@@ -21,4 +21,9 @@ public final class AttributeAccessNode extends ExpressionNode
                 ? candidate
                 : "(?)." + attrName;
     }
+
+    @Override
+    public String getType() {
+        return "attrName";
+    }
 }

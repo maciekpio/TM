@@ -25,4 +25,9 @@ public class BooleanNode extends ExpressionNode
         }
         return this.value == o.value;
     }
+
+    @Override
+    public String getType() {
+        return "Bool";
+    }
 }

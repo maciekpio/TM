@@ -1,4 +1,5 @@
 import norswap.autumn.AutumnTestFixture;
+import norswap.autumn.ParseResult;
 import norswap.autumn.positions.LineMapString;
 import ast.SighNode;
 import norswap.uranium.Reactor;
@@ -144,8 +145,30 @@ public final class SemanticAnalysisTests extends UraniumTestFixture
 
     // ---------------------------------------------------------------------------------------------
 
+    @Test public void testLetDecl() {
+        successInput("let x=1");
+        successInput("let x=2.0");
+        successInput("let x = 0 ; x+1");
+
+        successInput("let x=0 ; x=3");
+        successInput("let x = \"0\"; x = \"S\"");
+        System.out.println("HERE");
+        successInput("let x = 2.0; let x = true;");
+        successInput("let x = true; let y = !!x; y = true");
+
+        failureInputWith("let x = 2.0; x = true;", "Trying to assign a value to a non-compatible lvalue");
+        failureInputWith("let x = true ; x=1", "Trying to assign a value to a non-compatible lvalue");
+        failureInputWith("x + 1; let x = 2", "variable used before declaration: x");
+
+        // implicit conversions
+        //successInput("var x: Float = 1 ; x = 2");
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
     @Test public void testArrayStructAccess() {
-        successInput("return [1][0]");
+        successInput("array matrix [10] ; matrix.put(1, 0)");
+
         successInput("return [1.0][0]");
         successInput("return [1, 2][1]");
 

@@ -15,4 +15,9 @@ public final class ParenthesizedNode extends ExpressionNode
     @Override public String contents() {
         return String.format("(%s)", expression.contents());
     }
+
+    @Override
+    public String getType() {
+        return expression.getType();
+    }
 }

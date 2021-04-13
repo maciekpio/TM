@@ -35,4 +35,14 @@ public final class BinaryExpressionNode extends ExpressionNode
         }
         return this.left.equals(o.left) && this.right.equals(o.right) && this.operator.equals(o.operator);
     }
+
+    @Override
+    public String getType() {
+        String leftType = left.getType();
+        String rightType = right.getType();
+        if(leftType.equals("Float")||rightType.equals("Float")){
+            return "Float";
+        }
+        return "Int";
+    }
 }

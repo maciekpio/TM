@@ -42,4 +42,15 @@ public class ArrayLiteralNode extends ExpressionNode
 
         return b.append(']').toString();
     }
+
+    @Override
+    public String getType() {
+        String type = components.get(0).getType();
+        for (ArrayContentExpressionNode contentExpression : components){
+            if (!contentExpression.equals(type)){
+                return "None";
+            }
+        }
+        return type;
+    }
 }
