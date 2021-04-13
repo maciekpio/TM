@@ -21,7 +21,7 @@ public class StructDeclarationNode extends DeclarationNode
     }
 
     @Override public String contents () {
-        return "struct " + name;
+        return String.format("struct %s {%s}", name, attributes.toString());
     }
 
     @Override public String declaredThing () {

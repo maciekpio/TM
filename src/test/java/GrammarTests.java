@@ -6,6 +6,7 @@ import norswap.autumn.AutumnTestFixture;
 public class GrammarTests extends AutumnTestFixture {
 
     TMGrammar TMParser = new TMGrammar();
+    ParseResult ast;
 
     String structBasic = "struct struct_name {identifier1 = value1}";
     String structWith3values = "struct struct_name {identifier1 = value1 identifier2 = value2 identifierN = valueN}";
@@ -293,7 +294,9 @@ public class GrammarTests extends AutumnTestFixture {
     @Test
     public void testArrayDefinition(){
         this.rule=TMParser.array_decl;
-        success("array matrix[5]");
+
+        ast = success("array matrix[5]");
+        System.out.println(ast.valueStack);
         success("array m[a]");
 
         failure("array [5]");
@@ -438,7 +441,7 @@ public class GrammarTests extends AutumnTestFixture {
     @Test
     public void testLetDecl(){
         this.rule = TMParser.let_decl;
-        ParseResult parseResult = successExpect("let x = 1", new VarDeclarationNode(null, new ReferenceNode(null, "x"), new IntLiteralNode(null, 1)));
-        System.out.println(parseResult.valueStack);
+        ast = successExpect("let x = 1", new VarDeclarationNode(null, new ReferenceNode(null, "x"), new IntLiteralNode(null, 1)));
+        System.out.println(ast.valueStack);
     }
 }

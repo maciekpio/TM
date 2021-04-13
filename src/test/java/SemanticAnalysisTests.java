@@ -1,3 +1,4 @@
+import ast.RootNode;
 import norswap.autumn.AutumnTestFixture;
 import norswap.autumn.ParseResult;
 import norswap.autumn.positions.LineMapString;
@@ -13,6 +14,8 @@ import org.testng.annotations.Test;
  */
 public final class SemanticAnalysisTests extends UraniumTestFixture
 {
+    RootNode ast;
+
     // ---------------------------------------------------------------------------------------------
 
     private final TMGrammar grammar = new TMGrammar();
@@ -146,16 +149,17 @@ public final class SemanticAnalysisTests extends UraniumTestFixture
     // ---------------------------------------------------------------------------------------------
 
     @Test public void testLetDecl() {
+        ast = (RootNode) parse("let x = true; let y = !!x; y = true");
+        System.out.println(ast.contents());
         successInput("let x=1");
         successInput("let x=2.0");
         successInput("let x = 0 ; x+1");
-
         successInput("let x=0 ; x=3");
         successInput("let x = \"0\"; x = \"S\"");
-        System.out.println("HERE");
         successInput("let x = 2.0; let x = true;");
         successInput("let x = true; let y = !!x; y = true");
 
+        failureInputWith("let x = 2; let y = true ; let z = x + y", "Trying to plus int with Bool");
         failureInputWith("let x = 2.0; x = true;", "Trying to assign a value to a non-compatible lvalue");
         failureInputWith("let x = true ; x=1", "Trying to assign a value to a non-compatible lvalue");
         failureInputWith("x + 1; let x = 2", "variable used before declaration: x");
@@ -167,55 +171,11 @@ public final class SemanticAnalysisTests extends UraniumTestFixture
     // ---------------------------------------------------------------------------------------------
 
     @Test public void testArrayStructAccess() {
-        successInput("array matrix [10] ; matrix.put(1, 0)");
+        //successInput("array matrix [10];");
 
-        successInput("return [1.0][0]");
-        successInput("return [1, 2][1]");
-
-        failureInputWith("return [1][true]", "Indexing an array using a non-Int-valued expression");
-
-        // TODO make this legal?
-        // successInput("[].length", 0L);
-
-        successInput("return [1].length");
-        successInput("return [1, 2].length");
-
-        successInput("var array: Int[] = null; return array[0]");
-        successInput("var array: Int[] = null; return array.length");
-
-        successInput("var x: Int[] = [0, 1]; x[0] = 3; return x[0]");
-        successInput("var x: Int[] = []; x[0] = 3; return x[0]");
-        successInput("var x: Int[] = null; x[0] = 3");
-
-        successInput(
-                "struct P { var x: Int; var y: Int }" +
-                        "return $P(1, 2).y");
-
-        successInput(
-                "struct P { var x: Int; var y: Int }" +
-                        "var p: P = null;" +
-                        "return p.y");
-
-        successInput(
-                "struct P { var x: Int; var y: Int }" +
-                        "var p: P = $P(1, 2);" +
-                        "p.y = 42;" +
-                        "return p.y");
-
-        successInput(
-                "struct P { var x: Int; var y: Int }" +
-                        "var p: P = null;" +
-                        "p.y = 42");
-
-        failureInputWith(
-                "struct P { var x: Int; var y: Int }" +
-                        "return $P(1, true)",
-                "argument 1: expected Int but got Bool");
-
-        failureInputWith(
-                "struct P { var x: Int; var y: Int }" +
-                        "return $P(1, 2).z",
-                "Trying to access missing field z on struct P");
+        ast = (RootNode) parse("array matrix [10]; let x = matrix.get(0)");//TODO
+        System.out.println(ast.contents());
+        successInput("array matrix [10]; let x = matrix.get(0)");
     }
 
     // ---------------------------------------------------------------------------------------------

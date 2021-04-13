@@ -5,17 +5,17 @@ import norswap.utils.Util;
 
 public final class ArrayGetNode extends ExpressionNode
 {
-    public final ExpressionNode array;
     public final ExpressionNode index;
+    public final ExpressionNode array;
 
     public ArrayGetNode(Span span, Object array, Object index) {
         super(span);
-        this.array = Util.cast(array, ExpressionNode.class);
         this.index = Util.cast(index, ExpressionNode.class);
+        this.array = Util.cast(array, ExpressionNode.class);
     }
 
     @Override public String contents() {
-        return String.format("%s[%s]", array.contents(), index.contents());
+        return String.format(".get(%s)", index.contents());
     }
 
     @Override

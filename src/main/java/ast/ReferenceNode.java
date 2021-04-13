@@ -10,6 +10,7 @@ public final class ReferenceNode extends ExpressionNode
     public ReferenceNode (Span span, Object name) {
         super(span);
         this.name = Util.cast(name, String.class);
+        System.out.printf("The reference \"%s\" was used !%n", this.name);
     }
 
     @Override public String contents() {
@@ -18,6 +19,6 @@ public final class ReferenceNode extends ExpressionNode
 
     @Override
     public String getType() {
-        return "Type";//TODO
+        return "Type";
     }
 }

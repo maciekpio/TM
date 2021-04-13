@@ -105,10 +105,10 @@ public final class TMGrammar extends Grammar {
             .left(basic_expression)
             .suffix(seq(DOT, identifier),
                     $ -> new AttributeAccessNode($.span(), $.$[0], $.$[1]))
-            .suffix(seq(DOT, _get, lazy(() -> this.paren_expression)),
+            .suffix(seq(DOT, _get, LPAREN, lazy(() -> this.expression), RPAREN),
                     $ -> new ArrayGetNode($.span(), $.$[0], $.$[1]))
             .suffix(seq(DOT, _put, lazy(() -> this.paren_put_expression)),
-                    $ -> new ArrayPutNode($.span(), $.$[0], $.$[1]))
+                    $ -> new ArrayPutNode($.span(), $.$[0], $.$[1], $.$[2]))
             .suffix(lazy(() -> this.fct_call_args),
                     $ -> new FctCallNode($.span(), $.$[0], $.$[1]));
 
@@ -175,13 +175,8 @@ public final class TMGrammar extends Grammar {
             seq(this.expression, COMMA, this.expression)
     );
 
-    /**
-     * array matrix[5]
-     * matrix.put("this is an object", 0)
-     */
     public rule paren_put_expression = lazy(() ->
-            seq(LPAREN, this.put_expressions, RPAREN)
-                    .push($ -> new PutParametersNode($.span(), $.$[0], $.$[1])));
+            seq(LPAREN, this.put_expressions, RPAREN));
 
     public rule expression_stmt =
             expression.filter($ -> {
@@ -191,10 +186,10 @@ public final class TMGrammar extends Grammar {
                 return true;
             });
 
-    public rule expression_choice = lazy(() -> choice(
+    /*public rule expression_choice = lazy(() -> choice(
             this.expression_stmt,
             this.expression
-    ));
+    ));*/
 
     /**
      * Here is the main way for the root
@@ -206,7 +201,7 @@ public final class TMGrammar extends Grammar {
             this.struct_decl,
             this.if_stmt,
             this.while_stmt,
-            this.expression_choice
+            this.expression_stmt
     ));
 
     public rule block_statements = lazy(() -> choice(
@@ -214,7 +209,7 @@ public final class TMGrammar extends Grammar {
             this.array_decl,
             this.if_stmt,
             this.while_stmt,
-            this.expression_choice,
+            this.expression_stmt,
             this.return_stmt
     ));
 
@@ -223,7 +218,7 @@ public final class TMGrammar extends Grammar {
             this.array_decl,
             this.if_stmt,
             this.while_stmt,
-            this.expression_choice
+            this.expression_stmt
     ));
 
     public rule brace_statement =
@@ -255,17 +250,17 @@ public final class TMGrammar extends Grammar {
             expression.sep(0, COMMA).as_list(ExpressionNode.class)
     );
 
-    public rule fct_call_arg =
+    public rule fct_decl_arg =
             seq(identifier)
                     .push($ -> new ParameterNode($.span(), $.$[0]));
 
-    public rule fct_decl_args =
-            fct_call_arg.sep(0, COMMA)
+    public rule fct_decl_args_list =
+            fct_decl_arg.sep(0, COMMA)
                     .as_list(ParameterNode.class);
 
     public rule fct_decl = lazy(() ->
             seq(_def, ws, identifier,
-                    LPAREN, fct_decl_args, RPAREN,
+                    LPAREN, fct_decl_args_list, RPAREN,
                     LBRACE, fct_block, return_stmt, RBRACE)
                     .push($ -> new FctDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]))
     );
@@ -277,17 +272,6 @@ public final class TMGrammar extends Grammar {
             seq(_attr, identifier)
                     .push($ -> new AttributeDeclarationNode($.span(), $.$[0])
     );
-
-    /**
-     * struct person {
-     *     attr firstname;
-     *     attr lastname;
-     * }
-     * person TW = new person;
-     * person MP = new person;
-     *
-     * TW.firstname = Thibault;
-     */
 
     public rule struct_decl = lazy(() ->
             seq(_struct, ws, identifier, ws.opt(), LBRACE, struct_decl_attribute.at_least(1).as_list(DeclarationNode.class), RBRACE)

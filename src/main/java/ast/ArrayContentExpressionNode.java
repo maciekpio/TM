@@ -13,7 +13,7 @@ public final class ArrayContentExpressionNode extends ExpressionNode
     }
 
     @Override public String contents () {
-        return "array_content " + array_content;
+        return array_content.contents();
     }
 
     @Override

@@ -13,7 +13,7 @@ public final class ArrayLengthNode extends ExpressionNode
     }
 
     @Override public String contents () {
-        return "array_length " + array_length;
+        return array_length.contents();
     }
 
     @Override

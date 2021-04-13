@@ -17,7 +17,7 @@ public final class AttributeDeclarationNode extends DeclarationNode
     }
 
     @Override public String contents () {
-        return "attr " + name;
+        return name;
     }
 
     @Override public String declaredThing () {

@@ -27,7 +27,7 @@ public abstract class SighNode
     /**
      * The size that the string returned by {@link #toString} should not exceed.
      */
-    public static int TO_STRING_CUTOFF = 40;
+    public static int TO_STRING_CUTOFF = 1000;
 
     // ---------------------------------------------------------------------------------------------
 

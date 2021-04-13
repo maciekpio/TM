@@ -16,6 +16,10 @@ public final class RootNode extends SighNode
     }
 
     @Override public String contents () {
-        return "";
+        StringBuilder str = new StringBuilder("-----BEGIN-----\n");
+        for (StatementNode statement : statements) {
+            str.append(statement.contents()).append(" \n");
+        }
+        return str.append("------END------").toString();
     }
 }

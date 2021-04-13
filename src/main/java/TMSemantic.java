@@ -346,7 +346,7 @@ public final class TMSemantic {
         });
     }
 
-    private void arrayPut (ArrayPutNode node)
+    /*private void arrayPut (ArrayPutNode node)
     {
         R.rule()
                 .using(node.index, "type")
@@ -365,7 +365,7 @@ public final class TMSemantic {
                     else
                         r.error("Trying to index a non-array expression of type " + type, node);
                 });
-    }
+    }*/
 
     // ---------------------------------------------------------------------------------------------
 

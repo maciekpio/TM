@@ -19,7 +19,7 @@ public final class ArrayDeclarationNode extends DeclarationNode
     }
 
     @Override public String contents () {
-        return "array " + name;
+        return String.format("array %s[%s]", name, array_length.contents());
     }
 
     @Override public String declaredThing () {

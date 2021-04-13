@@ -26,7 +26,7 @@ public class FctDeclarationNode extends DeclarationNode
     }
 
     @Override public String contents () {
-        return "fun " + name;
+        return String.format("def %s (%s) {%s %s}", name, parameters.toString(), block.contents(), fct_return.contents());
     }
 
     @Override public String declaredThing () {

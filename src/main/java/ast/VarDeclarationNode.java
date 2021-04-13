@@ -28,7 +28,6 @@ public final class VarDeclarationNode extends DeclarationNode
 
         String typeName = this.initializer.getType();
         SimpleTypeNode simpleTypeNode;
-        System.out.println(typeName);
         if(typeName.equals("Int") || typeName.equals("Float") || typeName.equals("Bool") || typeName.equals("String") || typeName.equals("Type")){
             simpleTypeNode = new SimpleTypeNode(span, typeName);
         }
@@ -61,7 +60,7 @@ public final class VarDeclarationNode extends DeclarationNode
     }
 
     @Override public String contents () {
-        return "let " + type.contents() + " " + name;
+        return String.format("let (%s) %s = %s", type.contents(), name, initializer.contents());
     }
 
     @Override public String declaredThing () {
