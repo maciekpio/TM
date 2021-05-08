@@ -11,6 +11,7 @@ import types.StringType;
 import types.Type;
 import norswap.uranium.Reactor;
 import norswap.utils.Util;
+import norswap.utils.exceptions.Exceptions;
 import norswap.utils.exceptions.NoStackException;
 import norswap.utils.visitors.ValuedVisitor;
 import java.util.Arrays;
@@ -23,6 +24,13 @@ import static norswap.utils.Vanilla.map;
 
 /**
  * Implements a simple but inefficient interpreter for Sigh.
+ *
+ * <h2>Limitations</h2>
+ * <ul>
+ *     <li>The compiled code currently doesn't support closures (using variables in functions that
+ *     are declared in some surroudning scopes outside the function). The top scope is supported.
+ *     </li>
+ * </ul>
  *
  * <p>Runtime value representation:
  * <ul>
@@ -37,28 +45,33 @@ import static norswap.utils.Vanilla.map;
  *     <li>Types: the corresponding {@link StructDeclarationNode}</li>
  * </ul>
  */
-public final class Interpreter
+public final class TMInterpreter
 {
     // ---------------------------------------------------------------------------------------------
 
     private final ValuedVisitor<SighNode, Object> visitor = new ValuedVisitor<>();
     private final Reactor reactor;
-    private Frame frame = null;
+    private ScopeStorage storage = null;
+    private RootScope rootScope;
+    private ScopeStorage rootStorage;
 
     // ---------------------------------------------------------------------------------------------
 
-    public Interpreter (Reactor reactor) {
+    public TMInterpreter(Reactor reactor) {
         this.reactor = reactor;
 
         // expressions
         visitor.register(IntLiteralNode.class,           this::intLiteral);
+        visitor.register(FloatLiteralNode.class,         this::floatLiteral);
         visitor.register(StringLiteralNode.class,        this::stringLiteral);
+        visitor.register(BooleanLiteralNode.class,       this::booleanLiteral);
         visitor.register(ReferenceNode.class,            this::reference);
         visitor.register(ConstructorNode.class,          this::constructor);
         visitor.register(ArrayLiteralNode.class,         this::arrayLiteral);
         visitor.register(ParenthesizedNode.class,        this::parenthesized);
         visitor.register(AttributeAccessNode.class,      this::attrAccess);
-        visitor.register(ArrayGetNode.class,          this::arrayAccess);
+        visitor.register(ArrayGetNode.class,             this::arrayGet);
+        visitor.register(ArrayPutNode.class,             this::arrayPut);
         visitor.register(FctCallNode.class,              this::fctCall);
         visitor.register(UnaryExpressionNode.class,      this::unaryExpression);
         visitor.register(BinaryExpressionNode.class,     this::binaryExpression);
@@ -67,7 +80,7 @@ public final class Interpreter
         // statement groups & declarations
         visitor.register(RootNode.class,                 this::root);
         visitor.register(BlockNode.class,                this::block);
-        visitor.register(VarDeclarationNode.class,       this::varDecl);
+        visitor.register(VarDeclarationNode.class,       this::letDecl);
         // no need to visitor other declarations! (use fallback)
 
         // statements
@@ -81,8 +94,24 @@ public final class Interpreter
 
     // ---------------------------------------------------------------------------------------------
 
-    public Object run (SighNode node) {
-        return visitor.apply(node);
+    public Object interpret (SighNode root) {
+        try {
+            return run(root);
+        } catch (PassthroughException e) {
+            throw Exceptions.runtime(e.getCause());
+        }
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    private Object run (SighNode node) {
+        try {
+            return visitor.apply(node);
+        } catch (InterpreterException | Return | PassthroughException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new InterpreterException("exception while executing " + node, e);
+        }
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -100,7 +129,7 @@ public final class Interpreter
     // ---------------------------------------------------------------------------------------------
 
     private <T> T get(SighNode node) {
-        return cast(visitor.apply(node));
+        return cast(run(node));
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -109,7 +138,15 @@ public final class Interpreter
         return node.value;
     }
 
+    private Double floatLiteral (FloatLiteralNode node) {
+        return node.value;
+    }
+
     private String stringLiteral (StringLiteralNode node) {
+        return node.value;
+    }
+
+    private Boolean booleanLiteral (BooleanLiteralNode node){
         return node.value;
     }
 
@@ -152,8 +189,10 @@ public final class Interpreter
             return numericOp(node, floating, (Number) left, (Number) right);
 
         switch (node.operator) {
-            case EQUAL:      return  left == right;
-            case DIFF:    return  left != right;
+            case EQUAL:
+                return  leftType.isPrimitive() ? left.equals(right) : left == right;
+            case DIFF:
+                return  leftType.isPrimitive() ? !left.equals(right) : left != right;
         }
 
         throw new Error("should not reach here");
@@ -190,33 +229,33 @@ public final class Interpreter
         Object result;
         if (floating)
             switch (node.operator) {
-                case TIMES:      return fleft *  fright;
-                case DIVID:        return fleft /  fright;
-                case MODULO:     return fleft %  fright;
-                case PLUS:           return fleft +  fright;
-                case MINUS:      return fleft -  fright;
+                case TIMES:         return fleft *  fright;
+                case DIVID:         return fleft /  fright;
+                case MODULO:        return fleft %  fright;
+                case PLUS:          return fleft +  fright;
+                case MINUS:         return fleft -  fright;
                 case GREATER:       return fleft >  fright;
                 case LOWER:         return fleft <  fright;
                 case GREATER_EQUAL: return fleft >= fright;
                 case LOWER_EQUAL:   return fleft <= fright;
-                case EQUAL:      return fleft == fright;
-                case DIFF:    return fleft != fright;
+                case EQUAL:         return fleft == fright;
+                case DIFF:          return fleft != fright;
                 default:
                     throw new Error("should not reach here");
             }
         else
             switch (node.operator) {
-                case TIMES:      return ileft *  iright;
-                case DIVID:        return ileft /  iright;
-                case MODULO:     return ileft %  iright;
-                case PLUS:           return ileft +  iright;
-                case MINUS:      return ileft -  iright;
+                case TIMES:         return ileft *  iright;
+                case DIVID:         return ileft /  iright;
+                case MODULO:        return ileft %  iright;
+                case PLUS:          return ileft +  iright;
+                case MINUS:         return ileft -  iright;
                 case GREATER:       return ileft >  iright;
                 case LOWER:         return ileft <  iright;
                 case GREATER_EQUAL: return ileft >= iright;
                 case LOWER_EQUAL:   return ileft <= iright;
-                case EQUAL:      return ileft == iright;
-                case DIFF:    return ileft != iright;
+                case EQUAL:         return ileft == iright;
+                case DIFF:          return ileft != iright;
                 default:
                     throw new Error("should not reach here");
             }
@@ -230,7 +269,7 @@ public final class Interpreter
             Scope scope = reactor.get(node.left, "scope");
             String name = ((ReferenceNode) node.left).name;
             Object rvalue = get(node.right);
-            frame.set(scope, name, rvalue);
+            assign(scope, name, rvalue, reactor.get(node.left, "type"));
             return rvalue;
         }
 
@@ -238,17 +277,22 @@ public final class Interpreter
             ArrayGetNode arrayAccess = (ArrayGetNode) node.left;
             Object[] array = getNonNullArray(arrayAccess.array);
             int index = getIndex(arrayAccess.index);
-            return array[index] = get(node.right);
+            try {
+                return array[index] = get(node.right);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new PassthroughException(e);
+            }
         }
 
         if (node.left instanceof AttributeAccessNode) {
-            AttributeAccessNode attrAccess = (AttributeAccessNode) node.left;
-            Object object = get(attrAccess.stem);
+            AttributeAccessNode fieldAccess = (AttributeAccessNode) node.left;
+            Object object = get(fieldAccess.stem);
             if (object == Null.INSTANCE)
-                throw new NullPointerException("accessing field of null object");
+                throw new PassthroughException(
+                    new NullPointerException("accessing field of null object"));
             Map<String, Object> struct = cast(object);
             Object right = get(node.right);
-            struct.put(attrAccess.attrName, right);
+            struct.put(fieldAccess.attrName, right);
             return right;
         }
 
@@ -273,7 +317,7 @@ public final class Interpreter
     {
         Object object = get(node);
         if (object == Null.INSTANCE)
-            throw new NullPointerException("indexing null array");
+            throw new PassthroughException(new NullPointerException("indexing null array"));
         return (Object[]) object;
     }
 
@@ -282,33 +326,51 @@ public final class Interpreter
     private Object unaryExpression (UnaryExpressionNode node)
     {
         // there is only NOT
+        assert node.operator == UnaryOperator.NOT;
         return ! (boolean) get(node.operand);
     }
 
     // ---------------------------------------------------------------------------------------------
 
-    private Object arrayAccess (ArrayGetNode node)
+    private Object arrayGet(ArrayGetNode node)
     {
         Object[] array = getNonNullArray(node.array);
-        return array[getIndex(node.index)];
+        try {
+            return array[getIndex(node.index)];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new PassthroughException(e);
+        }
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    private Object arrayPut(ArrayPutNode node)
+    {
+        Object[] array = getNonNullArray(node.array);
+        int index = getIndex(node.index);
+        try {
+            return array[index] = get(node.objectPut);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new PassthroughException(e);
+        }
     }
 
     // ---------------------------------------------------------------------------------------------
 
     private Object root (RootNode node)
     {
-        assert frame == null;
-        RootScope root = reactor.get(node, "scope");
-        frame = new Frame(root, null);
-        frame.initRoot(root);
+        assert storage == null;
+        rootScope = reactor.get(node, "scope");
+        storage = rootStorage = new ScopeStorage(rootScope, null);
+        storage.initRoot(rootScope);
 
         try {
-            node.statements.forEach(visitor::apply);
+            node.statements.forEach(this::run);
         } catch (Return r) {
             return r.value;
             // allow returning from the main script
         } finally {
-            frame = null;
+            storage = null;
         }
         return null;
     }
@@ -317,9 +379,9 @@ public final class Interpreter
 
     private Void block (BlockNode node) {
         Scope scope = reactor.get(node, "scope");
-        frame = new Frame(scope, frame);
-        node.statements.forEach(visitor::apply);
-        frame = frame.parent;
+        storage = new ScopeStorage(scope, storage);
+        node.statements.forEach(this::run);
+        storage = storage.parent;
         return null;
     }
 
@@ -343,7 +405,8 @@ public final class Interpreter
     {
         Object stem = get(node.stem);
         if (stem == Null.INSTANCE)
-            throw new NullPointerException("accessing field of null object");
+            throw new PassthroughException(
+                new NullPointerException("accessing field of null object"));
         return stem instanceof Map
                 ? Util.<Map<String, Object>>cast(stem).get(node.attrName)
                 : (long) ((Object[]) stem).length; // only field on arrays
@@ -351,14 +414,14 @@ public final class Interpreter
 
     // ---------------------------------------------------------------------------------------------
 
-    private Object fctCall (FctCallNode node)
+    private Object fctCall(FctCallNode node)
     {
         Object decl = get(node.function);
-        node.arguments.forEach(visitor::apply);
+        node.arguments.forEach(this::run);
         Object[] args = map(node.arguments, new Object[0], visitor);
 
         if (decl == Null.INSTANCE)
-            throw new NullPointerException("calling a null function");
+            throw new PassthroughException(new NullPointerException("calling a null function"));
 
         if (decl instanceof SyntheticDeclarationNode)
             return builtin(((SyntheticDeclarationNode) decl).name(), args);
@@ -366,19 +429,20 @@ public final class Interpreter
         if (decl instanceof Constructor)
             return buildStruct(((Constructor) decl).declaration, args);
 
+        ScopeStorage oldStorage = storage;
         Scope scope = reactor.get(decl, "scope");
-        frame = new Frame(scope, frame);
+        storage = new ScopeStorage(scope, storage);
 
         FctDeclarationNode funDecl = (FctDeclarationNode) decl;
         coIterate(args, funDecl.parameters,
-                (arg, param) -> frame.set(scope, param.name, arg));
+                (arg, param) -> storage.set(scope, param.name, arg));
 
         try {
             get(funDecl.block);
         } catch (Return r) {
             return r.value;
         } finally {
-            frame = frame.parent;
+            storage = oldStorage;
         }
         return null;
     }
@@ -400,7 +464,7 @@ public final class Interpreter
         if (arg == Null.INSTANCE)
             return "null";
         else if (arg instanceof Object[])
-            return Arrays.toString((Object[]) arg);
+            return Arrays.deepToString((Object[]) arg);
         else if (arg instanceof FctDeclarationNode)
             return ((FctDeclarationNode) arg).name;
         else if (arg instanceof StructDeclarationNode)
@@ -452,7 +516,9 @@ public final class Interpreter
         || decl instanceof ParameterNode
         || decl instanceof SyntheticDeclarationNode
                 && ((SyntheticDeclarationNode) decl).kind() == DeclarationKind.VARIABLE)
-            return frame.get(scope, node.name);
+            return scope == rootScope
+                ? rootStorage.get(scope, node.name)
+                : storage.get(scope, node.name);
 
         return decl; // structure or function
     }
@@ -465,11 +531,23 @@ public final class Interpreter
 
     // ---------------------------------------------------------------------------------------------
 
-    private Void varDecl (VarDeclarationNode node)
+    private Void letDecl(VarDeclarationNode node)
     {
         Scope scope = reactor.get(node, "scope");
-        frame.set(scope, node.name, get(node.initializer));
+        assign(scope, node.name, get(node.initializer), reactor.get(node, "type"));
         return null;
+    }//array[0] = 1
+
+    // ---------------------------------------------------------------------------------------------
+
+    private void assign (Scope scope, String name, Object value, Type targetType)
+    {
+        if (value instanceof Long && targetType instanceof FloatType){
+            double dvalue = ((Long) value).doubleValue();
+            storage.set(scope, name, dvalue);
+            return;
+        }
+        storage.set(scope, name, value);
     }
 
     // ---------------------------------------------------------------------------------------------

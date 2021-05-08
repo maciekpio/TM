@@ -66,9 +66,9 @@ public final class Frame
      */
     void initRoot(RootScope root)
     {
-        set(root, root._true  .name(), true);
-        set(root, root._false .name(), false);
-        set(root, root._null  .name(), Null.INSTANCE);
+        //set(root, root._true  .name(), true);
+        //set(root, root._false .name(), false);
+        //set(root, root._null  .name(), Null.INSTANCE);
 
         // Function and types are not assigned values in frames - instead they derive
         // their runtime value values from the corresponding DeclarationNode.

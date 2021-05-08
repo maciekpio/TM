@@ -1,5 +1,5 @@
 import ast.*;
-import norswap.utils.Util;
+import interpreter.Void;
 import scopes.*;
 import types.*;
 import norswap.uranium.Attribute;
@@ -54,7 +54,7 @@ public final class TMSemantic {
 
         // TODO Add your rules here
         // expressions
-        walker.register(BooleanNode.class,              PRE_VISIT,  analysis::boolLiteral);
+        walker.register(BooleanLiteralNode.class,       PRE_VISIT,  analysis::boolLiteral);
         walker.register(IntLiteralNode.class,           PRE_VISIT,  analysis::intLiteral);
         walker.register(FloatLiteralNode.class,         PRE_VISIT,  analysis::floatLiteral);
         walker.register(StringLiteralNode.class,        PRE_VISIT,  analysis::stringLiteral);
@@ -113,7 +113,7 @@ public final class TMSemantic {
 
     // ---------------------------------------------------------------------------------------------
 
-    private void boolLiteral (BooleanNode node) {
+    private void boolLiteral (BooleanLiteralNode node) {
         R.set(node, "type", BoolType.INSTANCE);
     }
 

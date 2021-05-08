@@ -298,8 +298,8 @@ public class GrammarTests extends AutumnTestFixture {
         successExpect("1+2*3", new BinaryExpressionNode(null,new IntLiteralNode(null,1),BinaryOperator.PLUS, new BinaryExpressionNode(null,new IntLiteralNode(null,2),BinaryOperator.TIMES, new IntLiteralNode(null,3))));
         successExpect("1*2+3", new BinaryExpressionNode(null, new BinaryExpressionNode(null,new IntLiteralNode(null,1),BinaryOperator.TIMES, new IntLiteralNode(null,2)) ,BinaryOperator.PLUS, new IntLiteralNode(null,3)));
         successExpect("1==2", new BinaryExpressionNode(null,new IntLiteralNode(null,1), BinaryOperator.EQUAL, new IntLiteralNode(null,2)));
-        successExpect("true&&false", new BinaryExpressionNode( null,new BooleanNode(null,true),BinaryOperator.AND, new BooleanNode(null,false)));
-        successExpect("true||false", new BinaryExpressionNode(null,new BooleanNode(null,true), BinaryOperator.OR,new BooleanNode(null,false)));
+        successExpect("true&&false", new BinaryExpressionNode( null,new BooleanLiteralNode(null,true),BinaryOperator.AND, new BooleanLiteralNode(null,false)));
+        successExpect("true||false", new BinaryExpressionNode(null,new BooleanLiteralNode(null,true), BinaryOperator.OR,new BooleanLiteralNode(null,false)));
     }
 
     String ifTest1 = "if (i%15 == 0){\n" +
@@ -433,6 +433,13 @@ public class GrammarTests extends AutumnTestFixture {
     public void testReference(){
         this.rule = TMParser.root;
         ast = success("let x = 1; let matrix[] = [1, x];");
+        System.out.println(ast.valueStack);
+    }
+
+    @Test
+    public void testPut(){
+        this.rule = TMParser.root;
+        ast = success("x.put(0, 3)");
         System.out.println(ast.valueStack);
     }
 }

@@ -2,9 +2,7 @@ import ast.*;
 import norswap.autumn.Grammar;
 import norswap.autumn.actions.ActionContext;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public final class TMGrammar extends Grammar {
     // ==== LEXICAL ===========================================================
@@ -36,7 +34,7 @@ public final class TMGrammar extends Grammar {
     public rule GREATER      = word(">");
     public rule AND          = word("&&");
     public rule OR           = word("||");
-    public rule BANGBANG     = word("!!");
+    public rule BANG         = word("!");
     public rule LPAREN       = word("(");
     public rule RPAREN       = word(")");
     public rule LBRACE       = word("{");
@@ -55,20 +53,20 @@ public final class TMGrammar extends Grammar {
     public rule _new         = reserved("new");
     public rule _return      = reserved("return");
     public rule _struct      = reserved("struct");
-    public rule _main        = reserved("main").push($ -> str("main"));
+    public rule _main        = reserved("main"); //.push($ -> str("main"));
     public rule _get         = reserved("get");
     public rule _put         = reserved("put");
 
     /*Reserved constants*/
-    public rule _true        = reserved("true").push($ -> new BooleanNode($.span(), true));
-    public rule _false       = reserved("false").push($ -> new BooleanNode($.span(), false));
+    public rule _true        = reserved("true").push($ -> new BooleanLiteralNode($.span(), true));
+    public rule _false       = reserved("false").push($ -> new BooleanLiteralNode($.span(), false));
     public rule _anInt       = reserved("anInt").push($ -> new IntLiteralNode($.span(), 0));
     public rule _aFloat      = reserved("aFloat").push($ -> new FloatLiteralNode($.span(), 0.0));
     public rule _aString     = reserved("aString").push($ -> new StringLiteralNode($.span(), ""));
     public rule _anArray     = reserved("anArray").push($ -> new ArrayLiteralNode($.span(),
             new ArrayList<ExpressionNode>(){{ add(0, new IntLiteralNode($.span(), 0)); }}));//[0]
 
-    //public rule _null       = reserved("null").as_val(null);
+    //public rule _null         = reserved("null").as_val(null);
     //public rule _array      = reserved("array");
     //public rule _attr       = reserved("attr");
     //public rule _print      = reserved("print");
@@ -121,8 +119,12 @@ public final class TMGrammar extends Grammar {
             this.expression.sep(0, COMMA).as_list(ExpressionNode.class)
     );
 
+    public rule array_expressions = lazy(() ->
+            this.expression.sep(1, COMMA).as_list(ExpressionNode.class)
+    );
+
     public rule array_literal =
-            seq(LBRACKET, expressions, RBRACKET)
+            seq(LBRACKET, array_expressions, RBRACKET)
                     .push($ -> new ArrayLiteralNode($.span(), $.$[0]));
 
     public rule basic_expression = choice(
@@ -147,14 +149,14 @@ public final class TMGrammar extends Grammar {
                     $ -> new AttributeAccessNode($.span(), $.$[0], $.$[1]))
             .suffix(seq(DOT, _get, LPAREN, lazy(() -> this.expression), RPAREN),
                     $ -> new ArrayGetNode($.span(), $.$[0], $.$[1]))
-            .suffix(seq(DOT, _put, lazy(() -> this.paren_put_expression)),
+            .suffix(seq(DOT, _put, LPAREN, lazy(() -> this.expression).sep_exact(2, COMMA), RPAREN),
                     $ -> new ArrayPutNode($.span(), $.$[0], $.$[1], $.$[2]))
             .suffix(lazy(() -> this.fct_call_args),
                     $ -> new FctCallNode($.span(), $.$[0], $.$[1]));
 
     public rule prefix_expression = right_expression()
             .operand(choice(suffix_expression))
-            .prefix(BANGBANG.as_val(UnaryOperator.NOT),
+            .prefix(BANG.as_val(UnaryOperator.NOT),
                     $ -> new UnaryExpressionNode($.span(), $.$[0], $.$[1]));
 
     public rule mult_op = choice(
@@ -207,14 +209,19 @@ public final class TMGrammar extends Grammar {
 
     public rule expression = seq(assignment_expression);
 
+    /*
     public rule paren_put_expression = lazy(() ->
             seq(LPAREN, this.expression, COMMA, this.expression, RPAREN));
+    */
 
     public rule expression_stmt =
             expression.filter($ -> {
-                if (!($.$[0] instanceof AssignmentNode || $.$[0] instanceof FctCallNode))
+                if (!($.$[0] instanceof AssignmentNode || $.$[0] instanceof FctCallNode || $.$[0] instanceof ArrayPutNode)){
+                    System.out.println($.$[0] + " filter false");
                     return false;
+                }
                 $.push(new ExpressionStatementNode($.span(), $.$[0]));
+                System.out.println($.$[0] + " filter true");
                 return true;
             });
 
@@ -224,7 +231,6 @@ public final class TMGrammar extends Grammar {
     public rule statement = lazy(() -> choice(
             this.main_stmt,
             this.let_decl,
-            //this.array_decl,
             this.fct_decl,
             this.struct_decl,
             this.if_stmt,
@@ -234,7 +240,6 @@ public final class TMGrammar extends Grammar {
 
     public rule block_statements = lazy(() -> choice(
             this.let_decl,
-            //this.array_decl,
             this.if_stmt,
             this.while_stmt,
             this.expression_stmt,
@@ -243,7 +248,6 @@ public final class TMGrammar extends Grammar {
 
     public rule fct_statements = lazy(() -> choice(
             this.let_decl,
-            //this.array_decl,
             this.if_stmt,
             this.while_stmt,
             this.expression_stmt
@@ -289,12 +293,16 @@ public final class TMGrammar extends Grammar {
                     .push($ -> new FctDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]))
     );
 
-    public rule main_stmt = lazy(() ->
+    /*public rule main_stmt = lazy(() ->
             seq(_main,
                     LPAREN, fct_decl_args_list, RPAREN,
                     LBRACE, fct_block, RBRACE)
                     .push($ -> new FctDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], new ReturnNode($.span(), null)))
-    );
+    );*/
+
+    public rule main_stmt =
+            seq(_main, LBRACE, expression.or_push_null(), RBRACE)
+                    .push($ -> new ReturnNode($.span(), $.$[0]));
 
     public rule fct_call_args = lazy(() ->
             seq(LPAREN, expressions, RPAREN));
@@ -308,10 +316,6 @@ public final class TMGrammar extends Grammar {
             seq(_struct, ws, identifier, ws.opt(), LBRACE, struct_decl_attribute.at_least(1).as_list(DeclarationNode.class), RBRACE)
                     .push($ -> new StructDeclarationNode($.span(), $.$[0], $.$[1]))
     );
-
-    /*public rule array_decl =
-            seq(_let, ws, identifier, LBRACKET, RBRACKET, AS, array_literal)
-                    .push($ -> new ArrayDeclarationNode($.span(), $.$[0], $.$[1]));*/
 
     public rule root =
             seq(ws, statement.at_least(1))

@@ -1,9 +1,1 @@
-:The reference "People" was indeed in the map like People
-ƒThe current map is {People##ofAge=Bool, print=Void, rprint=Void, tibo=People, People##size=Float, People=People, People##age=Int}
-8The reference "tibo" was indeed in the map like People
-8The reference "tibo" was indeed in the map like People
-ŽThe current map is {People##ofAge=Bool, print=Void, rprint=Void, tibo=People, People##size=Float, People=People, People##age=Int, myAge=Int}
-TMSemantic.constructor
- expected People and got People
--Assignement of (Int) tibo.age with (Int) 22
-expected Int and got Int
+2The reference "f" was indeed in the map like Int

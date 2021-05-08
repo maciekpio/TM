@@ -9,7 +9,7 @@ public final class ArrayPutNode extends ExpressionNode
     public final ExpressionNode index;
     public final ExpressionNode array;
 
-    public ArrayPutNode(Span span, Object array, Object objectPut, Object index) {
+    public ArrayPutNode(Span span, Object array, Object index, Object objectPut) {
         super(span);
         this.objectPut = Util.cast(objectPut, ExpressionNode.class);
         this.index = Util.cast(index, ExpressionNode.class);

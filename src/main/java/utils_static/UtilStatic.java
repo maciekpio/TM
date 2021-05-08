@@ -11,6 +11,7 @@ public class UtilStatic {
     public static HashMap<String, String> typesMap = new HashMap<>(){{
         put("print", "Void");
         put("rprint", "Void");
+        put("null", "Void");
     }};
 
     public static TypeNode whichTypeIs(Span span, ExpressionNode thatExpression)

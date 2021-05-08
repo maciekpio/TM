@@ -2,11 +2,11 @@ package ast;
 
 import norswap.autumn.positions.Span;
 
-public class BooleanNode extends ExpressionNode
+public class BooleanLiteralNode extends ExpressionNode
 {
     public final boolean value;
 
-    public BooleanNode (Span span, boolean value) {
+    public BooleanLiteralNode(Span span, boolean value) {
         super(span);
         this.value = value;
     }
@@ -17,9 +17,9 @@ public class BooleanNode extends ExpressionNode
 
     @Override
     public boolean equals(Object obj) {
-        BooleanNode o;
+        BooleanLiteralNode o;
         try{
-            o = (BooleanNode) obj;
+            o = (BooleanLiteralNode) obj;
         } catch (ClassCastException e){
             return false;
         }
