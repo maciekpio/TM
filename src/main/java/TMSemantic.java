@@ -1,4 +1,5 @@
 import ast.*;
+import norswap.utils.Util;
 import scopes.*;
 import types.*;
 import norswap.uranium.Attribute;
@@ -29,7 +30,7 @@ public final class TMSemantic {
 
     private Scope scope; //Current scope
 
-    private SighNode inferenceContext; //ne me demande meme pas, je ne sais pas c'est quoi... nan jdéconne, un SighNode c'est un "faux node" qui va nous servir a bcp de choses que je comprends pas mais principalement Current context for type inference (currently only to infer the type of empty arrays).
+    private SighNode inferenceContext;
 
     private int argumentIndex;//index of the current function argument
 
@@ -59,11 +60,11 @@ public final class TMSemantic {
         walker.register(StringLiteralNode.class,        PRE_VISIT,  analysis::stringLiteral);
         walker.register(ReferenceNode.class,            PRE_VISIT,  analysis::reference);
         walker.register(ConstructorNode.class,          PRE_VISIT,  analysis::constructor);
-        //walker.register(ArrayLiteralNode.class,       PRE_VISIT,  analysis::arrayLiteral);
+        walker.register(ArrayLiteralNode.class,         PRE_VISIT,  analysis::arrayLiteral);
         walker.register(ParenthesizedNode.class,        PRE_VISIT,  analysis::parenthesized);
         walker.register(AttributeAccessNode.class,      PRE_VISIT,  analysis::attrAccess);
-        walker.register(ArrayGetNode.class,            PRE_VISIT,  analysis::arrayGet);
-        //walker.register(ArrayPushNode.class,          PRE_VISIT,  analysis::arrayPush);
+        walker.register(ArrayGetNode.class,             PRE_VISIT,  analysis::arrayGet);
+        walker.register(ArrayPutNode.class,             PRE_VISIT,  analysis::arrayPut);
         walker.register(FctCallNode.class,              PRE_VISIT,  analysis::fctCall);
         walker.register(UnaryExpressionNode.class,      PRE_VISIT,  analysis::unaryExpression);
         walker.register(BinaryExpressionNode.class,     PRE_VISIT,  analysis::binaryExpression);
@@ -71,7 +72,7 @@ public final class TMSemantic {
 
         // types
         walker.register(SimpleTypeNode.class,           PRE_VISIT,  analysis::simpleType);
-        //walker.register(ArrayTypeNode.class,            PRE_VISIT,  analysis::arrayType);
+        walker.register(ArrayTypeNode.class,            PRE_VISIT,  analysis::arrayType);
 
         // declarations & scopes
         walker.register(RootNode.class,                 PRE_VISIT,  analysis::root);
@@ -142,7 +143,6 @@ public final class TMSemantic {
         if (maybeCtx != null) {
             R.set(node, "decl",  maybeCtx.declaration);
             R.set(node, "scope", maybeCtx.scope);
-
             R.rule(node, "type")
             .using(maybeCtx.declaration, "type")
             .by(Rule::copyFirst);
@@ -163,7 +163,7 @@ public final class TMSemantic {
                 r.set(node, "scope", ctx.scope);
                 r.set(node, "decl", decl);
 
-                if (decl instanceof VarDeclarationNode)
+                if (decl instanceof VarDeclarationNode || decl instanceof ArrayDeclarationNode)
                     r.errorFor("variable used before declaration: " + node.name,
                         node, node.attr("type"));
                 else
@@ -178,6 +178,7 @@ public final class TMSemantic {
 
     private void constructor (ConstructorNode node)
     {
+        System.out.println("TMSemantic.constructor");
         R.rule()
         .using(node.ref, "decl")
         .by(r -> {
@@ -211,20 +212,20 @@ public final class TMSemantic {
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void arrayLiteral (ArrayLiteralNode node)
+    private void arrayLiteral (ArrayLiteralNode node)
     {
         if (node.components.size() == 0) { // []
             // Empty array: we need a type int to know the desired type.
 
             final SighNode context = this.inferenceContext;
 
-            if (context instanceof VarDeclarationNode)
+            if (context instanceof VarDeclarationNode || context instanceof ArrayDeclarationNode)
                 R.rule(node, "type")
                 .using(context, "type")
                 .by(Rule::copyFirst);
-            else if (context instanceof FunCallNode) {
+            else if (context instanceof FctCallNode) {
                 R.rule(node, "type")
-                .using(((FunCallNode) context).function.attr("type"), node.attr("index"))
+                .using(((FctCallNode) context).function.attr("type"), node.attr("index"))
                 .by(r -> {
                     FunType funType = r.get(0);
                     r.set(0, funType.paramTypes[(int) r.get(1)]);
@@ -267,7 +268,7 @@ public final class TMSemantic {
             else
                 r.set(0, new ArrayType(supertype));
         });
-    }*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
@@ -339,6 +340,7 @@ public final class TMSemantic {
         .using(node.array, "type")
         .by(r -> {
             Type type = r.get(0);
+            System.out.println("In TMSemantic.arrayGet => type : " + type.toString());
             if (type instanceof ArrayType)
                 r.set(0, ((ArrayType) type).componentType);
             else
@@ -346,7 +348,7 @@ public final class TMSemantic {
         });
     }
 
-    /*private void arrayPut (ArrayPutNode node)
+    private void arrayPut (ArrayPutNode node)
     {
         R.rule()
                 .using(node.index, "type")
@@ -365,7 +367,7 @@ public final class TMSemantic {
                     else
                         r.error("Trying to index a non-array expression of type " + type, node);
                 });
-    }*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
@@ -396,10 +398,13 @@ public final class TMSemantic {
             Type[] params = funType.paramTypes;
             List<ExpressionNode> args = node.arguments;
 
-            if (params.length != args.size())
+            boolean isDefaultConstructor = false;
+
+            if(node.function instanceof ConstructorNode && args.size()==0) isDefaultConstructor=true;
+
+            if (params.length != args.size() && !isDefaultConstructor)
                 r.errorFor(format("wrong number of arguments, expected %d but got %d",
-                        params.length, args.size()),
-                    node);
+                        params.length, args.size()), node);
 
             int checkedArgs = Math.min(params.length, args.size());
 
@@ -549,14 +554,14 @@ public final class TMSemantic {
         .by(r -> {
             Type left  = r.get(0);
             Type right = r.get(1);
-            System.out.println("assignement of " + left.toString() + " with " + right.toString());
+            System.out.printf("Assignement of (%s) %s with (%s) %s%n", left.toString(), node.left.contents(), right.toString(), node.right.contents());
 
             r.set(0, r.get(1)); // the type of the assignment is the right-side type
 
             if (node.left instanceof ReferenceNode
             ||  node.left instanceof AttributeAccessNode
             ||  node.left instanceof ArrayGetNode) {
-                if (!isAssignableTo(right, left) && !left.toString().equals("Type")) {
+                if (!isAssignableTo(right, left) && !left.toString().equals("Type") && !left.toString().equals("Type[]")) {
                     r.errorFor("Trying to assign a value to a non-compatible lvalue.", node);
                 }
             }
@@ -601,12 +606,12 @@ public final class TMSemantic {
 
     // ---------------------------------------------------------------------------------------------
 
-    /*private void arrayType (ArrayTypeNode node)
+    private void arrayType (ArrayTypeNode node)
     {
         R.rule(node, "value")
         .using(node.componentType, "value")
         .by(r -> r.set(0, new ArrayType(r.get(0))));
-    }*/
+    }
 
     // ---------------------------------------------------------------------------------------------
 
@@ -708,7 +713,7 @@ public final class TMSemantic {
     {
         this.inferenceContext = node;
 
-        System.out.println(this.inferenceContext.contents());
+        //System.out.println(this.inferenceContext.contents() + " (1)");
 
         scope.declare(node.name, node);
         R.set(node, "scope", scope);
@@ -723,13 +728,13 @@ public final class TMSemantic {
             Type expected = r.get(0);
             Type actual = r.get(1);
 
+            System.out.printf("expected %s and got %s%n", expected.toString(), actual.toString());
+
             if (!isAssignableTo(actual, expected))
-                if(!expected.toString().equals("Type")){
                     r.error(format(
                             "incompatible initializer type provided for variable `%s`: expected %s but got %s",
                             node.name, expected, actual),
                             node.initializer);
-                }
         });
     }
 
@@ -737,7 +742,9 @@ public final class TMSemantic {
 
     private void attrDecl (AttributeDeclarationNode node)
     {
-        R.rule(node, "type");
+        R.rule(node, "type")
+        .using(node.type, "value")
+        .by(Rule::copyFirst);
     }
 
     // ---------------------------------------------------------------------------------------------

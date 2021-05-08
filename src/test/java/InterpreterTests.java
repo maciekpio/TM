@@ -19,7 +19,7 @@ import java.util.Set;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertThrows;
 
-public final class TMInterpreterTests extends TestFixture {
+public final class InterpreterTests extends TestFixture {
     // ---------------------------------------------------------------------------------------------
 
     private final TMGrammar grammar = new TMGrammar();

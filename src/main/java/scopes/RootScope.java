@@ -37,8 +37,10 @@ public final class RootScope extends Scope
     public final SyntheticDeclarationNode _null  = decl("null",  VARIABLE);
 
     // root scope functions
-    public final SyntheticDeclarationNode print = decl("print", FUNCTION);
+    public final SyntheticDeclarationNode print  = decl("print",  FUNCTION);
     public final SyntheticDeclarationNode rprint = decl("rprint", FUNCTION);
+    public final SyntheticDeclarationNode main   = decl("main",   FUNCTION);
+    public final SyntheticDeclarationNode is     = decl("is",   FUNCTION);
 
     // ---------------------------------------------------------------------------------------------
 
@@ -66,7 +68,9 @@ public final class RootScope extends Scope
         reactor.set(_null,  "type",       NullType.INSTANCE);
 
         reactor.set(print,  "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
-        reactor.set(rprint,  "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
+        reactor.set(rprint, "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
+        reactor.set(main,   "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
+        reactor.set(is,     "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -17,4 +17,10 @@ public abstract class DeclarationNode extends StatementNode
      * Return the name of the thing declared (e.g. "function").
      */
     public abstract String declaredThing();
+
+    /**
+     * @return a String that represents the Type of the declaredThing
+     *      : Int, Float, Bool, String, (null==Type)
+     */
+    public abstract String getType();
 }

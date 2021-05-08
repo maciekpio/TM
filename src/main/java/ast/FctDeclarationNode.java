@@ -2,6 +2,8 @@ package ast;
 
 import norswap.autumn.positions.Span;
 import norswap.utils.Util;
+import utils_static.UtilStatic;
+
 import java.util.List;
 
 public class FctDeclarationNode extends DeclarationNode
@@ -10,6 +12,7 @@ public class FctDeclarationNode extends DeclarationNode
     public final List<ParameterNode> parameters;
     public final BlockNode block;
     public final ReturnNode fct_return;
+    public TypeNode returnType;
 
     @SuppressWarnings("unchecked")
     public FctDeclarationNode
@@ -19,6 +22,13 @@ public class FctDeclarationNode extends DeclarationNode
         this.parameters = Util.cast(parameters, List.class);
         this.block = Util.cast(block, BlockNode.class);
         this.fct_return = Util.cast(fct_return, ReturnNode.class);
+
+        this.returnType = UtilStatic.whichTypeIs(span, this.fct_return.expression);
+
+        UtilStatic.typesMap.put(this.name, returnType.contents());
+        /*this.returnType = type == null
+                ? new SimpleTypeNode(new Span(span.start, span.start), "Void")
+                : Util.cast(type, TypeNode.class);*/
     }
 
     @Override public String name () {
@@ -31,5 +41,10 @@ public class FctDeclarationNode extends DeclarationNode
 
     @Override public String declaredThing () {
         return "function";
+    }
+
+    @Override
+    public String getType() {
+        return returnType.contents();
     }
 }

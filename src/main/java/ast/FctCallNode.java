@@ -24,6 +24,6 @@ public final class FctCallNode extends ExpressionNode
 
     @Override
     public String getType() {
-        return "function";//TODO
+        return function.getType();
     }
 }

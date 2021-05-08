@@ -15,11 +15,11 @@ public final class ArrayGetNode extends ExpressionNode
     }
 
     @Override public String contents() {
-        return String.format(".get(%s)", index.contents());
+        return String.format("%s.get(%s)", array.contents(), index.contents());
     }
 
     @Override
     public String getType() {
-        return "array.get";//TODO
+        return "Int";//TODO
     }
 }

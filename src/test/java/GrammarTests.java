@@ -149,11 +149,10 @@ public class GrammarTests extends AutumnTestFixture {
         failure("return (if)");
     }
 
-    /*@Test
+    @Test
     public void testStruct(){
-
-
         this.rule = TMParser.struct_decl;
+
         success(structBasic);
         success(structWith3values);
         success(structBackSlashN);
@@ -169,7 +168,6 @@ public class GrammarTests extends AutumnTestFixture {
         failure("if (struct) {return ()}");
         failure(" ");
     }
-     */
 
     @Test
     public void testLetDefinition(){
@@ -289,20 +287,6 @@ public class GrammarTests extends AutumnTestFixture {
         failure("##je m'appele");
         failure("##");
 
-    }
-
-    @Test
-    public void testArrayDefinition(){
-        this.rule=TMParser.array_decl;
-
-        ast = success("array matrix[5]");
-        System.out.println(ast.valueStack);
-        success("array m[a]");
-
-        failure("array [5]");
-        failure("array matrix[]");
-        failure("array[5]");
-        failure("arraymatrix[5]");
     }
 
     @Test
@@ -441,7 +425,14 @@ public class GrammarTests extends AutumnTestFixture {
     @Test
     public void testLetDecl(){
         this.rule = TMParser.let_decl;
-        ast = successExpect("let x = 1", new VarDeclarationNode(null, new ReferenceNode(null, "x"), new IntLiteralNode(null, 1)));
+        ast = successExpect("let x = 1", new VarDeclarationNode(null, "x", new IntLiteralNode(null, 1)));
+        System.out.println(ast.valueStack);
+    }
+
+    @Test
+    public void testReference(){
+        this.rule = TMParser.root;
+        ast = success("let x = 1; let matrix[] = [1, x];");
         System.out.println(ast.valueStack);
     }
 }

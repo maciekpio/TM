@@ -40,9 +40,8 @@ public final class BinaryExpressionNode extends ExpressionNode
     public String getType() {
         String leftType = left.getType();
         String rightType = right.getType();
-        if(leftType.equals("Float")||rightType.equals("Float")){
-            return "Float";
-        }
+        if(leftType.equals("Float")||rightType.equals("Float")) return "Float";
+        if(leftType.equals("Type")||rightType.equals("Type")) return "Type";
         return "Int";
     }
 }

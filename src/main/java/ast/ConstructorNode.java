@@ -13,11 +13,11 @@ public class ConstructorNode extends ExpressionNode
     }
 
     @Override public String contents () {
-        return "$" + ref.name;
+        return "new "+ ref.name;
     }
 
     @Override
     public String getType() {
-        return "constructor";//TODO
+        return ref.getType();
     }
 }

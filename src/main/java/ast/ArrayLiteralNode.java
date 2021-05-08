@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ArrayLiteralNode extends ExpressionNode
 {
-    public final List<ArrayContentExpressionNode> components;
+    public final List<ExpressionNode> components;
 
     @SuppressWarnings("unchecked")
     public ArrayLiteralNode (Span span, Object components) {
@@ -45,12 +45,18 @@ public class ArrayLiteralNode extends ExpressionNode
 
     @Override
     public String getType() {
-        String type = components.get(0).getType();
-        for (ArrayContentExpressionNode contentExpression : components){
-            if (!contentExpression.equals(type)){
-                return "None";
+
+        if (components.get(0).getType().equals("Bool")) return "Bool";
+        if (components.get(0).getType().equals("String")) return "String";
+
+        for (ExpressionNode contentExpression : components){
+            if (contentExpression.getType().equals("Type")){
+                return "Type";
+            }
+            if (contentExpression.getType().equals("Float")){
+                return "Float";
             }
         }
-        return type;
+        return "Int";
     }
 }

@@ -2,6 +2,7 @@ package ast;
 
 import norswap.autumn.positions.Span;
 import norswap.utils.Util;
+import utils_static.UtilStatic;
 
 public final class AttributeAccessNode extends ExpressionNode
 {
@@ -24,6 +25,6 @@ public final class AttributeAccessNode extends ExpressionNode
 
     @Override
     public String getType() {
-        return "attrName";
+        return UtilStatic.typesMap.get(stem.getType()+"##"+attrName);
     }
 }

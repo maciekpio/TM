@@ -1,5 +1,10 @@
 import ast.*;
 import norswap.autumn.Grammar;
+import norswap.autumn.actions.ActionContext;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public final class TMGrammar extends Grammar {
     // ==== LEXICAL ===========================================================
@@ -16,47 +21,58 @@ public final class TMGrammar extends Grammar {
         id_part = choice(alphanum, '_');
     }
 
-    public rule TIMES = word("*");
-    public rule DIVID = word("/");
-    public rule MODULO = word("%");
-    public rule PLUS = word("+");
-    public rule MINUS = word("-");
-    //public rule SEMICOLON = word(";");
-    public rule EQUAL = word("==");
-    public rule AS = word("=");
-    public rule DIFF = word("!=");
-    public rule LOWER_EQUAL = word("<=");
+    /*Useful signs*/
+    public rule TIMES        = word("*");
+    public rule DIVID        = word("/");
+    public rule MODULO       = word("%");
+    public rule PLUS         = word("+");
+    public rule MINUS        = word("-");
+    public rule EQUAL        = word("==");
+    public rule AS           = word("=");
+    public rule DIFF         = word("!=");
+    public rule LOWER_EQUAL  = word("<=");
     public rule RANGLE_EQUAL = word(">=");
-    public rule LOWER = word("<");
-    public rule GREATER = word(">");
-    public rule AND = word("&&");
-    public rule OR = word("||");
-    public rule BANGBANG = word("!!");
-    public rule LPAREN = word("(");
-    public rule RPAREN = word(")");
-    public rule LBRACE = word("{");
-    public rule RBRACE = word("}");
-    public rule LBRACKET = word("[");
-    public rule RBRACKET = word("]");
-    public rule COMMA = word(",");
-    public rule DOT = word(".");
+    public rule LOWER        = word("<");
+    public rule GREATER      = word(">");
+    public rule AND          = word("&&");
+    public rule OR           = word("||");
+    public rule BANGBANG     = word("!!");
+    public rule LPAREN       = word("(");
+    public rule RPAREN       = word(")");
+    public rule LBRACE       = word("{");
+    public rule RBRACE       = word("}");
+    public rule LBRACKET     = word("[");
+    public rule RBRACKET     = word("]");
+    public rule COMMA        = word(",");
+    public rule DOT          = word(".");
 
-    public rule _let = reserved("let");
-    public rule _if = reserved("if");
-    public rule _else = reserved("else");
-    public rule _while = reserved("while");
-    public rule _def = reserved("def");
-    public rule _return = reserved("return");
-    public rule _struct = reserved("struct");
-    public rule _attr = reserved("attr");
-    public rule _array = reserved("array");
-    public rule _get = reserved("get");
-    public rule _put = reserved("put");
-    public rule _true = reserved("true").push($ -> new BooleanNode($.span(), true));
-    public rule _false = reserved("false").push($ -> new BooleanNode($.span(), false));
-    public rule _null = reserved("null").as_val(null);
-    //public rule _print = reserved("print");
-    //public rule _rprint = reserved("rprint");
+    /*Reserved words*/
+    public rule _let         = reserved("let");
+    public rule _if          = reserved("if");
+    public rule _else        = reserved("else");
+    public rule _while       = reserved("while");
+    public rule _def         = reserved("def");
+    public rule _new         = reserved("new");
+    public rule _return      = reserved("return");
+    public rule _struct      = reserved("struct");
+    public rule _main        = reserved("main").push($ -> str("main"));
+    public rule _get         = reserved("get");
+    public rule _put         = reserved("put");
+
+    /*Reserved constants*/
+    public rule _true        = reserved("true").push($ -> new BooleanNode($.span(), true));
+    public rule _false       = reserved("false").push($ -> new BooleanNode($.span(), false));
+    public rule _anInt       = reserved("anInt").push($ -> new IntLiteralNode($.span(), 0));
+    public rule _aFloat      = reserved("aFloat").push($ -> new FloatLiteralNode($.span(), 0.0));
+    public rule _aString     = reserved("aString").push($ -> new StringLiteralNode($.span(), ""));
+    public rule _anArray     = reserved("anArray").push($ -> new ArrayLiteralNode($.span(),
+            new ArrayList<ExpressionNode>(){{ add(0, new IntLiteralNode($.span(), 0)); }}));//[0]
+
+    //public rule _null       = reserved("null").as_val(null);
+    //public rule _array      = reserved("array");
+    //public rule _attr       = reserved("attr");
+    //public rule _print      = reserved("print");
+    //public rule _rprint     = reserved("rprint");
 
     public rule number =
             seq(opt('-'), choice('0', digit.at_least(1)));
@@ -77,7 +93,7 @@ public final class TMGrammar extends Grammar {
 
     public rule string_content =
             string_char.at_least(0)
-                    .push($ -> $.str());
+                    .push(ActionContext::str);
 
     public rule string =
             seq('"', string_content, '"')
@@ -86,20 +102,44 @@ public final class TMGrammar extends Grammar {
 
     public rule identifier =
             identifier(seq(choice(alpha, '_'), id_part.at_least(0)))
-                    .push($ -> $.str());
+                    .push(ActionContext::str);
 
     // ==== SYNTACTIC =========================================================
 
     public rule reference =
             identifier.push($ -> new ReferenceNode($.span(), $.$[0]));
 
+    public rule constructor =
+            seq(_new, reference)
+                    .push($ -> new ConstructorNode($.span(), $.$[0]));
+
+    public rule paren_expression = lazy(() ->
+            seq(LPAREN, this.expression, RPAREN)
+                    .push($ -> new ParenthesizedNode($.span(), $.$[0])));
+
+    public rule expressions = lazy(() ->
+            this.expression.sep(0, COMMA).as_list(ExpressionNode.class)
+    );
+
+    public rule array_literal =
+            seq(LBRACKET, expressions, RBRACKET)
+                    .push($ -> new ArrayLiteralNode($.span(), $.$[0]));
+
     public rule basic_expression = choice(
+            constructor,
             reference,
             _true,
             _false,
+            _anInt,
+            _aFloat,
+            _aString,
+            _anArray,
+            //_null,
             fractional,
             integer,
-            string);
+            string,
+            paren_expression,
+            array_literal);
 
     public rule suffix_expression = left_expression()
             .left(basic_expression)
@@ -167,16 +207,8 @@ public final class TMGrammar extends Grammar {
 
     public rule expression = seq(assignment_expression);
 
-    public rule paren_expression = lazy(() ->
-            seq(LPAREN, this.expression, RPAREN)
-                    .push($ -> new ParenthesizedNode($.span(), $.$[0])));
-
-    public rule put_expressions = lazy(() ->
-            seq(this.expression, COMMA, this.expression)
-    );
-
     public rule paren_put_expression = lazy(() ->
-            seq(LPAREN, this.put_expressions, RPAREN));
+            seq(LPAREN, this.expression, COMMA, this.expression, RPAREN));
 
     public rule expression_stmt =
             expression.filter($ -> {
@@ -186,17 +218,13 @@ public final class TMGrammar extends Grammar {
                 return true;
             });
 
-    /*public rule expression_choice = lazy(() -> choice(
-            this.expression_stmt,
-            this.expression
-    ));*/
-
-    /**
+    /*
      * Here is the main way for the root
      */
     public rule statement = lazy(() -> choice(
+            this.main_stmt,
             this.let_decl,
-            this.array_decl,
+            //this.array_decl,
             this.fct_decl,
             this.struct_decl,
             this.if_stmt,
@@ -206,7 +234,7 @@ public final class TMGrammar extends Grammar {
 
     public rule block_statements = lazy(() -> choice(
             this.let_decl,
-            this.array_decl,
+            //this.array_decl,
             this.if_stmt,
             this.while_stmt,
             this.expression_stmt,
@@ -215,7 +243,7 @@ public final class TMGrammar extends Grammar {
 
     public rule fct_statements = lazy(() -> choice(
             this.let_decl,
-            this.array_decl,
+            //this.array_decl,
             this.if_stmt,
             this.while_stmt,
             this.expression_stmt
@@ -246,10 +274,6 @@ public final class TMGrammar extends Grammar {
             fct_statements.at_least(0)
                     .as_list(StatementNode.class).push($ -> new BlockNode($.span(), $.$[0]));
 
-    public rule expressions = lazy(() ->
-            expression.sep(0, COMMA).as_list(ExpressionNode.class)
-    );
-
     public rule fct_decl_arg =
             seq(identifier)
                     .push($ -> new ParameterNode($.span(), $.$[0]));
@@ -265,12 +289,19 @@ public final class TMGrammar extends Grammar {
                     .push($ -> new FctDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]))
     );
 
+    public rule main_stmt = lazy(() ->
+            seq(_main,
+                    LPAREN, fct_decl_args_list, RPAREN,
+                    LBRACE, fct_block, RBRACE)
+                    .push($ -> new FctDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], new ReturnNode($.span(), null)))
+    );
+
     public rule fct_call_args = lazy(() ->
-            seq(LPAREN, expressions.opt(), RPAREN));
+            seq(LPAREN, expressions, RPAREN));
 
     public rule struct_decl_attribute =
-            seq(_attr, identifier)
-                    .push($ -> new AttributeDeclarationNode($.span(), $.$[0])
+            seq(identifier, AS, expression)
+                    .push($ -> new AttributeDeclarationNode($.span(), $.$[0], $.$[1])
     );
 
     public rule struct_decl = lazy(() ->
@@ -278,13 +309,9 @@ public final class TMGrammar extends Grammar {
                     .push($ -> new StructDeclarationNode($.span(), $.$[0], $.$[1]))
     );
 
-    public rule array_length =
-            seq(LBRACKET, expression, RBRACKET)
-            .push($ -> new ArrayLengthNode($.span(), $.$[0]));
-
-    public rule array_decl =
-            seq(_array, ws, identifier, array_length)
-                    .push($ -> new ArrayDeclarationNode($.span(), $.$[0], $.$[1]));
+    /*public rule array_decl =
+            seq(_let, ws, identifier, LBRACKET, RBRACKET, AS, array_literal)
+                    .push($ -> new ArrayDeclarationNode($.span(), $.$[0], $.$[1]));*/
 
     public rule root =
             seq(ws, statement.at_least(1))
