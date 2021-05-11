@@ -5,22 +5,19 @@ import scopes.DeclarationKind;
 import scopes.RootScope;
 import scopes.Scope;
 import scopes.SyntheticDeclarationNode;
-import types.FloatType;
-import types.IntType;
-import types.StringType;
-import types.Type;
+import types.*;
 import norswap.uranium.Reactor;
 import norswap.utils.Util;
 import norswap.utils.exceptions.Exceptions;
 import norswap.utils.exceptions.NoStackException;
 import norswap.utils.visitors.ValuedVisitor;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 
 import static norswap.utils.Util.cast;
 import static norswap.utils.Vanilla.coIterate;
 import static norswap.utils.Vanilla.map;
+import static utils_static.UtilStatic.*;
 
 /**
  * Implements a simple but inefficient interpreter for Sigh.
@@ -76,11 +73,12 @@ public final class TMInterpreter
         visitor.register(UnaryExpressionNode.class,      this::unaryExpression);
         visitor.register(BinaryExpressionNode.class,     this::binaryExpression);
         visitor.register(AssignmentNode.class,           this::assignment);
+        visitor.register(StructDeclarationNode.class,    this::structDecl);
 
         // statement groups & declarations
         visitor.register(RootNode.class,                 this::root);
         visitor.register(BlockNode.class,                this::block);
-        visitor.register(VarDeclarationNode.class,       this::letDecl);
+        visitor.register(LetDeclarationNode.class,       this::letDecl);
         // no need to visitor other declarations! (use fallback)
 
         // statements
@@ -168,19 +166,46 @@ public final class TMInterpreter
     {
         Type leftType  = reactor.get(node.left, "type");
         Type rightType = reactor.get(node.right, "type");
+        Object left  = get(node.left);
+        Object right = get(node.right);
+        boolean notYetTyped = (leftType instanceof NotYetType || rightType instanceof NotYetType);
+        boolean stringFormatted = (node.operator == BinaryOperator.PLUS && (left instanceof String || right instanceof String));
+
+        if(stringFormatted) return convertToString(left) + convertToString(right);
+
+        if(notYetTyped) {
+            String errorCause = String.format("%s %s %s not permitted", left.toString(), node.operator.string, right.toString());
+            String str = (left.getClass().toString() + " --- " + right.getClass().toString());
+            if (isArithmetic(node.operator) || isComparison(node.operator)) {
+                if (!isInstanceOf(left, new Class[]{Long.class, Double.class}) || !isInstanceOf(right, new Class[]{Long.class, Double.class})) {
+                    throw new PassthroughException(new Throwable(errorCause));
+                }
+            } else if (isLogic(node.operator)) {
+                if (!(left instanceof Boolean && right instanceof Boolean)) {
+                    throw new PassthroughException(new Throwable(errorCause));
+                }
+            } /*else if (isEquality(node.operator)) {
+                if(left instanceof String || right instanceof String){
+                    throw new PassthroughException(new Throwable(errorCause));
+                }
+            }*/
+        }
+
+        if(notYetTyped){
+            leftType = whichTypeIs(left);
+            rightType = whichTypeIs(right);
+        }
+
 
         // Cases where both operands should not be evaluated.
         switch (node.operator) {
-            case OR:  return booleanOp(node, false);
-            case AND: return booleanOp(node, true);
+            case OR:  return booleanGate(node, false);
+            case AND: return booleanGate(node, true);
         }
 
-        Object left  = get(node.left);
-        Object right = get(node.right);
-
-        if (node.operator == BinaryOperator.PLUS
+        /*if (node.operator == BinaryOperator.PLUS
                 && (leftType instanceof StringType || rightType instanceof StringType))
-            return convertToString(left) + convertToString(right);
+            return convertToString(left) + convertToString(right);*/
 
         boolean floating = leftType instanceof FloatType || rightType instanceof FloatType;
         boolean numeric  = floating || leftType instanceof IntType;
@@ -190,17 +215,37 @@ public final class TMInterpreter
 
         switch (node.operator) {
             case EQUAL:
-                return  leftType.isPrimitive() ? left.equals(right) : left == right;
+                if (leftType instanceof ArrayType && rightType instanceof ArrayType){
+                    return Arrays.equals((Object[]) left, (Object[]) right);
+                }
+                else {
+                    return  left.equals(right);
+                }
             case DIFF:
-                return  leftType.isPrimitive() ? !left.equals(right) : left != right;
+                if (leftType instanceof ArrayType && rightType instanceof ArrayType){
+                    return !Arrays.equals((Object[]) left, (Object[]) right);
+                }
+                else {
+                    return  !left.equals(right);
+                }
         }
 
         throw new Error("should not reach here");
     }
 
+    /*private boolean isSameArrays(Object left, Object right){
+        Object[] leftArray = (Object[]) left;
+        Object[] rightArray = (Object[]) right;
+        if (leftArray.length != rightArray.length) return false;
+        for (int i = 0; i < leftArray.length; i++){
+            if(!leftArray[i].equals(rightArray[i])) return false;
+        }
+        return true;
+    }*/
+
     // ---------------------------------------------------------------------------------------------
 
-    private boolean booleanOp (BinaryExpressionNode node, boolean isAnd)
+    private boolean booleanGate(BinaryExpressionNode node, boolean isAnd)
     {
         boolean left = get(node.left);
         return isAnd
@@ -286,7 +331,7 @@ public final class TMInterpreter
 
         if (node.left instanceof AttributeAccessNode) {
             AttributeAccessNode fieldAccess = (AttributeAccessNode) node.left;
-            Object object = get(fieldAccess.stem);
+            Object object = get(fieldAccess.parent);
             if (object == Null.INSTANCE)
                 throw new PassthroughException(
                     new NullPointerException("accessing field of null object"));
@@ -403,7 +448,7 @@ public final class TMInterpreter
 
     private Object attrAccess(AttributeAccessNode node)
     {
-        Object stem = get(node.stem);
+        Object stem = get(node.parent);
         if (stem == Null.INSTANCE)
             throw new PassthroughException(
                 new NullPointerException("accessing field of null object"));
@@ -470,7 +515,7 @@ public final class TMInterpreter
         else if (arg instanceof StructDeclarationNode)
             return ((StructDeclarationNode) arg).name;
         else if (arg instanceof Constructor)
-            return "$" + ((Constructor) arg).declaration.name;
+            return "new " + ((Constructor) arg).declaration.name;
         else
             return arg.toString();
     }
@@ -480,8 +525,15 @@ public final class TMInterpreter
     private HashMap<String, Object> buildStruct (StructDeclarationNode node, Object[] args)
     {
         HashMap<String, Object> struct = new HashMap<>();
-        for (int i = 0; i < node.attributes.size(); ++i)
-            struct.put(node.attributes.get(i).name, args[i]);
+        if (args.length > 0){
+            for (int i = 0; i < node.attributes.size(); ++i)
+                struct.put(node.attributes.get(i).name, args[i]);
+        }
+        else {
+            Scope scope = reactor.get(node, "scope");
+            for (int i = 0; i < node.attributes.size(); ++i)
+                struct.put(node.attributes.get(i).name, rootStorage.get(scope, node.name+"##"+node.attributes.get(i).name));
+        }
         return struct;
     }
 
@@ -512,7 +564,7 @@ public final class TMInterpreter
         Scope scope = reactor.get(node, "scope");
         DeclarationNode decl = reactor.get(node, "decl");
 
-        if (decl instanceof VarDeclarationNode
+        if (decl instanceof LetDeclarationNode
         || decl instanceof ParameterNode
         || decl instanceof SyntheticDeclarationNode
                 && ((SyntheticDeclarationNode) decl).kind() == DeclarationKind.VARIABLE)
@@ -531,12 +583,22 @@ public final class TMInterpreter
 
     // ---------------------------------------------------------------------------------------------
 
-    private Void letDecl(VarDeclarationNode node)
+    private Void structDecl(StructDeclarationNode node)
+    {
+        Scope scope = reactor.get(node, "scope");
+        for (AttributeDeclarationNode attr : node.attributes)
+            assign(scope, node.name+"##"+attr.name, get(attr.initializer), reactor.get(node, "type"));
+        return null;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    private Void letDecl(LetDeclarationNode node)
     {
         Scope scope = reactor.get(node, "scope");
         assign(scope, node.name, get(node.initializer), reactor.get(node, "type"));
         return null;
-    }//array[0] = 1
+    }
 
     // ---------------------------------------------------------------------------------------------
 

@@ -425,7 +425,7 @@ public class GrammarTests extends AutumnTestFixture {
     @Test
     public void testLetDecl(){
         this.rule = TMParser.let_decl;
-        ast = successExpect("let x = 1", new VarDeclarationNode(null, "x", new IntLiteralNode(null, 1)));
+        ast = successExpect("let x = 1", new LetDeclarationNode(null, "x", new IntLiteralNode(null, 1)));
         System.out.println(ast.valueStack);
     }
 

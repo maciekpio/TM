@@ -6,18 +6,18 @@ import utils_static.UtilStatic;
 
 public final class AttributeAccessNode extends ExpressionNode
 {
-    public final ExpressionNode stem;
+    public final ExpressionNode parent;
     public final String attrName;
 
-    public AttributeAccessNode (Span span, Object stem, Object fieldName) {
+    public AttributeAccessNode (Span span, Object parent, Object fieldName) {
         super(span);
-        this.stem = Util.cast(stem, ExpressionNode.class);
+        this.parent = Util.cast(parent, ExpressionNode.class);
         this.attrName = Util.cast(fieldName, String.class);
     }
 
     @Override public String contents ()
     {
-        String candidate = String.format("%s.%s", stem.contents(), attrName);
+        String candidate = String.format("%s.%s", parent.contents(), attrName);
         return candidate.length() <= contentsBudget()
                 ? candidate
                 : "(?)." + attrName;
@@ -25,6 +25,6 @@ public final class AttributeAccessNode extends ExpressionNode
 
     @Override
     public String getType() {
-        return UtilStatic.typesMap.get(stem.getType()+"##"+attrName);
+        return UtilStatic.typesMap.get(parent.getType()+"##"+attrName);
     }
 }

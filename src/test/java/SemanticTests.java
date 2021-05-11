@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
  * NOTE(norswap): These tests were derived from the {@link InterpreterTests} and don't test anything
  * more, but show how to idiomatically test semantic analysis. using {@link UraniumTestFixture}.
  */
-public final class SemanticAnalysisTests extends UraniumTestFixture
+public final class SemanticTests extends UraniumTestFixture
 {
     RootNode ast;
 
@@ -222,16 +222,14 @@ public final class SemanticAnalysisTests extends UraniumTestFixture
 
     @Test public void testCalls() {
         successInput(
-                "def add (a, b) { return (a + b) } " +
-                        "return add(4, 7)");
+                "def add (a, b) { return (a || b) }; main{add(4, 7)}"
+        );
 
-        successInput(
-                "struct Point { var x: Int; var y: Int }" +
-                        "return $Point(1, 2)");
+        /*successInput(
+                "struct Point {x = anInt; y = anInt }" +
+                        "main{(new Point(1, 2))}");
 
-        successInput("var str: String = null; return print(str + 1)");
-
-        failureInputWith("return print(1)", "argument 0: expected String but got Int");
+        failureInputWith("main{ print(1) }", "incompatible argument provided for argument 0: expected Int but got String");*/
     }
 
     // ---------------------------------------------------------------------------------------------

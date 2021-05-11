@@ -29,7 +29,7 @@ public final class RootScope extends Scope
     public final SyntheticDeclarationNode String = decl("String", TYPE);
     public final SyntheticDeclarationNode Void   = decl("Void",   TYPE);
     public final SyntheticDeclarationNode Type   = decl("Type",   TYPE);
-    public final SyntheticDeclarationNode None   = decl("None",   TYPE);
+    public final SyntheticDeclarationNode NotYet   = decl("NotYet",   TYPE);
 
     // root scope variables
     //public final SyntheticDeclarationNode _true  = decl("true",  VARIABLE);
@@ -53,7 +53,7 @@ public final class RootScope extends Scope
         reactor.set(String, "type",       TypeType.INSTANCE);
         reactor.set(Void,   "type",       TypeType.INSTANCE);
         reactor.set(Type,   "type",       TypeType.INSTANCE);
-        reactor.set(None,   "type",       TypeType.INSTANCE);
+        reactor.set(NotYet,   "type",       TypeType.INSTANCE);
 
         reactor.set(Bool,   "declared",   BoolType.INSTANCE);
         reactor.set(Int,    "declared",    IntType.INSTANCE);
@@ -61,7 +61,7 @@ public final class RootScope extends Scope
         reactor.set(String, "declared", StringType.INSTANCE);
         reactor.set(Void,   "declared",   VoidType.INSTANCE);
         reactor.set(Type,   "declared",   TypeType.INSTANCE);
-        reactor.set(None,   "declared",   TypeType.INSTANCE);
+        reactor.set(NotYet,   "declared",   TypeType.INSTANCE);
 
         //reactor.set(_true,  "type",       BoolType.INSTANCE);
         //reactor.set(_false, "type",       BoolType.INSTANCE);

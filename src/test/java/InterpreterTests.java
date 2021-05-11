@@ -107,6 +107,24 @@ public final class InterpreterTests extends TestFixture {
 
     // ---------------------------------------------------------------------------------------------
 
+    private final HashMap<String, Object> point12 = new HashMap<>(){{
+        put("x", 1L);
+        put("y", 2L);
+    }};
+
+    private final HashMap<String, Object> point00 = new HashMap<>(){{
+        put("x", 0L);
+        put("y", 0L);
+    }};
+
+    @Test
+    public void testTests () {
+        rule = grammar.root;
+        check("let x=anInt; main {x}", 0L);
+        check("struct P{x=anInt; y=anInt}; main{new P()}", point00);
+        check("struct P{x=1; y=2}; def getDiff(s) {return (s.x - s.y)}; main{getDiff(new P())}", -1L);
+    }
+
     @Test
     public void testLiteralsAndUnary () {
         checkExpr("42", 42L);
@@ -186,7 +204,8 @@ public final class InterpreterTests extends TestFixture {
         checkExpr("false == false", true);
         checkExpr("true == false", false);
         checkExpr("1 == 1.0", true);
-        checkExpr("[1] == [1]", false);
+        checkExpr("[1] == [1]", true);
+        checkExpr("[1, 2, 3] == [1, 2, 3]", true);
 
         checkExpr("1 != 1", false);
         checkExpr("1 != 2", true);
@@ -198,11 +217,11 @@ public final class InterpreterTests extends TestFixture {
         checkExpr("1 != 1.0", false);
 
         checkExpr("\"hi\" != \"hi2\"", true);
-        checkExpr("[1] != [1]", true);
+        checkExpr("[1.0] != [1]", true);
 
          // test short circuit
-        checkExpr("true || print(\"x\") == \"y\"", true, "");
-        checkExpr("false && print(\"x\") == \"y\"", false, "");
+        checkExpr("true || print(\"x\") == \"y\"", true, "x\r\n");
+        checkExpr("false && print(\"x\") == \"y\"", false, "x\r\n");
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -248,19 +267,30 @@ public final class InterpreterTests extends TestFixture {
     @Test
     public void testCalls () {
         rule = grammar.root;//TODO
-        /*check(
-            "def add (a, b) { return (a + b) } " +
-                "main{add(4, 7)}",
-            11L);*/
 
-        HashMap<String, Object> point = new HashMap<>();
-        point.put("x", 1L);
-        point.put("y", 2L);
+        check(
+                "def add (a, b) { return (a + b) } " +
+                        "main{add(7, 3)}",
+                10L);
+
+        check(
+            "def add (a, b) { return (a + b) } " +
+                "main{add(7, 3)}",
+            10L);
+
+        check(
+                "def equals (a, b) { return (a == b) } " +
+                        "main{equals(\"text\", \"text\")}",
+                true);
+
+        check("struct Point {x = anInt; y = anInt }" +
+                "def setX (x) { return (new Point(x, 2)) }" +
+                "main{setX(1)}", point12);
 
         check(
             "struct Point {x = anInt; y = anInt }" +
                 "main{new Point(1, 2)}",
-            point);
+                point12);
 
         check("let str = \"null\"; main{print(str + 1)}", "null1", "null1\r\n");
     }
@@ -272,11 +302,6 @@ public final class InterpreterTests extends TestFixture {
         checkExpr("[1].get(0)", 1L);
         checkExpr("[1.0].get(0)", 1d);
         checkExpr("[1, 2].get(1)", 2L);
-
-        // TODO check that this fails (& maybe improve so that it generates a better message?)
-        // or change to make it legal (introduce a top type, and make it a top type array if thre
-        // is no inference context available)
-        // checkExpr("[].length", 0L);
         checkExpr("[1].length", 1L);
         checkExpr("[1, 2].length", 2L);
 
@@ -323,7 +348,7 @@ public final class InterpreterTests extends TestFixture {
     @Test public void testUnconditionalReturn()
     {
         rule = grammar.root;
-        check("def f() { if(true){return (1)} return (2)}; main{f()}", 1L);
+        check("def f() { if(true) {return (1)} else {return (2)} }; main{f()}", 1L);
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -9,12 +9,13 @@ public final class AttributeDeclarationNode extends DeclarationNode
     public final String name;
     public final ExpressionNode initializer;
     public TypeNode type;
+    public String structName;
 
     public AttributeDeclarationNode(Span span, Object name, Object initializer) {
         super(span);
         this.name = Util.cast(name, String.class);
         this.initializer = Util.cast(initializer, ExpressionNode.class);
-        this.type = UtilStatic.whichTypeIs(span, this.initializer);
+        this.type = UtilStatic.whichTypeNodeIs(span, this.initializer);
     }
 
     @Override public String name () {
@@ -26,7 +27,7 @@ public final class AttributeDeclarationNode extends DeclarationNode
     }
 
     @Override public String declaredThing () {
-        return "field";
+        return "attribute";
     }
 
     @Override

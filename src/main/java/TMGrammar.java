@@ -246,12 +246,12 @@ public final class TMGrammar extends Grammar {
             this.return_stmt
     ));
 
-    public rule fct_statements = lazy(() -> choice(
+    /*public rule fct_statements = lazy(() -> choice(
             this.let_decl,
             this.if_stmt,
             this.while_stmt,
             this.expression_stmt
-    ));
+    ));*/
 
     public rule brace_statement =
             seq(LBRACE, block_statements.at_least(0), RBRACE)
@@ -259,7 +259,7 @@ public final class TMGrammar extends Grammar {
 
     public rule let_decl = lazy(() ->
             seq(_let, identifier, AS, choice(expression, paren_expression))
-                    .push($ -> new VarDeclarationNode($.span(), $.$[0], $.$[1]))
+                    .push($ -> new LetDeclarationNode($.span(), $.$[0], $.$[1]))
     );
 
     public rule if_stmt =
@@ -275,7 +275,7 @@ public final class TMGrammar extends Grammar {
                     .push($ -> new ReturnNode($.span(), $.$[0]));
 
     public rule fct_block =
-            fct_statements.at_least(0)
+            block_statements.at_least(0)
                     .as_list(StatementNode.class).push($ -> new BlockNode($.span(), $.$[0]));
 
     public rule fct_decl_arg =
@@ -289,11 +289,18 @@ public final class TMGrammar extends Grammar {
     public rule fct_decl = lazy(() ->
             seq(_def, ws, identifier,
                     LPAREN, fct_decl_args_list, RPAREN,
+                    LBRACE, fct_block, RBRACE)
+                    .push($ -> new FctDeclarationNode($.span(), $.$[0], $.$[1], $.$[2]))
+    );
+
+    /*public rule fct_decl = lazy(() ->
+            seq(_def, ws, identifier,
+                    LPAREN, fct_decl_args_list, RPAREN,
                     LBRACE, fct_block, return_stmt, RBRACE)
                     .push($ -> new FctDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]))
     );
 
-    /*public rule main_stmt = lazy(() ->
+    public rule main_stmt = lazy(() ->
             seq(_main,
                     LPAREN, fct_decl_args_list, RPAREN,
                     LBRACE, fct_block, RBRACE)

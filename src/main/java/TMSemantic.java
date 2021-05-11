@@ -1,5 +1,4 @@
 import ast.*;
-import interpreter.Void;
 import scopes.*;
 import types.*;
 import norswap.uranium.Attribute;
@@ -20,6 +19,7 @@ import static norswap.utils.Vanilla.list;
 import static norswap.utils.Vanilla.forEachIndexed;
 import static norswap.utils.visitors.WalkVisitType.POST_VISIT;
 import static norswap.utils.visitors.WalkVisitType.PRE_VISIT;
+import static utils_static.UtilStatic.*;
 
 public final class TMSemantic {
     // =============================================================================================
@@ -77,7 +77,7 @@ public final class TMSemantic {
         // declarations & scopes
         walker.register(RootNode.class,                 PRE_VISIT,  analysis::root);
         walker.register(BlockNode.class,                PRE_VISIT,  analysis::block);
-        walker.register(VarDeclarationNode.class,       PRE_VISIT,  analysis::letDecl);
+        walker.register(LetDeclarationNode.class,       PRE_VISIT,  analysis::letDecl);
         walker.register(AttributeDeclarationNode.class, PRE_VISIT,  analysis::attrDecl);
         walker.register(ParameterNode.class,            PRE_VISIT,  analysis::parameter);
         walker.register(FctDeclarationNode.class,       PRE_VISIT,  analysis::fctDecl);
@@ -163,7 +163,7 @@ public final class TMSemantic {
                 r.set(node, "scope", ctx.scope);
                 r.set(node, "decl", decl);
 
-                if (decl instanceof VarDeclarationNode || decl instanceof ArrayDeclarationNode)
+                if (decl instanceof LetDeclarationNode || decl instanceof ArrayDeclarationNode)
                     r.errorFor("variable used before declaration: " + node.name,
                         node, node.attr("type"));
                 else
@@ -219,7 +219,7 @@ public final class TMSemantic {
 
             final SighNode context = this.inferenceContext;
 
-            if (context instanceof VarDeclarationNode || context instanceof ArrayDeclarationNode)
+            if (context instanceof LetDeclarationNode || context instanceof ArrayDeclarationNode)
                 R.rule(node, "type")
                 .using(context, "type")
                 .by(Rule::copyFirst);
@@ -284,7 +284,7 @@ public final class TMSemantic {
     private void attrAccess(AttributeAccessNode node)
     {
         R.rule()
-        .using(node.stem, "type")
+        .using(node.parent, "type")
         .by(r -> {
             Type type = r.get(0);
 
@@ -298,23 +298,26 @@ public final class TMSemantic {
                 return;
             }
             
-            if (!(type instanceof StructType)) {
+            if (!(isInstanceOf(type, new Class[]{StructType.class, NotYetType.class}))) {
                 r.errorFor("Trying to access a field on an expression of type " + type,
                         node,
                         node.attr("type"));
                 return;
             }
 
+            if(type instanceof NotYetType){
+                //DeclarationNode attribute = new AttributeDeclarationNode();
+            }
+
             StructDeclarationNode decl = ((StructType) type).node;
 
-            for (DeclarationNode field: decl.attributes)
+            for (DeclarationNode attribute: decl.attributes)
             {
-                if (!field.name().equals(node.attrName)) continue;
+                if (!attribute.name().equals(node.attrName)) continue;
 
                 R.rule(node, "type")
-                .using(field, "type")
+                .using(attribute, "type")
                 .by(Rule::copyFirst);
-
                 return;
             }
 
@@ -449,7 +452,13 @@ public final class TMSemantic {
             Type left  = r.get(0);
             Type right = r.get(1);
 
-            if (node.operator == PLUS && (left instanceof StringType || right instanceof StringType))
+            if(left instanceof NotYetType && right instanceof NotYetType)
+                r.set(0, NotYetType.INSTANCE);
+            else if (left instanceof NotYetType)
+                r.set(0, right);
+            else if (right instanceof NotYetType)
+                r.set(0, left);
+            else if (node.operator == PLUS && (left instanceof StringType || right instanceof StringType))
                 r.set(0, StringType.INSTANCE);
             else if (isArithmetic(node.operator))
                 binaryArithmetic(r, node, left, right);
@@ -464,21 +473,7 @@ public final class TMSemantic {
 
     // ---------------------------------------------------------------------------------------------
 
-    private boolean isArithmetic (BinaryOperator op) {
-        return op == PLUS || op == TIMES || op == MINUS || op == DIVID || op == MODULO;
-    }
 
-    private boolean isComparison (BinaryOperator op) {
-        return op == GREATER || op == GREATER_EQUAL || op == LOWER || op == LOWER_EQUAL;
-    }
-
-    private boolean isLogic (BinaryOperator op) {
-        return op == OR || op == AND;
-    }
-
-    private boolean isEquality (BinaryOperator op) {
-        return op == EQUAL || op == DIFF;
-    }
 
     // ---------------------------------------------------------------------------------------------
 
@@ -631,6 +626,9 @@ public final class TMSemantic {
      */
     private static boolean isAssignableTo (Type a, Type b)
     {
+        if (a instanceof NotYetType || b instanceof NotYetType)
+            return true;
+
         if (a instanceof VoidType || b instanceof VoidType)
             return false;
 
@@ -651,6 +649,9 @@ public final class TMSemantic {
      */
     private static boolean isComparableTo (Type a, Type b)
     {
+        if (a instanceof NotYetType || b instanceof NotYetType)
+            return true;
+
         if (a instanceof VoidType || b instanceof VoidType)
             return false;
 
@@ -709,7 +710,7 @@ public final class TMSemantic {
 
     // ---------------------------------------------------------------------------------------------
 
-    private void letDecl(VarDeclarationNode node)
+    private void letDecl(LetDeclarationNode node)
     {
         this.inferenceContext = node;
 
@@ -742,6 +743,11 @@ public final class TMSemantic {
 
     private void attrDecl (AttributeDeclarationNode node)
     {
+        this.inferenceContext = node;
+
+        scope.declare(node.structName+"##"+node.name, node);
+        R.set(node, "scope", scope);
+
         R.rule(node, "type")
         .using(node.type, "value")
         .by(Rule::copyFirst);
@@ -754,6 +760,7 @@ public final class TMSemantic {
         scope.declare(node.name, node); // scope pushed by FunDeclarationNode
 
         R.rule(node, "type");
+        R.set(node, "type", NotYetType.INSTANCE);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -764,34 +771,36 @@ public final class TMSemantic {
         scope = new Scope(node, scope);
         R.set(node, "scope", scope);
 
-        /*Attribute[] dependencies = new Attribute[node.parameters.size() + 1];
+        Attribute[] dependencies = new Attribute[node.parameters.size() + 1];
         dependencies[0] = node.returnType.attr("value");
         forEachIndexed(node.parameters, (i, param) ->
-            dependencies[i + 1] = param.attr("type"));
+                dependencies[i + 1] = param.attr("type"));
 
         R.rule(node, "type")
-        .by (r -> {
-            Type[] paramTypes = new Type[node.parameters.size()];
-            for (int i = 0; i < paramTypes.length; ++i)
-                paramTypes[i] = r.get(i + 1);
-            r.set(0, new FunType(r.get(0), paramTypes));
-        });
+                .using(dependencies)
+                .by (r -> {
+                    Type[] paramTypes = new Type[node.parameters.size()];
+                    for (int i = 0; i < paramTypes.length; ++i)
+                        paramTypes[i] = r.get(i + 1);
+                    r.set(0, new FunType(r.get(0), paramTypes));
+                });
 
         R.rule()
-        .using(node.fct_return.attr("returns"), node.returnType.attr("value"))
-        .by(r -> {
-            boolean returns = r.get(0);
-            Type returnType = r.get(1);
-            if (!returns && !(returnType instanceof VoidType))
-                r.error("Missing return in function.", node);
-            // NOTE: The returned value presence & type is checked in returnStmt().
-        });*/
+                .using(node.block.attr("returns"), node.returnType.attr("value"))
+                .by(r -> {
+                    boolean returns = r.get(0);
+                    Type returnType = r.get(1);
+                    if (!returns && !(returnType instanceof VoidType))
+                        r.error("Missing return in function.", node);
+                    // NOTE: The returned value presence & type is checked in returnStmt().
+                });
     }
 
     // ---------------------------------------------------------------------------------------------
 
     private void structDecl (StructDeclarationNode node) {
         scope.declare(node.name, node);
+        R.set(node, "scope", scope);
         R.set(node, "type", TypeType.INSTANCE);
         R.set(node, "declared", new StructType(node));
     }

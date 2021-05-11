@@ -1,1 +1,5 @@
-2The reference "f" was indeed in the map like Int
+3The reference "s" was indeed in the map as NotYet
+3The reference "s" was indeed in the map as NotYet
+9The reference "getDiff" was indeed in the map as NotYet
+.The reference "P" was indeed in the map as P
+TMSemantic.constructor

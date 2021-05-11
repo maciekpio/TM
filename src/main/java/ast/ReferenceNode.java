@@ -15,9 +15,10 @@ public final class ReferenceNode extends ExpressionNode
         this.name = Util.cast(name, String.class);
         this.type = typesMap.get(this.name);
         if(type != null){
-            System.out.printf("The reference \"%s\" was indeed in the map like %s%n", this.name, typesMap.get(this.name));
+            System.out.printf("The reference \"%s\" was indeed in the map as %s%n", this.name, typesMap.get(this.name));
         }else{
-            System.out.printf("The reference \"%s\" was not found in the map...%n", this.name);
+            throw new Error(String.format("The reference \"%s\" is not declared%n", this.name));
+            //System.out.printf("The reference \"%s\" was not found in the map...%n", this.name);
         }
         //System.out.printf("The reference \"%s\" was used !%n", this.name);
     }

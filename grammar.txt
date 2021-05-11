@@ -1,7 +1,7 @@
 // FONCTIONS
 
 def nom_de_la_fonction (argument1, argument2, ...){
-    statement;
+    statements;
     return ();
 }
 

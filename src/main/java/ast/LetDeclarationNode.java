@@ -4,17 +4,17 @@ import norswap.autumn.positions.Span;
 import norswap.utils.Util;
 import static utils_static.UtilStatic.*;
 
-public final class VarDeclarationNode extends DeclarationNode
+public final class LetDeclarationNode extends DeclarationNode
 {
     public final String name;
     public TypeNode type;
     public final ExpressionNode initializer;
 
-    public VarDeclarationNode (Span span, Object name, Object initializer) {
+    public LetDeclarationNode(Span span, Object name, Object initializer) {
         super(span);
         this.name = Util.cast(name, String.class);
         this.initializer = Util.cast(initializer, ExpressionNode.class);
-        this.type = whichTypeIs(span, this.initializer);
+        this.type = whichTypeNodeIs(span, this.initializer);
         typesMap.put(this.name, this.type.contents());
         System.out.printf("The current map is %s%n", typesMap.toString());
     }
@@ -35,7 +35,7 @@ public final class VarDeclarationNode extends DeclarationNode
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        VarDeclarationNode that = (VarDeclarationNode) o;
+        LetDeclarationNode that = (LetDeclarationNode) o;
         return name.equals(that.name) &&
                 type.equals(that.type) &&
                 initializer.equals(that.initializer);

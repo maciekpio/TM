@@ -19,6 +19,7 @@ public class StructDeclarationNode extends DeclarationNode
         this.attributes = Util.cast(attributes, List.class);
         typesMap.put(this.name, this.name);
         for (AttributeDeclarationNode attr : this.attributes) {
+            attr.structName = this.name;
             typesMap.put(this.name + "##" + attr.name(), attr.getType());
         }
     }
