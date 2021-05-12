@@ -20,6 +20,6 @@ public final class ArrayGetNode extends ExpressionNode
 
     @Override
     public String getType() {
-        return "Int";//TODO
+        return array.getType();
     }
 }

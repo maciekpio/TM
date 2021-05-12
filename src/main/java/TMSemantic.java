@@ -61,6 +61,7 @@ public final class TMSemantic {
         walker.register(ReferenceNode.class,            PRE_VISIT,  analysis::reference);
         walker.register(ConstructorNode.class,          PRE_VISIT,  analysis::constructor);
         walker.register(ArrayLiteralNode.class,         PRE_VISIT,  analysis::arrayLiteral);
+        walker.register(ArrayOfNode.class,              PRE_VISIT,  analysis::arrayOf);
         walker.register(ParenthesizedNode.class,        PRE_VISIT,  analysis::parenthesized);
         walker.register(AttributeAccessNode.class,      PRE_VISIT,  analysis::attrAccess);
         walker.register(ArrayGetNode.class,             PRE_VISIT,  analysis::arrayGet);
@@ -163,7 +164,7 @@ public final class TMSemantic {
                 r.set(node, "scope", ctx.scope);
                 r.set(node, "decl", decl);
 
-                if (decl instanceof LetDeclarationNode || decl instanceof ArrayDeclarationNode)
+                if (decl instanceof LetDeclarationNode)
                     r.errorFor("variable used before declaration: " + node.name,
                         node, node.attr("type"));
                 else
@@ -212,6 +213,29 @@ public final class TMSemantic {
 
     // ---------------------------------------------------------------------------------------------
 
+    private void arrayOf (ArrayOfNode node)
+    {
+        R.rule()
+        .using(node.length, "type")
+        .by(r -> {
+            Type type = r.get(0);
+            if (!(type instanceof IntType || type instanceof NotYetType))
+                r.error("Initializing an array using a non-int-valued expression as length.", node.length);
+            //r.set(0, type);
+        });
+
+        R.rule(node, "type")
+        .using(node.initializer, "type")
+        .by(r -> {
+            Type type = r.get(0);
+            if (type instanceof VoidType)
+                r.error("Void type is used as an initializer type of an array.", node.initializer);
+            r.set(0, new ArrayType(type));
+        });
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
     private void arrayLiteral (ArrayLiteralNode node)
     {
         if (node.components.size() == 0) { // []
@@ -219,7 +243,7 @@ public final class TMSemantic {
 
             final SighNode context = this.inferenceContext;
 
-            if (context instanceof LetDeclarationNode || context instanceof ArrayDeclarationNode)
+            if (context instanceof LetDeclarationNode)
                 R.rule(node, "type")
                 .using(context, "type")
                 .by(Rule::copyFirst);
@@ -232,7 +256,7 @@ public final class TMSemantic {
                 });
             }
             return;
-        }
+        }//NOT PERMITTED
 
         Attribute[] dependencies =
             node.components.stream().map(it -> it.attr("type")).toArray(Attribute[]::new);
@@ -337,7 +361,7 @@ public final class TMSemantic {
         .using(node.index, "type")
         .by(r -> {
             Type type = r.get(0);
-            if (!(type instanceof IntType))
+            if (!(type instanceof IntType || type instanceof NotYetType))
                 r.error("Indexing an array using a non-int-valued expression.", node.index);
         });
 

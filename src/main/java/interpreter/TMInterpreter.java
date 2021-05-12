@@ -65,6 +65,7 @@ public final class TMInterpreter
         visitor.register(ReferenceNode.class,            this::reference);
         visitor.register(ConstructorNode.class,          this::constructor);
         visitor.register(ArrayLiteralNode.class,         this::arrayLiteral);
+        visitor.register(ArrayOfNode.class,              this::arrayOf);
         visitor.register(ParenthesizedNode.class,        this::parenthesized);
         visitor.register(AttributeAccessNode.class,      this::attrAccess);//TODO prevent errors
         visitor.register(ArrayGetNode.class,             this::arrayGet);//TODO prevent errors
@@ -157,7 +158,26 @@ public final class TMInterpreter
     // ---------------------------------------------------------------------------------------------
 
     private Object[] arrayLiteral (ArrayLiteralNode node) {
-        return map(node.components, new Object[0], visitor);
+        Object [] map = map(node.components, new Object[0], visitor);
+        return map;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    private Object[] arrayOf (ArrayOfNode node) {
+        //Type lenType = reactor.get(node.length, "type");
+        Long len;
+        try{
+            len = get(node.length);
+        }
+        catch (ClassCastException e) {
+            throw new PassthroughException(new Throwable("Initializing an array using a non-int-valued expression as length."));
+        }
+
+        Object init = get(node.initializer);
+        Object[] map = new Object[Integer.parseInt(String.valueOf(len))];
+        Arrays.fill(map, init);
+        return map;
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -29,7 +29,7 @@ public final class RootScope extends Scope
     public final SyntheticDeclarationNode String = decl("String", TYPE);
     public final SyntheticDeclarationNode Void   = decl("Void",   TYPE);
     public final SyntheticDeclarationNode Type   = decl("Type",   TYPE);
-    public final SyntheticDeclarationNode NotYet   = decl("NotYet",   TYPE);
+    public final SyntheticDeclarationNode NotYet = decl("NotYet", TYPE);
 
     // root scope variables
     //public final SyntheticDeclarationNode _true  = decl("true",  VARIABLE);
@@ -39,8 +39,8 @@ public final class RootScope extends Scope
     // root scope functions
     public final SyntheticDeclarationNode print  = decl("print",  FUNCTION);
     public final SyntheticDeclarationNode rprint = decl("rprint", FUNCTION);
-    //public final SyntheticDeclarationNode main   = decl("main",   FUNCTION);
-    public final SyntheticDeclarationNode is     = decl("is",   FUNCTION);
+    public final SyntheticDeclarationNode is     = decl("is",     FUNCTION);
+    //public final SyntheticDeclarationNode array  = decl("array",  FUNCTION);
 
     // ---------------------------------------------------------------------------------------------
 
@@ -67,10 +67,9 @@ public final class RootScope extends Scope
         //reactor.set(_false, "type",       BoolType.INSTANCE);
         //reactor.set(_null,  "type",       NullType.INSTANCE);
 
-        reactor.set(print,  "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
-        reactor.set(rprint, "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
-        //reactor.set(main,   "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
-        reactor.set(is,     "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
+        reactor.set(print,  "type", new FunType(VoidType.INSTANCE, StringType.INSTANCE));
+        reactor.set(rprint, "type", new FunType(VoidType.INSTANCE, StringType.INSTANCE));
+        //reactor.set(is,     "type", new FunType(BoolType.INSTANCE, StringType.INSTANCE));
     }
 
     // ---------------------------------------------------------------------------------------------

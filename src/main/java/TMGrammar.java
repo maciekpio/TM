@@ -2,8 +2,6 @@ import ast.*;
 import norswap.autumn.Grammar;
 import norswap.autumn.actions.ActionContext;
 
-import java.util.ArrayList;
-
 public final class TMGrammar extends Grammar {
     // ==== LEXICAL ===========================================================
 
@@ -54,9 +52,10 @@ public final class TMGrammar extends Grammar {
     public rule _new         = reserved("new");
     public rule _return      = reserved("return");
     public rule _struct      = reserved("struct");
-    public rule _main        = reserved("main"); //.push($ -> str("main"));
+    public rule _main        = reserved("main");
     public rule _get         = reserved("get");
     public rule _put         = reserved("put");
+    public rule _arrayOf     = reserved("arrayOf");
 
     /*Reserved constants*/
     public rule _true        = reserved("true").push($ -> new BooleanLiteralNode($.span(), true));
@@ -64,8 +63,8 @@ public final class TMGrammar extends Grammar {
     public rule _anInt       = reserved("anInt").push($ -> new IntLiteralNode($.span(), 0));
     public rule _aFloat      = reserved("aFloat").push($ -> new FloatLiteralNode($.span(), 0.0));
     public rule _aString     = reserved("aString").push($ -> new StringLiteralNode($.span(), ""));
-    public rule _anArray     = reserved("anArray").push($ -> new ArrayLiteralNode($.span(),
-            new ArrayList<ExpressionNode>(){{ add(0, new IntLiteralNode($.span(), 0)); }}));//[0]
+    /*public rule _anArray     = reserved("anArray").push($ -> new ArrayLiteralNode($.span(),
+            new ArrayList<ExpressionNode>(){{ add(0, new IntLiteralNode($.span(), 0)); }}));//[0]*/
 
     //public rule _null         = reserved("null").as_val(null);
     //public rule _array      = reserved("array");
@@ -128,6 +127,13 @@ public final class TMGrammar extends Grammar {
             seq(LBRACKET, array_expressions, RBRACKET)
                     .push($ -> new ArrayLiteralNode($.span(), $.$[0]));
 
+    public rule array_of = lazy(() ->
+            seq(_arrayOf, LPAREN, this.expression, COLON, this.expression, RPAREN)
+                    .push($ -> new ArrayOfNode($.span(), $.$[0], $.$[1])));
+
+    public rule array_choice =
+            choice(array_of, array_literal);
+
     public rule basic_expression = choice(
             constructor,
             reference,
@@ -136,7 +142,7 @@ public final class TMGrammar extends Grammar {
             _anInt,
             _aFloat,
             _aString,
-            _anArray,
+            array_choice,
             //_null,
             fractional,
             integer,
@@ -150,7 +156,7 @@ public final class TMGrammar extends Grammar {
                     $ -> new AttributeAccessNode($.span(), $.$[0], $.$[1]))
             .suffix(seq(DOT, _get, LPAREN, lazy(() -> this.expression), RPAREN),
                     $ -> new ArrayGetNode($.span(), $.$[0], $.$[1]))
-            .suffix(seq(DOT, _put, LPAREN, lazy(() -> this.expression).sep_exact(2, COMMA), RPAREN),
+            .suffix(seq(DOT, _put, LPAREN, lazy(() -> this.expression).sep_exact(2, COLON), RPAREN),
                     $ -> new ArrayPutNode($.span(), $.$[0], $.$[1], $.$[2]))
             .suffix(lazy(() -> this.fct_call_args),
                     $ -> new FctCallNode($.span(), $.$[0], $.$[1]));

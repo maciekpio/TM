@@ -1,5 +1,6 @@
 package ast;
 
+import interpreter.Void;
 import norswap.autumn.positions.Span;
 import norswap.utils.Util;
 
@@ -22,6 +23,6 @@ public final class ArrayPutNode extends ExpressionNode
 
     @Override
     public String getType() {
-        return "array.put";//TODO
+        return "Void";
     }
 }

@@ -27,12 +27,11 @@ public final class ReferenceNode extends ExpressionNode
 
     @Override
     public String getType() {
-        if(type!=null) return type;
-        return "Type";
+        return type;
     }
 
     public void setType(String strType){
         System.out.printf("The type %s of the node reference \"%s\" was changed to %s%n", this.getType(), name, strType);
-        this.type = strType;
+        type = strType;
     }
 }

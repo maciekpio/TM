@@ -46,17 +46,21 @@ public class ArrayLiteralNode extends ExpressionNode
     @Override
     public String getType() {
 
-        if (components.get(0).getType().equals("Bool")) return "Bool";
-        if (components.get(0).getType().equals("String")) return "String";
+        String type = components.get(0).getType();
 
-        for (ExpressionNode contentExpression : components){
-            if (contentExpression.getType().equals("Type")){
-                return "Type";
+        if(type.equals("Bool") || type.equals("String") || type.equals("Float")) return type;
+
+        if(type.equals("Int")){
+            for (ExpressionNode contentExpression : components){
+                if (contentExpression.getType().equals("Type")){
+                    return "Type";
+                }
+                if (contentExpression.getType().equals("Float")){
+                    return "Float";
+                }
             }
-            if (contentExpression.getType().equals("Float")){
-                return "Float";
-            }
+            return "Int";
         }
-        return "Int";
+        return type;
     }
 }

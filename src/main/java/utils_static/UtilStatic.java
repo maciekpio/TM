@@ -36,10 +36,9 @@ public class UtilStatic {
         if (thatExpression==null) return new SimpleTypeNode(span, "Void");
 
         TypeNode type;
-        boolean isAnArray = (thatExpression instanceof ArrayLiteralNode);
-        SimpleTypeNode simpleTypeNode;
+        boolean isAnArray = (isInstanceOf(thatExpression, ArrayLiteralNode.class, ArrayOfNode.class));
 
-        simpleTypeNode = new SimpleTypeNode(span, thatExpression.getType());
+        SimpleTypeNode simpleTypeNode = new SimpleTypeNode(span, thatExpression.getType());
         if(isAnArray){
             type = Util.cast(new ArrayTypeNode(span, simpleTypeNode), TypeNode.class);
         }
