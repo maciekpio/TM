@@ -15,6 +15,7 @@ import norswap.utils.data.wrappers.Pair;
 import norswap.utils.visitors.Walker;
 import org.testng.annotations.Test;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import static org.testng.Assert.assertNotNull;
@@ -69,6 +70,7 @@ public final class InterpreterTests extends TestFixture {
         walker.walk(root);
         reactor.run();
         Set<SemanticError> errors = reactor.errors();
+        //List<SemanticError> errors = reactor.allErrors();
 
         if (!errors.isEmpty()) {
             LineMapString map = new LineMapString("<test>", input);
@@ -120,9 +122,75 @@ public final class InterpreterTests extends TestFixture {
     @Test
     public void testTests () {
         rule = grammar.root;
-        check("let x=anInt; main {x}", 0L);
-        check("struct P{x=anInt; y=anInt}; main{new P()}", point00);
-        check("struct P{x=1; y=2}; def getDiff(s) {return (s.x - s.y)}; main{getDiff(new P())}", -1L);
+        //check("let x=anInt; main {x}", 0L);
+        //check("struct P{x=anInt; y=anInt}; main{new P()}", point00);
+        /*check("struct P{x=aFloat; y=aFloat}\n" +
+                "struct P3D{x=aFloat; y=aFloat; z=aFloat}" +
+                "\n" +
+                "def abs(n){\n" +
+                "    if(n>=0){return (n)}\n" +
+                "    return (0-n);\n" +
+                "}\n" +
+                "\n" +
+                "def getManDiff(p1, p2) {\n" +
+                "   let dX = abs((p1.x - p2.x))\n" +
+                "   let dY = abs((p1.y - p2.y))\n" +
+                "   return (dX+dY)\n" +
+                "}\n" +
+                "\n" +
+                "main{getManDiff(new P(), new P3D(1.5, 2.5, 0.0))}", 4d);*/
+        /*check("struct P2D{\n" +
+                "    x=aFloat\n" +
+                "    y=aFloat\n" +
+                "}\n" +
+                "\n" +
+                "struct P3D{\n" +
+                "    x=aFloat\n" +
+                "    y=aFloat\n" +
+                "    z=aFloat\n" +
+                "}\n" +
+                "\n" +
+                "def abs(n){\n" +
+                "    if(n>=0){\n" +
+                "        return (n)\n" +
+                "    }\n" +
+                "    return (0-n)\n" +
+                "}\n" +
+                "\n" +
+                "def getManDiff(p1, p2) {\n" +
+                "   let dX = abs((p1.x - p2.x))\n" +
+                "   let dY = abs((p1.y - p2.y))\n" +
+                "   return (dX+dY)\n" +
+                "}\n" +
+                "\n" +
+                "main{\n" +
+                "    getManDiff(new P2D(), new P3D(1.5, 2.5, -2.0))\n" +
+                "}", 4d);*/
+        /*check("def abs(n){\n" +
+                "    if(n>=0){return (n)}\n" +
+                "    return (0-n);\n" +
+                "}\n" +
+                "\n" +
+                "def getManDiff(p2) {\n" +
+                "   let p1 = [0, 0]" +
+                "   let dX = abs((p1.get(0) - p2.get(0)))\n" +
+                "   let dY = abs((p1.get(1) - p2.get(1)))\n" +
+                "   return (dX+dY)\n" +
+                "}\n" +
+                "let a2 = [1.5, 2.5]"+
+                "main{" +
+                "   getManDiff(a2)" +
+                "}", 4d);*/
+        check("def transferTo(a1, a2) {\n" +
+                "   a1.put(0, a2.get(0)) " +
+                "   a1.put(1, a2.get(1)) " +
+                "}\n" +
+                "let arrayTarget = [aFloat, aFloat] " +
+                "let arrayFrom = [1.5, 2.5] " +
+                "transferTo(arrayTarget, arrayFrom) "+
+                "main{" +
+                "   print(arrayTarget + aString)" +
+                "}", null, "[1.5, 2.5]\r\n");
     }
 
     @Test

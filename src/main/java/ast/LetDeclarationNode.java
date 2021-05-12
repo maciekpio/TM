@@ -2,6 +2,8 @@ package ast;
 
 import norswap.autumn.positions.Span;
 import norswap.utils.Util;
+import utils_static.UtilStatic;
+
 import static utils_static.UtilStatic.*;
 
 public final class LetDeclarationNode extends DeclarationNode
@@ -14,7 +16,7 @@ public final class LetDeclarationNode extends DeclarationNode
         super(span);
         this.name = Util.cast(name, String.class);
         this.initializer = Util.cast(initializer, ExpressionNode.class);
-        this.type = whichTypeNodeIs(span, this.initializer);
+        this.type = UtilStatic.whichTypeIs(span, this.initializer);
         typesMap.put(this.name, this.type.contents());
         System.out.printf("The current map is %s%n", typesMap.toString());
     }

@@ -43,6 +43,7 @@ public final class TMGrammar extends Grammar {
     public rule RBRACKET     = word("]");
     public rule COMMA        = word(",");
     public rule DOT          = word(".");
+    public rule COLON        = word(":");
 
     /*Reserved words*/
     public rule _let         = reserved("let");
@@ -278,9 +279,12 @@ public final class TMGrammar extends Grammar {
             block_statements.at_least(0)
                     .as_list(StatementNode.class).push($ -> new BlockNode($.span(), $.$[0]));
 
+    public rule arg_type =
+            seq(COLON, reference);
+
     public rule fct_decl_arg =
-            seq(identifier)
-                    .push($ -> new ParameterNode($.span(), $.$[0]));
+            seq(identifier, arg_type.or_push_null())
+                    .push($ -> new ParameterNode($.span(), $.$[0], $.$[1]));
 
     public rule fct_decl_args_list =
             fct_decl_arg.sep(0, COMMA)

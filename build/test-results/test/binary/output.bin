@@ -1,5 +1,16 @@
-3The reference "s" was indeed in the map as NotYet
-3The reference "s" was indeed in the map as NotYet
-9The reference "getDiff" was indeed in the map as NotYet
-.The reference "P" was indeed in the map as P
-TMSemantic.constructor
+4The reference "a1" was indeed in the map as NotYet
+4The reference "a2" was indeed in the map as NotYet
++ArrayPut(.put a2.get(0) at 0) filter true
+4The reference "a1" was indeed in the map as NotYet
+4The reference "a2" was indeed in the map as NotYet
++ArrayPut(.put a2.get(1) at 1) filter true
+lThe current map is {a1=NotYet, a2=NotYet, print=Void, rprint=Void, arrayTarget=Float[], transferTo=NotYet}
+The current map is {a1=NotYet, a2=NotYet, print=Void, rprint=Void, arrayTarget=Float[], arrayFrom=Float[], transferTo=NotYet}
+<The reference "transferTo" was indeed in the map as NotYet
+>The reference "arrayTarget" was indeed in the map as Float[]
+<The reference "arrayFrom" was indeed in the map as Float[]
+&FctCall(transferTo(...)) filter true
+5The reference "print" was indeed in the map as Void
+>The reference "arrayTarget" was indeed in the map as Float[]
+"expected Float[] and got Float[]
+"expected Float[] and got Float[]

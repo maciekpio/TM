@@ -66,7 +66,7 @@ public final class TMSemantic {
         walker.register(ArrayGetNode.class,             PRE_VISIT,  analysis::arrayGet);
         walker.register(ArrayPutNode.class,             PRE_VISIT,  analysis::arrayPut);
         walker.register(FctCallNode.class,              PRE_VISIT,  analysis::fctCall);
-        walker.register(UnaryExpressionNode.class,      PRE_VISIT,  analysis::unaryExpression);
+        walker.register(UnaryExpressionNode.class,      PRE_VISIT,  analysis::unaryExpression);//TODO prevent NotYetType
         walker.register(BinaryExpressionNode.class,     PRE_VISIT,  analysis::binaryExpression);
         walker.register(AssignmentNode.class,           PRE_VISIT,  analysis::assignment);
 
@@ -288,6 +288,12 @@ public final class TMSemantic {
         .by(r -> {
             Type type = r.get(0);
 
+            if (type instanceof NotYetType) {
+                R.rule(node, "type")
+                .by(rr -> rr.set(0, NotYetType.INSTANCE));
+                return;
+            }
+
             if (type instanceof ArrayType) {
                 if (node.attrName.equals("length"))
                     R.rule(node, "type")
@@ -298,15 +304,11 @@ public final class TMSemantic {
                 return;
             }
             
-            if (!(isInstanceOf(type, new Class[]{StructType.class, NotYetType.class}))) {
+            if (!(type instanceof StructType)) {
                 r.errorFor("Trying to access a field on an expression of type " + type,
                         node,
                         node.attr("type"));
                 return;
-            }
-
-            if(type instanceof NotYetType){
-                //DeclarationNode attribute = new AttributeDeclarationNode();
             }
 
             StructDeclarationNode decl = ((StructType) type).node;
@@ -343,8 +345,10 @@ public final class TMSemantic {
         .using(node.array, "type")
         .by(r -> {
             Type type = r.get(0);
-            System.out.println("In TMSemantic.arrayGet => type : " + type.toString());
-            if (type instanceof ArrayType)
+            if (type instanceof NotYetType){
+                r.set(0, NotYetType.INSTANCE);
+            }
+            else if (type instanceof ArrayType)
                 r.set(0, ((ArrayType) type).componentType);
             else
                 r.error("Trying to index a non-array expression of type " + type, node);
@@ -354,22 +358,33 @@ public final class TMSemantic {
     private void arrayPut (ArrayPutNode node)
     {
         R.rule()
-                .using(node.index, "type")
-                .by(r -> {
-                    Type type = r.get(0);
-                    if (!(type instanceof IntType))
-                        r.error("Indexing an array using a non-int-valued expression.", node.index);
-                });
+        .using(node.index, "type")
+        .by(r -> {
+            Type type = r.get(0);
+            if (!(isInstanceOf(type, IntType.class, NotYetType.class)))
+                r.error("Indexing an array using a non-int-valued expression.", node.index);
+        });
 
         R.rule(node, "type")
-                .using(node.array, "type")
-                .by(r -> {
-                    Type type = r.get(0);
-                    if (type instanceof ArrayType)
-                        r.set(0, ((ArrayType) type).componentType);
-                    else
-                        r.error("Trying to index a non-array expression of type " + type, node);
-                });
+        .using(node.array.attr("type"), node.objectPut.attr("type"))
+        .by(r -> {
+            Type atype = r.get(0);
+            Type ptype = r.get(1);
+
+            if (!atLeastOneNYT(atype, ptype)){
+                if (atype instanceof ArrayType){
+                    Type ctype = ((ArrayType) atype).componentType;
+                    r.set(0, ctype);
+                    if (!ptype.name().equals(ctype.name()))
+                        r.error(String.format("Trying to put %s type in an array of %s", ptype.name(), ctype.name()), node);
+                    return;
+                }
+                else{
+                    r.error("Trying to index a non-array expression of type " + atype, node);
+                }
+            }
+            r.set(0, NotYetType.INSTANCE);
+        });
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -452,12 +467,8 @@ public final class TMSemantic {
             Type left  = r.get(0);
             Type right = r.get(1);
 
-            if(left instanceof NotYetType && right instanceof NotYetType)
+            if(left instanceof NotYetType && right instanceof NotYetType)//TODO
                 r.set(0, NotYetType.INSTANCE);
-            else if (left instanceof NotYetType)
-                r.set(0, right);
-            else if (right instanceof NotYetType)
-                r.set(0, left);
             else if (node.operator == PLUS && (left instanceof StringType || right instanceof StringType))
                 r.set(0, StringType.INSTANCE);
             else if (isArithmetic(node.operator))
@@ -479,7 +490,11 @@ public final class TMSemantic {
 
     private void binaryArithmetic (Rule r, BinaryExpressionNode node, Type left, Type right)
     {
-        if (left instanceof IntType)
+        if (isInstanceOf(left, NotYetType.class, FloatType.class) && isInstanceOf(right, NotYetType.class, FloatType.class))
+            r.set(0, FloatType.INSTANCE);
+        else if (atLeastOneNYT(left, right))
+            r.set(0, NotYetType.INSTANCE);
+        else if (left instanceof IntType)
             if (right instanceof IntType)
                 r.set(0, IntType.INSTANCE);
             else if (right instanceof FloatType)
@@ -507,10 +522,12 @@ public final class TMSemantic {
     {
         r.set(0, BoolType.INSTANCE);
 
-        if (!(left instanceof IntType) && !(left instanceof FloatType))
+        if (atLeastOneNYT(left, right)) return;
+
+        if (!(isNumber(left)))
             r.errorFor("Attempting to perform arithmetic comparison on non-numeric type: " + left,
                 node.left);
-        if (!(right instanceof IntType) && !(right instanceof FloatType))
+        if (!(isNumber(right)))
             r.errorFor("Attempting to perform arithmetic comparison on non-numeric type: " + right,
                 node.right);
     }
@@ -531,6 +548,8 @@ public final class TMSemantic {
     private void binaryLogic (Rule r, BinaryExpressionNode node, Type left, Type right)
     {
         r.set(0, BoolType.INSTANCE);
+
+        if (atLeastOneNYT(left, right)) return;
 
         if (!(left instanceof BoolType))
             r.errorFor("Attempting to perform binary logic on non-boolean type: " + left,
@@ -626,7 +645,7 @@ public final class TMSemantic {
      */
     private static boolean isAssignableTo (Type a, Type b)
     {
-        if (a instanceof NotYetType || b instanceof NotYetType)
+        if (atLeastOneNYT(a, b))
             return true;
 
         if (a instanceof VoidType || b instanceof VoidType)
@@ -649,7 +668,7 @@ public final class TMSemantic {
      */
     private static boolean isComparableTo (Type a, Type b)
     {
-        if (a instanceof NotYetType || b instanceof NotYetType)
+        if (atLeastOneNYT(a, b))
             return true;
 
         if (a instanceof VoidType || b instanceof VoidType)
@@ -757,10 +776,22 @@ public final class TMSemantic {
 
     private void parameter (ParameterNode node)
     {
+        R.set(node, "scope", scope);
         scope.declare(node.name, node); // scope pushed by FunDeclarationNode
 
-        R.rule(node, "type");
-        R.set(node, "type", NotYetType.INSTANCE);
+        String str = node.getType();
+
+        if(node.getType().equals("NotYet")){
+            R.rule(node, "type");
+            R.set(node, "type", NotYetType.INSTANCE);
+        }
+        else{
+            R.rule(node, "type")
+            .using(node.type, "value")
+            .by(Rule::copyFirst);
+        }
+
+
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -771,21 +802,27 @@ public final class TMSemantic {
         scope = new Scope(node, scope);
         R.set(node, "scope", scope);
 
-        Attribute[] dependencies = new Attribute[node.parameters.size() + 1];
+        Attribute[] dependencies = new Attribute[node.parameters.size() + 2];
         dependencies[0] = node.returnType.attr("value");
+        dependencies[1] = node.block.attr("returns");
+
         forEachIndexed(node.parameters, (i, param) ->
-                dependencies[i + 1] = param.attr("type"));
+                dependencies[i + 2] = param.attr("type"));
 
         R.rule(node, "type")
                 .using(dependencies)
                 .by (r -> {
+                    boolean returns = r.get(1);
+                    Type reType = returns ? r.get(0) : VoidType.INSTANCE;
+
                     Type[] paramTypes = new Type[node.parameters.size()];
                     for (int i = 0; i < paramTypes.length; ++i)
-                        paramTypes[i] = r.get(i + 1);
-                    r.set(0, new FunType(r.get(0), paramTypes));
+                        paramTypes[i] = r.get(i + 2);
+
+                    r.set(0, new FunType(reType, paramTypes));
                 });
 
-        R.rule()
+        /*R.rule()
                 .using(node.block.attr("returns"), node.returnType.attr("value"))
                 .by(r -> {
                     boolean returns = r.get(0);
@@ -793,7 +830,7 @@ public final class TMSemantic {
                     if (!returns && !(returnType instanceof VoidType))
                         r.error("Missing return in function.", node);
                     // NOTE: The returned value presence & type is checked in returnStmt().
-                });
+                });*/
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -66,13 +66,13 @@ public final class TMInterpreter
         visitor.register(ConstructorNode.class,          this::constructor);
         visitor.register(ArrayLiteralNode.class,         this::arrayLiteral);
         visitor.register(ParenthesizedNode.class,        this::parenthesized);
-        visitor.register(AttributeAccessNode.class,      this::attrAccess);
-        visitor.register(ArrayGetNode.class,             this::arrayGet);
-        visitor.register(ArrayPutNode.class,             this::arrayPut);
+        visitor.register(AttributeAccessNode.class,      this::attrAccess);//TODO prevent errors
+        visitor.register(ArrayGetNode.class,             this::arrayGet);//TODO prevent errors
+        visitor.register(ArrayPutNode.class,             this::arrayPut);//TODO prevent errors
         visitor.register(FctCallNode.class,              this::fctCall);
-        visitor.register(UnaryExpressionNode.class,      this::unaryExpression);
+        visitor.register(UnaryExpressionNode.class,      this::unaryExpression);//TODO prevent errors
         visitor.register(BinaryExpressionNode.class,     this::binaryExpression);
-        visitor.register(AssignmentNode.class,           this::assignment);
+        visitor.register(AssignmentNode.class,           this::assignment);//TODO prevent errors
         visitor.register(StructDeclarationNode.class,    this::structDecl);
 
         // statement groups & declarations
@@ -168,7 +168,7 @@ public final class TMInterpreter
         Type rightType = reactor.get(node.right, "type");
         Object left  = get(node.left);
         Object right = get(node.right);
-        boolean notYetTyped = (leftType instanceof NotYetType || rightType instanceof NotYetType);
+        boolean notYetTyped = (atLeastOneNYT(leftType, rightType));
         boolean stringFormatted = (node.operator == BinaryOperator.PLUS && (left instanceof String || right instanceof String));
 
         if(stringFormatted) return convertToString(left) + convertToString(right);
@@ -176,19 +176,14 @@ public final class TMInterpreter
         if(notYetTyped) {
             String errorCause = String.format("%s %s %s not permitted", left.toString(), node.operator.string, right.toString());
             String str = (left.getClass().toString() + " --- " + right.getClass().toString());
+
             if (isArithmetic(node.operator) || isComparison(node.operator)) {
-                if (!isInstanceOf(left, new Class[]{Long.class, Double.class}) || !isInstanceOf(right, new Class[]{Long.class, Double.class})) {
+                if (!isInstanceOf(left, Long.class, Double.class) || !isInstanceOf(right, Long.class, Double.class))
                     throw new PassthroughException(new Throwable(errorCause));
-                }
             } else if (isLogic(node.operator)) {
-                if (!(left instanceof Boolean && right instanceof Boolean)) {
+                if (!(left instanceof Boolean && right instanceof Boolean))
                     throw new PassthroughException(new Throwable(errorCause));
-                }
-            } /*else if (isEquality(node.operator)) {
-                if(left instanceof String || right instanceof String){
-                    throw new PassthroughException(new Throwable(errorCause));
-                }
-            }*/
+            }
         }
 
         if(notYetTyped){
@@ -499,7 +494,7 @@ public final class TMInterpreter
         assert name.equals("print"); // only one at the moment
         String out = convertToString(args[0]);
         System.out.println(out);
-        return out;
+        return null;
     }
 
     // ---------------------------------------------------------------------------------------------

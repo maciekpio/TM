@@ -9,11 +9,20 @@ public final class ParameterNode extends DeclarationNode
     public final String name;
     public final TypeNode type;
 
-    public ParameterNode (Span span, Object name) {
+    public ParameterNode (Span span, Object name, Object maybeType) {
         super(span);
         this.name = Util.cast(name, String.class);
-        this.type = Util.cast(new SimpleTypeNode(span, "NotYet"), TypeNode.class);
-        UtilStatic.typesMap.put(this.name, "NotYet");
+
+        if(maybeType==null){
+            this.type = Util.cast(new SimpleTypeNode(span, "NotYet"), TypeNode.class);
+            UtilStatic.typesMap.put(this.name, "NotYet");
+        }
+        else {
+            this.type = new SimpleTypeNode(span, ((ReferenceNode)maybeType).name);
+            UtilStatic.typesMap.put(this.name, type.contents());
+        }
+
+
     }
 
     @Override public String name () {

@@ -73,3 +73,49 @@ rprint(error);
 
 //MAIN
 main{}
+
+//Tests
+-----
+struct P{x=aFloat; y=aFloat}
+
+def abs(n){
+    if(n>=0){return (n)}
+    return (0-n);
+}
+
+def getManDiff(p1:P, p2:P) {
+   let dX = abs((p1.x - p2.x))
+   let dY = abs((p1.y - p2.y))
+   return (dX+dY)
+}
+
+main{getDiff(new P(), new P(1, 2))}
+
+-----
+struct P2D{
+    x=aFloat
+    y=aFloat
+}
+
+struct P3D{
+    x=aFloat
+    y=aFloat
+    z=aFloat
+}
+
+def abs(n){
+    if(n>=0){
+        return (n)
+    }
+    return (0-n)
+}
+
+def getManDiff(p1, p2) {
+   let dX = abs((p1.x - p2.x))
+   let dY = abs((p1.y - p2.y))
+   return (dX+dY)
+}
+
+main{
+    getManDiff(new P2D(), new P3D(1.5, 2.5, -2.0))
+}

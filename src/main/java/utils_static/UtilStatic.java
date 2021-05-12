@@ -29,7 +29,7 @@ public class UtilStatic {
      * @param thatExpression is any expression.
      * @return a {@link TypeNode} that represents the type of the expression.
      */
-    public static TypeNode whichTypeNodeIs(Span thatSpan, ExpressionNode thatExpression)
+    public static TypeNode whichTypeIs(Span thatSpan, ExpressionNode thatExpression)
     {
         Span span = new Span(thatSpan.start, thatSpan.start);
         /*If "thatExpression" is the return () of a function, the type's function is void*/
@@ -84,10 +84,25 @@ public class UtilStatic {
     }
 
     /**@return true if {@param o} is one of the instances of all the class types in {@param types}.*/
-    public static boolean isInstanceOf (Object o, Class[] types){
+    public static boolean isInstanceOf (Object o, Class... types){
         boolean b;
         for (Object type : types){
             b = (o.getClass() == type);
+            if(b) return true;
+        }
+        return false;
+    }
+
+    /**@return true if the object is numeric*/
+    public static boolean isNumber (Object o){
+        return (isInstanceOf(o, IntType.class, FloatType.class, Long.class, Double.class));
+    }
+
+    /**@return true if at least one these object is not yet typed*/
+    public static boolean atLeastOneNYT(Object... types){
+        boolean b;
+        for (Object type : types){
+            b = (type instanceof NotYetType);
             if(b) return true;
         }
         return false;

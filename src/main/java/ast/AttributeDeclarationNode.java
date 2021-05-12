@@ -7,7 +7,7 @@ import utils_static.UtilStatic;
 public final class AttributeDeclarationNode extends DeclarationNode
 {
     public final String name;
-    public final ExpressionNode initializer;
+    public ExpressionNode initializer;
     public TypeNode type;
     public String structName;
 
@@ -15,7 +15,13 @@ public final class AttributeDeclarationNode extends DeclarationNode
         super(span);
         this.name = Util.cast(name, String.class);
         this.initializer = Util.cast(initializer, ExpressionNode.class);
-        this.type = UtilStatic.whichTypeNodeIs(span, this.initializer);
+        this.type = UtilStatic.whichTypeIs(span, this.initializer);
+    }
+
+    public AttributeDeclarationNode(Span span, String name) {
+        super(span);
+        this.name = name;
+        this.type = new SimpleTypeNode(span, "NotYetType");
     }
 
     @Override public String name () {
@@ -32,6 +38,8 @@ public final class AttributeDeclarationNode extends DeclarationNode
 
     @Override
     public String getType() {
-        return this.type.contents();
+        return type!=null
+            ? this.type.contents()
+            : "NotYetType";
     }
 }
