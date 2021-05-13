@@ -1,7 +1,1 @@
-5The reference "len" was indeed in the map as NotYet
-5The reference "len" was indeed in the map as NotYet
-5The reference "print" was indeed in the map as Void
-;The reference "createTab" was indeed in the map as NotYet
-XThe current map is {print=Void, rprint=Void, createTab=NotYet, len=NotYet, tab=Bool[]}
-5The reference "tab" was indeed in the map as Bool[]
- expected Bool[] and got Bool[]
+.The reference "S" was indeed in the map as S

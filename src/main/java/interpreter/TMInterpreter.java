@@ -300,6 +300,7 @@ public final class TMInterpreter
                 case LOWER_EQUAL:   return fleft <= fright;
                 case EQUAL:         return fleft == fright;
                 case DIFF:          return fleft != fright;
+                case POW:           return Math.pow(fleft,fright);
                 default:
                     throw new Error("should not reach here");
             }
@@ -316,6 +317,7 @@ public final class TMInterpreter
                 case LOWER_EQUAL:   return ileft <= iright;
                 case EQUAL:         return ileft == iright;
                 case DIFF:          return ileft != iright;
+                case POW:           return Math.round(Math.pow(ileft,iright));
                 default:
                     throw new Error("should not reach here");
             }

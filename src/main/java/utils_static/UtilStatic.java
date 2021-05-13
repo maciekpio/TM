@@ -64,7 +64,8 @@ public class UtilStatic {
 
     /**Works with numbers*/
     public static boolean isArithmetic (BinaryOperator op) {
-        return op == PLUS || op == TIMES || op == MINUS || op == DIVID || op == MODULO;
+        return op == PLUS || op == TIMES || op == MINUS || op == DIVID || op == MODULO
+                || op == POW;
     }
 
     /**Works with numbers*/

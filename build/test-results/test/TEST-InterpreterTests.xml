@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="InterpreterTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-05-13T09:17:30" hostname="LAPTOP-TPLG6GOL" time="0.455">
+  <properties/>
+  <testcase name="testTypeAsValues" classname="InterpreterTests" time="0.455"/>
+  <system-out><![CDATA[The reference "S" was indeed in the map as S
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

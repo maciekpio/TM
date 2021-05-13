@@ -19,6 +19,7 @@ public final class TMGrammar extends Grammar {
 
     /*Useful signs*/
     public rule TIMES        = word("*");
+    public rule POW          = word("**");
     public rule DIVID        = word("/");
     public rule MODULO       = word("%");
     public rule PLUS         = word("+");
@@ -65,12 +66,6 @@ public final class TMGrammar extends Grammar {
     public rule _aString     = reserved("aString").push($ -> new StringLiteralNode($.span(), ""));
     /*public rule _anArray     = reserved("anArray").push($ -> new ArrayLiteralNode($.span(),
             new ArrayList<ExpressionNode>(){{ add(0, new IntLiteralNode($.span(), 0)); }}));//[0]*/
-
-    //public rule _null         = reserved("null").as_val(null);
-    //public rule _array      = reserved("array");
-    //public rule _attr       = reserved("attr");
-    //public rule _print      = reserved("print");
-    //public rule _rprint     = reserved("rprint");
 
     public rule number =
             seq(opt('-'), choice('0', digit.at_least(1)));
@@ -171,6 +166,8 @@ public final class TMGrammar extends Grammar {
             DIVID.as_val(BinaryOperator.DIVID),
             MODULO.as_val(BinaryOperator.MODULO));
 
+    public rule pow_op = POW.as_val(BinaryOperator.POW);
+
     public rule add_op = choice(
             PLUS.as_val(BinaryOperator.PLUS),
             MINUS.as_val(BinaryOperator.MINUS));
@@ -183,8 +180,13 @@ public final class TMGrammar extends Grammar {
             LOWER.as_val(BinaryOperator.LOWER),
             GREATER.as_val(BinaryOperator.GREATER));
 
-    public rule mult_expr = left_expression()
+    public rule pow_expr = left_expression()
             .operand(prefix_expression)
+            .infix(pow_op,
+                    $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
+
+    public rule mult_expr = left_expression()
+            .operand(pow_expr)
             .infix(mult_op,
                     $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 
