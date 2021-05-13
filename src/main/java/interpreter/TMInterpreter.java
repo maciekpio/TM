@@ -513,9 +513,16 @@ public final class TMInterpreter
 
     private Object builtin (String name, Object[] args)
     {
-        assert name.equals("print"); // only one at the moment
-        String out = convertToString(args[0]);
-        System.out.println(out);
+        switch (name){
+            case "print":
+                System.out.println(convertToString(args[0]));
+                break;
+            case "rprint":
+                System.out.println("Error: "+convertToString(args[0]));
+                break;
+            default:
+                throw new Error("should not reach here");
+        }
         return null;
     }
 

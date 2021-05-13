@@ -201,6 +201,17 @@ public final class InterpreterTests extends TestFixture {
                 "main{tab == [false, false]}", true);
     }
 
+    // ---------------------------------------------------------------------------------------------
+
+    @Test
+    public void testPrint(){
+        rule=grammar.root;
+        check("main{ print(\"hello\")}", null, "hello\r\n");
+        check("main{ rprint(\"Arithmetic error\")}", null, "Error: Arithmetic error\r\n");
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
     @Test
     public void testLiteralsAndUnary () {
         checkExpr("42", 42L);
