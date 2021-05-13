@@ -197,6 +197,8 @@ public final class InterpreterTests extends TestFixture {
                 "main{" +
                 "   print(createTab(3))" +
                 "}", null, "[3, 3, 3]\r\n");
+        check("let tab = arrayOf(false:2)" +
+                "main{tab == [false, false]}", true);
     }
 
     @Test

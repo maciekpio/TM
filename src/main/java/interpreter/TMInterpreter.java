@@ -175,7 +175,7 @@ public final class TMInterpreter
         }
 
         Object init = get(node.initializer);
-        Object[] map = new Object[Integer.parseInt(String.valueOf(len))];
+        Object[] map = new Object[Math.toIntExact(len)];
         Arrays.fill(map, init);
         return map;
     }
