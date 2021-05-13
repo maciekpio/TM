@@ -1,87 +1,7 @@
-7The current map is {print=Void, rprint=Void, x=Int[]}
-2The reference "x" was indeed in the map as Int[]
-#ArrayPut(.put 3 at 0) filter true
-2The reference "x" was indeed in the map as Int[]
-expected Int[] and got Int[]
-7The current map is {print=Void, rprint=Void, x=Int[]}
-2The reference "x" was indeed in the map as Int[]
-#ArrayPut(.put 3 at 1) filter true
-2The reference "x" was indeed in the map as Int[]
-expected Int[] and got Int[]
-.The reference "P" was indeed in the map as P
-TMSemantic.constructor
-.The reference "P" was indeed in the map as P
-UThe current map is {P=P, p=P, print=Void, rprint=Void, x=Int[], P##x=Int, P##y=Int}
-.The reference "p" was indeed in the map as P
-"Assignment(p.y = 42) filter true
-.The reference "p" was indeed in the map as P
-TMSemantic.constructor
-expected P and got P
-(Assignement of (Int) p.y with (Int) 42
-3The reference "a" was indeed in the map as NotYet
-3The reference "b" was indeed in the map as NotYet
-5The reference "add" was indeed in the map as NotYet
-3The reference "a" was indeed in the map as NotYet
-3The reference "b" was indeed in the map as NotYet
-5The reference "add" was indeed in the map as NotYet
-3The reference "a" was indeed in the map as NotYet
-3The reference "b" was indeed in the map as NotYet
-8The reference "equals" was indeed in the map as NotYet
-6The reference "Point" was indeed in the map as Point
-3The reference "x" was indeed in the map as NotYet
-6The reference "setX" was indeed in the map as NotYet
-TMSemantic.constructor
-6The reference "Point" was indeed in the map as Point
-TMSemantic.constructor
-ÇThe current map is {add=NotYet, a=NotYet, b=NotYet, setX=NotYet, Point##y=Int, Point##x=Int, Point=Point, P##x=Int, P##y=Int, P=P, p=P, str=String, print=Void, rprint=Void, equals=NotYet, x=NotYet}
-5The reference "print" was indeed in the map as Void
-5The reference "str" was indeed in the map as String
- expected String and got String
-ÄThe current map is {add=NotYet, a=NotYet, b=NotYet, setX=NotYet, Point##y=Int, Point##x=Int, Point=Point, P##x=Int, P##y=Int, P=P, p=P, str=String, print=Void, rprint=Void, equals=NotYet, x=Int}
-0The reference "x" was indeed in the map as Int
-expected Int and got Int
-ËThe current map is {add=NotYet, a=NotYet, b=NotYet, setX=NotYet, Point##y=Int, Point##x=Int, i=Int, Point=Point, P##x=Int, P##y=Int, P=P, p=P, str=String, print=Void, rprint=Void, equals=NotYet, x=Int}
-0The reference "i" was indeed in the map as Int
-5The reference "print" was indeed in the map as Void
-0The reference "i" was indeed in the map as Int
-!FctCall(print(...)) filter true
-0The reference "i" was indeed in the map as Int
-0The reference "i" was indeed in the map as Int
-#Assignment(i = i + 1) filter true
-expected Int and got Int
-)Assignement of (Int) i with (Int) i + 1
-5The reference "print" was indeed in the map as Void
-!FctCall(print(...)) filter true
-5The reference "print" was indeed in the map as Void
-!FctCall(print(...)) filter true
-5The reference "print" was indeed in the map as Void
-!FctCall(print(...)) filter true
-5The reference "print" was indeed in the map as Void
-!FctCall(print(...)) filter true
-5The reference "print" was indeed in the map as Void
-!FctCall(print(...)) filter true
-5The reference "print" was indeed in the map as Void
-!FctCall(print(...)) filter true
-ËThe current map is {add=NotYet, a=NotYet, b=NotYet, setX=NotYet, Point##y=Int, Point##x=Int, i=Int, Point=Point, P##x=Int, P##y=Int, P=P, p=P, str=String, print=Void, rprint=Void, equals=NotYet, x=Int}
-5The reference "print" was indeed in the map as Void
-0The reference "x" was indeed in the map as Int
-!FctCall(print(...)) filter true
-ËThe current map is {add=NotYet, a=NotYet, b=NotYet, setX=NotYet, Point##y=Int, Point##x=Int, i=Int, Point=Point, P##x=Int, P##y=Int, P=P, p=P, str=String, print=Void, rprint=Void, equals=NotYet, x=Int}
-5The reference "print" was indeed in the map as Void
-0The reference "x" was indeed in the map as Int
-!FctCall(print(...)) filter true
-expected Int and got Int
-expected Int and got Int
-	5The reference "len" was indeed in the map as NotYet
-	5The reference "len" was indeed in the map as NotYet
-	5The reference "print" was indeed in the map as Void
-	;The reference "createTab" was indeed in the map as NotYet
-
-.The reference "S" was indeed in the map as S
-3The reference "f" was indeed in the map as NotYet
-‡The current map is {add=NotYet, a=NotYet, b=NotYet, setX=NotYet, f=NotYet, Point##y=Int, Point##x=Int, i=Int, Point=Point, P##x=Int, P##y=Int, P=P, p=P, str=String, print=Void, rprint=Void, createTab=NotYet, S=S, len=NotYet, equals=NotYet, x=Float, S##attr=Int}
-2The reference "x" was indeed in the map as Float
-Assignment(x = 2) filter true
-2The reference "x" was indeed in the map as Float
-expected Float and got Float
-'Assignement of (Float) x with (Int) 2
+5The reference "len" was indeed in the map as NotYet
+5The reference "len" was indeed in the map as NotYet
+5The reference "print" was indeed in the map as Void
+;The reference "createTab" was indeed in the map as NotYet
+XThe current map is {print=Void, rprint=Void, createTab=NotYet, len=NotYet, tab=Bool[]}
+5The reference "tab" was indeed in the map as Bool[]
+ expected Bool[] and got Bool[]
