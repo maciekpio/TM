@@ -14,6 +14,7 @@ import norswap.utils.visitors.ValuedVisitor;
 
 import java.util.*;
 
+import static java.lang.Integer.parseInt;
 import static norswap.utils.Util.cast;
 import static norswap.utils.Vanilla.coIterate;
 import static norswap.utils.Vanilla.map;
@@ -520,6 +521,14 @@ public final class TMInterpreter
             case "rprint":
                 System.out.println("Error: "+convertToString(args[0]));
                 break;
+            case "parseInt":
+                try{
+                    return parseInt(convertToString(args[0]));
+                }catch (NumberFormatException e){
+                    throw new PassthroughException(new Throwable("String passed in args cannot be converted to int"));
+                }
+
+
             default:
                 throw new Error("should not reach here");
         }

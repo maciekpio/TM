@@ -414,8 +414,9 @@ public class GrammarTests extends AutumnTestFixture {
                     "}";
 
     @Test
-    public void testFib() {
+    public void testProg() {
         this.rule = TMParser.root;
+
         success(fib);
         success(fizzbuzz);
         success(prime);

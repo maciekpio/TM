@@ -1,4 +1,5 @@
 import ast.SighNode;
+import interpreter.PassthroughException;
 import norswap.autumn.AutumnTestFixture;
 import norswap.autumn.Grammar;
 import norswap.autumn.Grammar.rule;
@@ -204,10 +205,12 @@ public final class InterpreterTests extends TestFixture {
     // ---------------------------------------------------------------------------------------------
 
     @Test
-    public void testPrint(){
+    public void testBuiltIn(){
         rule=grammar.root;
         check("main{ print(\"hello\")}", null, "hello\r\n");
         check("main{ rprint(\"Arithmetic error\")}", null, "Error: Arithmetic error\r\n");
+        check("main{ parseInt(\"5\")}",  5,null);
+        checkThrows("main{ parseInt(\"BEBEW\")}",  Throwable.class);
     }
 
     // ---------------------------------------------------------------------------------------------
