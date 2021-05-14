@@ -20,6 +20,7 @@ public class UtilStatic {
         put("print", "Void");
         put("rprint", "Void");
         put("parseInt", "Int");
+        put("args", "String");
     }};
 
     public static HashMap<String, Boolean> pinnedMap = new HashMap<>();

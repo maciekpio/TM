@@ -195,13 +195,13 @@ public final class InterpreterTests extends TestFixture {
                 "transferTo(arrayTarget, arrayFrom) "+
                 "main{" +
                 "   print(arrayTarget + aString)" +
-                "}", null, "[1.5, 2.5]\r\n");
+                "}", null, "[1.5, 2.5]\n");
         check("def createTab(len){" +
                 "   return (arrayOf(len:len))" +
                 "}" +
                 "main{" +
                 "   print(createTab(3))" +
-                "}", null, "[3, 3, 3]\r\n");
+                "}", null, "[3, 3, 3]\n");
         check("def abs(n){\n" +
                 "    if(n>=0){return (n)}\n" +
                 "    return (0-n);\n" +
@@ -246,8 +246,8 @@ public final class InterpreterTests extends TestFixture {
     @Test
     public void testBuiltIn(){
         rule=grammar.root;
-        check("main{ print(\"hello\")}", null, "hello\r\n");
-        check("main{ rprint(\"Arithmetic error\")}", null, "Error: Arithmetic error\r\n");
+        check("main{ print(\"hello\")}", null, "hello\n");
+        check("main{ rprint(\"Arithmetic error\")}", null, "Error: Arithmetic error\n");
         check("main{ parseInt(\"5\")}",  5,null);
         checkThrows("main{ parseInt(\"text\")}",  NumberFormatException.class);
     }
@@ -380,25 +380,25 @@ public final class InterpreterTests extends TestFixture {
         check("main{1}", 1L);
         check("main{1}; main{2}", 1L);
 
-        check("print(\"a\")", null, "a\r\n");
-        check("print(\"a\" + 1)", null, "a1\r\n");
-        check("print(\"a\"); print(\"b\")", null, "a\r\nb\r\n");
+        check("print(\"a\")", null, "a\n");
+        check("print(\"a\" + 1)", null, "a1\n");
+        check("print(\"a\"); print(\"b\")", null, "a\nb\n");
 
-        check("print(\"a\"); print(\"b\")", null, "a\r\nb\r\n");
+        check("print(\"a\"); print(\"b\")", null, "a\nb\n");
 
         check(
             "let x = 1;" +
                    "print(\"\" + x);" +
                    "let x = 2;" +
                    "print(\"\" + x)",
-            null, "1\r\n2\r\n");
+            null, "1\n2\n");
     }
 
     // ---------------------------------------------------------------------------------------------
 
     @Test
     public void testCalls () {
-        rule = grammar.root;//TODO
+        rule = grammar.root;
 
         check(
                 "def add (a, b) { return (a + b) } " +
@@ -424,7 +424,7 @@ public final class InterpreterTests extends TestFixture {
                 "main{new Point(1, 2)}",
                 point12);
 
-        check("let str = \"null\"; main{print(str + 1)}", null, "null1\r\n");
+        check("let str = \"null\"; main{print(str + 1)}", null, "null1\n");
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -473,7 +473,7 @@ public final class InterpreterTests extends TestFixture {
         check("if (false) {return (1)} else{ if (true) {return (2)} else {return (3)}} ", 2L);
         check("if (false) {return (1)} else{ if (false) {return (2)} else {return (3)}} ", 3L);
 
-        check("let i = 0; while (i < 3) { print(\"\" + i); i = i + 1 } ", null, "0\r\n1\r\n2\r\n");
+        check("let i = 0; while (i < 3) { print(\"\" + i); i = i + 1 } ", null, "0\n1\n2\n");
     }
 
     // ---------------------------------------------------------------------------------------------

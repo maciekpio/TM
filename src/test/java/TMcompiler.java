@@ -28,13 +28,13 @@ public final class TMcompiler
 
         if (args.length == 0){
             String file = "TM_code_samples.tm";
-            path = Paths.get("examples/", file).toAbsolutePath().toString();
+            path = Paths.get("src/test/java/", file).toAbsolutePath().toString();
             src = IO.slurp(path);
         }
         else if (args[0].equals("-walker") && args.length == 1){
             seeWalker = true;
             String file = "TM_code_samples.tm";
-            path = Paths.get("examples/", file).toAbsolutePath().toString();
+            path = Paths.get("src/test/java/", file).toAbsolutePath().toString();
             src = IO.slurp(path);
         }
         else{

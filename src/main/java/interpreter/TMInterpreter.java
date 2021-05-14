@@ -169,9 +169,6 @@ public final class TMInterpreter
         Long len;
         try{
             len = get(node.length);
-            if (len < 1){
-                throw new PassthroughException(new Error("Initializing an array with a negative int-valued expression as length."));
-            }
         }
         catch (ClassCastException e) {
             throw new PassthroughException(new Error("Initializing an array using a non-int-valued expression as length."));

@@ -637,17 +637,6 @@ public final class TMSemantic {
 
     private void assignment (AssignmentNode node)
     {
-        if (node.left instanceof ReferenceNode){
-            ReferenceNode ref = Util.cast(node.left, ReferenceNode.class);
-            R.rule()
-            .using(ref, "pinned")
-            .by(r -> {
-                Boolean pinned = Util.cast(r.get(0), Boolean.class);
-                if (pinned)
-                    r.errorFor("Trying to assign a value to a pinned reference.", ref);
-            });
-        }
-
         R.rule(node, "type")
         .using(node.left.attr("type"), node.right.attr("type"))
         .by(r -> {
@@ -660,6 +649,16 @@ public final class TMSemantic {
             if (isInstanceOf(node.left, ReferenceNode.class, AttributeAccessNode.class)) {
                 if (!isAssignableTo(right, left)) {
                     r.errorFor("Trying to assign a value to a non-compatible lvalue.", node);
+                }
+                if (node.left instanceof ReferenceNode){
+                    ReferenceNode ref = Util.cast(node.left, ReferenceNode.class);
+                    R.rule()
+                            .using(ref, "pinned")
+                            .by(rr -> {
+                                Boolean pinned = Util.cast(rr.get(0), Boolean.class);
+                                if (pinned)
+                                    rr.errorFor("Trying to assign a value to a pinned reference.", ref);
+                            });
                 }
             }
             else if (node.left instanceof ArrayMapGetNode)
