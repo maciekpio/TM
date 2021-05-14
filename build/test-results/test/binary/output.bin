@@ -1,7 +1,26 @@
-5The reference "len" was indeed in the map as NotYet
-5The reference "len" was indeed in the map as NotYet
-5The reference "print" was indeed in the map as Void
-;The reference "createTab" was indeed in the map as NotYet
-XThe current map is {print=Void, rprint=Void, createTab=NotYet, len=NotYet, tab=Bool[]}
-5The reference "tab" was indeed in the map as Bool[]
- expected Bool[] and got Bool[]
+9The current map is {a1=NotYet, print=Void, rprint=Void}
+DThe current map is {a1=NotYet, a2=NotYet, print=Void, rprint=Void}
+4The reference "a1" was indeed in the map as NotYet
+4The reference "a2" was indeed in the map as NotYet
+2ArrayMapPut(.put a2.get("x") at "x") filter true
+4The reference "a1" was indeed in the map as NotYet
+4The reference "a2" was indeed in the map as NotYet
+2ArrayMapPut(.put a2.get("y") at "y") filter true
+YThe current map is {a1=NotYet, a2=NotYet, print=Void, rprint=Void, transferWith=NotYet}
+cThe current map is {a1=NotYet, a2=NotYet, print=Void, rprint=Void, x=String, transferWith=NotYet}
+mThe current map is {a1=NotYet, a2=NotYet, print=Void, rprint=Void, x=String, y=String, transferWith=NotYet}
+3The reference "x" was indeed in the map as String
+3The reference "y" was indeed in the map as String
+‚The current map is {a1=NotYet, a2=NotYet, print=Void, rprint=Void, arrayTarget=Float{}, x=String, y=String, transferWith=NotYet}
+3The reference "x" was indeed in the map as String
+3The reference "y" was indeed in the map as String
+•The current map is {a1=NotYet, a2=NotYet, print=Void, rprint=Void, arrayTarget=Float{}, x=String, arrayFrom=Float{}, y=String, transferWith=NotYet}
+>The reference "transferWith" was indeed in the map as NotYet
+>The reference "arrayTarget" was indeed in the map as Float{}
+<The reference "arrayFrom" was indeed in the map as Float{}
+(FctCall(transferWith(...)) filter true
+>The reference "arrayTarget" was indeed in the map as Float{}
+ expected String and got String
+ expected String and got String
+"expected Float{} and got Float{}
+"expected Float{} and got Float{}

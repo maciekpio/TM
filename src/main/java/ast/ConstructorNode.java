@@ -2,6 +2,7 @@ package ast;
 
 import norswap.autumn.positions.Span;
 import norswap.utils.Util;
+import utils_static.UtilStatic;
 
 public class ConstructorNode extends ExpressionNode
 {

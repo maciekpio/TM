@@ -64,12 +64,13 @@ public final class TMInterpreter
         visitor.register(BooleanLiteralNode.class,       this::booleanLiteral);
         visitor.register(ReferenceNode.class,            this::reference);
         visitor.register(ConstructorNode.class,          this::constructor);
+        visitor.register(MapLiteralNode.class,           this::mapLiteral);
         visitor.register(ArrayLiteralNode.class,         this::arrayLiteral);
         visitor.register(ArrayOfNode.class,              this::arrayOf);
         visitor.register(ParenthesizedNode.class,        this::parenthesized);
         visitor.register(AttributeAccessNode.class,      this::attrAccess);//TODO prevent errors
-        visitor.register(ArrayGetNode.class,             this::arrayGet);//TODO prevent errors
-        visitor.register(ArrayPutNode.class,             this::arrayPut);//TODO prevent errors
+        visitor.register(ArrayMapGetNode.class,          this::arrayMapGet);//TODO prevent errors
+        visitor.register(ArrayMapPutNode.class,          this::arrayMapPut);//TODO prevent errors
         visitor.register(FctCallNode.class,              this::fctCall);
         visitor.register(UnaryExpressionNode.class,      this::unaryExpression);//TODO prevent errors
         visitor.register(BinaryExpressionNode.class,     this::binaryExpression);
@@ -158,14 +159,12 @@ public final class TMInterpreter
     // ---------------------------------------------------------------------------------------------
 
     private Object[] arrayLiteral (ArrayLiteralNode node) {
-        Object [] map = map(node.components, new Object[0], visitor);
-        return map;
+        return map(node.components, new Object[0], visitor);
     }
 
     // ---------------------------------------------------------------------------------------------
 
     private Object[] arrayOf (ArrayOfNode node) {
-        //Type lenType = reactor.get(node.length, "type");
         Long len;
         try{
             len = get(node.length);
@@ -177,6 +176,22 @@ public final class TMInterpreter
         Object init = get(node.initializer);
         Object[] map = new Object[Math.toIntExact(len)];
         Arrays.fill(map, init);
+        return map;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    private HashMap mapLiteral (MapLiteralNode node) {
+        HashMap<String, Object> map = new HashMap<>();
+        for (MapEntryNode entry : node.entries){
+            String key;
+            try {
+                key = get(entry.key);
+            } catch (ClassCastException e){
+                throw new PassthroughException(new Throwable("Trying to use a non-string as key for a map entry"));
+            }
+            map.put(key, get(entry.value));
+        }
         return map;
     }
 
@@ -286,7 +301,7 @@ public final class TMInterpreter
             fleft = fright = 0;
         }
 
-        Object result;
+
         if (floating)
             switch (node.operator) {
                 case TIMES:         return fleft *  fright;
@@ -325,23 +340,21 @@ public final class TMInterpreter
 
     public Object assignment (AssignmentNode node)
     {
+        Type leftType = reactor.get(node.left, "type");
+        Type rightType = reactor.get(node.right, "type");
+        if (atLeastOneNYT(leftType, rightType)){
+            leftType  = whichTypeIs(get(node.left));
+            rightType = whichTypeIs(get(node.right));
+        }
+        if (!isAssignableTo(rightType, leftType))
+            throw new PassthroughException(new Throwable(String.format("Trying to assign %s to a %s variable", rightType.toString(), leftType.toString())));
+
         if (node.left instanceof ReferenceNode) {
             Scope scope = reactor.get(node.left, "scope");
             String name = ((ReferenceNode) node.left).name;
             Object rvalue = get(node.right);
-            assign(scope, name, rvalue, reactor.get(node.left, "type"));
+            assign(scope, name, rvalue, leftType);
             return rvalue;
-        }
-
-        if (node.left instanceof ArrayGetNode) {
-            ArrayGetNode arrayAccess = (ArrayGetNode) node.left;
-            Object[] array = getNonNullArray(arrayAccess.array);
-            int index = getIndex(arrayAccess.index);
-            try {
-                return array[index] = get(node.right);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new PassthroughException(e);
-            }
         }
 
         if (node.left instanceof AttributeAccessNode) {
@@ -351,9 +364,9 @@ public final class TMInterpreter
                 throw new PassthroughException(
                     new NullPointerException("accessing field of null object"));
             Map<String, Object> struct = cast(object);
-            Object right = get(node.right);
-            struct.put(fieldAccess.attrName, right);
-            return right;
+            Object newAttr = get(node.right);
+            struct.put(fieldAccess.attrName, newAttr);
+            return newAttr;
         }
 
         throw new Error("should not reach here");
@@ -373,46 +386,123 @@ public final class TMInterpreter
 
     // ---------------------------------------------------------------------------------------------
 
-    private Object[] getNonNullArray (ExpressionNode node)
-    {
-        Object object = get(node);
-        if (object == Null.INSTANCE)
-            throw new PassthroughException(new NullPointerException("indexing null array"));
-        return (Object[]) object;
-    }
-
-    // ---------------------------------------------------------------------------------------------
-
     private Object unaryExpression (UnaryExpressionNode node)
     {
         // there is only NOT
         assert node.operator == UnaryOperator.NOT;
-        return ! (boolean) get(node.operand);
+        Object o = get(node.operand);
+        try{
+            return ! (boolean) o;
+        } catch (ClassCastException e){
+            throw new PassthroughException(new Throwable(String.format("Trying to inverse an non-boolean object as !%s", whichTypeIs(o).toString())));
+        }
+
     }
 
     // ---------------------------------------------------------------------------------------------
 
-    private Object arrayGet(ArrayGetNode node)
+    private Object arrayMapGet(ArrayMapGetNode node)
     {
-        Object[] array = getNonNullArray(node.array);
-        try {
-            return array[getIndex(node.index)];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new PassthroughException(e);
+        Object array_map = get(node.array_map);
+        if (array_map instanceof HashMap)
+        {
+            HashMap <String, Object> map;
+            String key;
+            try {
+                map = (HashMap <String, Object>) array_map;
+            } catch (ClassCastException e){
+                throw new PassthroughException(new Throwable("Reading a non-map object."));
+            }
+            try {
+                key = get(node.index_key);
+            } catch (ClassCastException e){
+                throw new PassthroughException(new Throwable("Trying to use a non-string as key to read."));
+            }
+            Object o = map.get(key);
+            if (o==null){
+                throw new PassthroughException(new NullPointerException("A key is missing in the map."));
+            }
+            return o;
         }
+        else if (array_map instanceof Object[])
+        {
+            Object[] array;
+            int index;
+            try {
+                array = (Object[]) array_map;
+            } catch (ClassCastException e) {
+                throw new PassthroughException(new Throwable("Indexing a non-array object."));
+            }
+            try{
+                index = getIndex(node.index_key);
+            } catch (ClassCastException e){
+                throw new PassthroughException(new Throwable("Indexing with a non-int index."));
+            }
+            try{
+                return array[index];
+            } catch (ArrayIndexOutOfBoundsException e){
+                throw new PassthroughException(e);
+            }
+        }
+
+        throw new PassthroughException(new Throwable("Getting on a non-array/non-map object."));
     }
 
     // ---------------------------------------------------------------------------------------------
 
-    private Object arrayPut(ArrayPutNode node)
+    @SuppressWarnings("unchecked")
+    private Boolean arrayMapPut(ArrayMapPutNode node)
     {
-        Object[] array = getNonNullArray(node.array);
-        int index = getIndex(node.index);
-        try {
-            return array[index] = get(node.objectPut);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new PassthroughException(e);
+        Object o = get(node.object_valuePut);
+        Type arrayMapType = whichTypeIs(get(node.array_map));
+        Type putType = whichTypeIs(o);
+        if (!arrayMapType.equals(putType))
+            throw new PassthroughException(new Throwable(String.format("Trying to put a %s object in an array/map of %s", putType.toString(), arrayMapType.toString())));
+
+        Object array_map = get(node.array_map);
+
+        if (array_map instanceof HashMap)
+        {
+            HashMap <String, Object> map;
+            String key;
+            try {
+                map = (HashMap <String, Object>) array_map;
+            } catch (ClassCastException e){
+                throw new PassthroughException(new Throwable("Writing in a non-map object."));
+            }
+            try {
+                key = get(node.index_key);
+            } catch (ClassCastException e){
+                throw new PassthroughException(new Throwable("Trying to use a non-string as key to read."));
+            }
+
+            Object previous = map.put(key, o);
+            return previous!=null ? Boolean.FALSE : Boolean.TRUE;
         }
+        else if (array_map instanceof Object[])
+        {
+            Object[] array;
+            int index;
+            try {
+                array = (Object[]) array_map;
+            } catch (ClassCastException e) {
+                throw new PassthroughException(new Throwable("Indexing a non-array object."));
+            }
+            try{
+                index = getIndex(node.index_key);
+            } catch (ClassCastException e){
+                throw new PassthroughException(new Throwable("Indexing with a non-int index."));
+            }
+
+            try{
+                array[index] = o;
+                return Boolean.TRUE;
+            } catch (ArrayIndexOutOfBoundsException e){
+                Arrays.copyOf(array, index+1)[index] = o;
+                return Boolean.FALSE;
+            }
+        }
+        throw new PassthroughException(new Throwable("Putting on a non-array/non-map object."));
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -464,6 +554,10 @@ public final class TMInterpreter
     private Object attrAccess(AttributeAccessNode node)
     {
         Object stem = get(node.parent);
+
+        if (!isInstanceOf(stem, Map.class, Object[].class))
+            throw new PassthroughException(new Throwable("Accessing an attribute of non-structure nor array object."));
+
         if (stem == Null.INSTANCE)
             throw new PassthroughException(
                 new NullPointerException("accessing field of null object"));
@@ -611,7 +705,12 @@ public final class TMInterpreter
     private Void letDecl(LetDeclarationNode node)
     {
         Scope scope = reactor.get(node, "scope");
-        assign(scope, node.name, get(node.initializer), reactor.get(node, "type"));
+        Object init = get(node.initializer);
+        Type initType = reactor.get(node, "type");
+        if (initType instanceof NotYetType)
+            initType = whichTypeIs(init);
+
+        assign(scope, node.name, init, initType);
         return null;
     }
 
@@ -628,4 +727,22 @@ public final class TMInterpreter
     }
 
     // ---------------------------------------------------------------------------------------------
+
+    private boolean isAssignableTo (Type a, Type b)
+    {
+        if (atLeastOneNYT(a, b))
+            throw new Error("isAssignableTo : should not reach here");
+
+        if (a instanceof VoidType || b instanceof VoidType)
+            return false;
+
+        if (a instanceof IntType && b instanceof FloatType)
+            return true;
+
+        if (a instanceof ArrayType)
+            return b instanceof ArrayType
+                    && isAssignableTo(((ArrayType)a).componentType, ((ArrayType)b).componentType);
+
+        return a instanceof NullType && b.isReference() || a.equals(b);
+    }
 }

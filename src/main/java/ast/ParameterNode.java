@@ -4,6 +4,8 @@ import norswap.autumn.positions.Span;
 import norswap.utils.Util;
 import utils_static.UtilStatic;
 
+import static utils_static.UtilStatic.typesMap;
+
 public final class ParameterNode extends DeclarationNode
 {
     public final String name;
@@ -15,11 +17,13 @@ public final class ParameterNode extends DeclarationNode
 
         if(maybeType==null){
             this.type = Util.cast(new SimpleTypeNode(span, "NotYet"), TypeNode.class);
-            UtilStatic.typesMap.put(this.name, "NotYet");
+            UtilStatic.surePut(this.name, "NotYet");
+            System.out.printf("The current map is %s%n", typesMap.toString());
         }
         else {
             this.type = new SimpleTypeNode(span, ((ReferenceNode)maybeType).name);
-            UtilStatic.typesMap.put(this.name, type.contents());
+            UtilStatic.surePut(this.name, type.contents());
+            System.out.printf("The current map is %s%n", typesMap.toString());
         }
 
 

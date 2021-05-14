@@ -6,6 +6,8 @@ import utils_static.UtilStatic;
 
 import java.util.List;
 
+import static utils_static.UtilStatic.typesMap;
+
 public class FctDeclarationNode extends DeclarationNode
 {
     public final String name;
@@ -23,12 +25,8 @@ public class FctDeclarationNode extends DeclarationNode
         this.block = Util.cast(block, BlockNode.class);
         this.returnType = Util.cast(new SimpleTypeNode(span, "NotYet"), TypeNode.class);
 
-        //this.fct_return = Util.cast(fct_return, ReturnNode.class);
-        //this.returnType = UtilStatic.whichTypeIs(span, this.fct_return.expression);
-        UtilStatic.typesMap.put(this.name, returnType.contents());
-        /*this.returnType = type == null
-                ? new SimpleTypeNode(new Span(span.start, span.start), "Void")
-                : Util.cast(type, TypeNode.class);*/
+        UtilStatic.surePut(this.name, returnType.contents());
+        System.out.printf("The current map is %s%n", typesMap.toString());
     }
 
     @Override public String name () {

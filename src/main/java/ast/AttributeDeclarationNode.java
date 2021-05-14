@@ -40,6 +40,6 @@ public final class AttributeDeclarationNode extends DeclarationNode
     public String getType() {
         return type!=null
             ? this.type.contents()
-            : "NotYetType";
+            : "NotYet";
     }
 }

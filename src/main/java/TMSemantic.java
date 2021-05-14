@@ -61,11 +61,13 @@ public final class TMSemantic {
         walker.register(ReferenceNode.class,            PRE_VISIT,  analysis::reference);
         walker.register(ConstructorNode.class,          PRE_VISIT,  analysis::constructor);
         walker.register(ArrayLiteralNode.class,         PRE_VISIT,  analysis::arrayLiteral);
+        walker.register(MapLiteralNode.class,           PRE_VISIT,  analysis::mapLiteral);
         walker.register(ArrayOfNode.class,              PRE_VISIT,  analysis::arrayOf);
+        walker.register(MapEntryNode.class,             PRE_VISIT,  analysis::mapEntry);
         walker.register(ParenthesizedNode.class,        PRE_VISIT,  analysis::parenthesized);
         walker.register(AttributeAccessNode.class,      PRE_VISIT,  analysis::attrAccess);
-        walker.register(ArrayGetNode.class,             PRE_VISIT,  analysis::arrayGet);
-        walker.register(ArrayPutNode.class,             PRE_VISIT,  analysis::arrayPut);
+        walker.register(ArrayMapGetNode.class,          PRE_VISIT,  analysis::arrayMapGet);
+        walker.register(ArrayMapPutNode.class,          PRE_VISIT,  analysis::arrayMapPut);
         walker.register(FctCallNode.class,              PRE_VISIT,  analysis::fctCall);
         walker.register(UnaryExpressionNode.class,      PRE_VISIT,  analysis::unaryExpression);//TODO prevent NotYetType
         walker.register(BinaryExpressionNode.class,     PRE_VISIT,  analysis::binaryExpression);
@@ -74,6 +76,7 @@ public final class TMSemantic {
         // types
         walker.register(SimpleTypeNode.class,           PRE_VISIT,  analysis::simpleType);
         walker.register(ArrayTypeNode.class,            PRE_VISIT,  analysis::arrayType);
+        walker.register(MapTypeNode.class,              PRE_VISIT,  analysis::mapType);
 
         // declarations & scopes
         walker.register(RootNode.class,                 PRE_VISIT,  analysis::root);
@@ -187,7 +190,7 @@ public final class TMSemantic {
 
             if (!(decl instanceof StructDeclarationNode)) {
                 String description =
-                        "Applying the constructor operator ($) to non-struct reference for: "
+                        "Applying the constructor operator (new) to non-struct reference for: "
                         + decl;
                 r.errorFor(description, node, node.attr("type"));
                 return;
@@ -238,26 +241,6 @@ public final class TMSemantic {
 
     private void arrayLiteral (ArrayLiteralNode node)
     {
-        if (node.components.size() == 0) { // []
-            // Empty array: we need a type int to know the desired type.
-
-            final SighNode context = this.inferenceContext;
-
-            if (context instanceof LetDeclarationNode)
-                R.rule(node, "type")
-                .using(context, "type")
-                .by(Rule::copyFirst);
-            else if (context instanceof FctCallNode) {
-                R.rule(node, "type")
-                .using(((FctCallNode) context).function.attr("type"), node.attr("index"))
-                .by(r -> {
-                    FunType funType = r.get(0);
-                    r.set(0, funType.paramTypes[(int) r.get(1)]);
-                });
-            }
-            return;
-        }//NOT PERMITTED
-
         Attribute[] dependencies =
             node.components.stream().map(it -> it.attr("type")).toArray(Attribute[]::new);
 
@@ -291,6 +274,62 @@ public final class TMSemantic {
                     node);
             else
                 r.set(0, new ArrayType(supertype));
+        });
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    private void mapLiteral (MapLiteralNode node)
+    {
+        Attribute[] dependencies =
+                node.entries.stream().map(it -> it.attr("type")).toArray(Attribute[]::new);
+
+        R.rule(node, "type")
+                .using(dependencies)
+                .by(r -> {
+                    Type[] types = IntStream.range(0, dependencies.length).<Type>mapToObj(r::get)
+                            .distinct().toArray(Type[]::new);
+
+                    int i = 0;
+                    Type supertype = null;
+                    for (Type type: types) {
+                        if (type instanceof VoidType)
+                            // We report the error, but compute a type for the array from the other elements.
+                            r.errorFor("Void-valued expression in map literal", node.entries.get(i));
+                        else if (supertype == null)
+                            supertype = type;
+                        else {
+                            supertype = commonSupertype(supertype, type);
+                            if (supertype == null) {
+                                r.error("Could not find common supertype in map literal.", node);
+                                return;
+                            }
+                        }
+                        ++i;
+                    }
+
+                    if (supertype == null)
+                        r.error(
+                                "Could not find common supertype in map literal: all members have Void type.",
+                                node);
+                    else
+                        r.set(0, new MapType(supertype));
+                });
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    private void mapEntry (MapEntryNode node)
+    {
+        R.rule(node, "type")
+        .using(node.value, "type")
+        .by(Rule::copyFirst);
+
+        R.rule()
+        .using(node.key, "type")
+        .by(r -> {
+            if (!isInstanceOf(r.get(0), StringType.class, NotYetType.class))
+                r.errorFor("Trying to use a non-string as key for a map entry", node.key);
         });
     }
 
@@ -355,59 +394,63 @@ public final class TMSemantic {
 
     // ---------------------------------------------------------------------------------------------
 
-    private void arrayGet (ArrayGetNode node)
+    private void arrayMapGet(ArrayMapGetNode node)
     {
         R.rule()
-        .using(node.index, "type")
+        .using(node.index_key, "type")
         .by(r -> {
             Type type = r.get(0);
-            if (!(type instanceof IntType || type instanceof NotYetType))
-                r.error("Indexing an array using a non-int-valued expression.", node.index);
+            if (!isInstanceOf(type, IntType.class, StringType.class, NotYetType.class))
+                r.error("Indexing an array/map using a non-int-valued/non-string-valued expression.", node.index_key);
         });
 
         R.rule(node, "type")
-        .using(node.array, "type")
+        .using(node.array_map, "type")
         .by(r -> {
             Type type = r.get(0);
-            if (type instanceof NotYetType){
+            if (type instanceof NotYetType)
                 r.set(0, NotYetType.INSTANCE);
-            }
             else if (type instanceof ArrayType)
                 r.set(0, ((ArrayType) type).componentType);
+            else if (type instanceof MapType)
+                r.set(0, ((MapType) type).componentType);
             else
-                r.error("Trying to index a non-array expression of type " + type, node);
+                r.error("Trying to index a non-array/non-map expression of type " + type, node);
         });
     }
 
-    private void arrayPut (ArrayPutNode node)
+    private void arrayMapPut(ArrayMapPutNode node)
     {
         R.rule()
-        .using(node.index, "type")
+        .using(node.index_key, "type")
         .by(r -> {
             Type type = r.get(0);
-            if (!(isInstanceOf(type, IntType.class, NotYetType.class)))
-                r.error("Indexing an array using a non-int-valued expression.", node.index);
+            if (!isInstanceOf(type, IntType.class, StringType.class, NotYetType.class))
+                r.error("Indexing an array/map using a non-int-valued/non-string-valued expression.", node.index_key);
         });
 
         R.rule(node, "type")
-        .using(node.array.attr("type"), node.objectPut.attr("type"))
+        .using(node.array_map.attr("type"), node.object_valuePut.attr("type"))
         .by(r -> {
-            Type atype = r.get(0);
-            Type ptype = r.get(1);
+            Type array_mapType = r.get(0);
+            Type putType = r.get(1);
 
-            if (!atLeastOneNYT(atype, ptype)){
-                if (atype instanceof ArrayType){
-                    Type ctype = ((ArrayType) atype).componentType;
-                    r.set(0, ctype);
-                    if (!ptype.name().equals(ctype.name()))
-                        r.error(String.format("Trying to put %s type in an array of %s", ptype.name(), ctype.name()), node);
-                    return;
+            if (!atLeastOneNYT(array_mapType, putType)){
+                if (array_mapType instanceof ArrayType){
+                    Type comType = ((ArrayType) array_mapType).componentType;
+                    if (!putType.equals(comType))
+                        r.error(String.format("Trying to put %s type in an array of %s", putType.name(), comType.name()), node);
+                }
+                else if (array_mapType instanceof MapType){
+                    Type comType = ((MapType) array_mapType).componentType;
+                    if (!putType.equals(comType))
+                        r.error(String.format("Trying to put %s type in an array of %s", putType.name(), comType.name()), node);
                 }
                 else{
-                    r.error("Trying to index a non-array expression of type " + atype, node);
+                    r.error("Trying to index a non-array/non-map expression of type " + array_mapType, node);
                 }
             }
-            r.set(0, NotYetType.INSTANCE);
+            r.set(0, BoolType.INSTANCE);
         });
     }
 
@@ -473,8 +516,8 @@ public final class TMSemantic {
         .using(node.operand, "type")
         .by(r -> {
             Type opType = r.get(0);
-            if (!(opType instanceof BoolType))
-                r.error("trying to negate type: " + opType, node);
+            if (!(isInstanceOf(BoolType.class, NotYetType.class)))
+                r.error("Trying to negate type: " + opType, node);
         });
     }
 
@@ -491,7 +534,7 @@ public final class TMSemantic {
             Type left  = r.get(0);
             Type right = r.get(1);
 
-            if(left instanceof NotYetType && right instanceof NotYetType)//TODO
+            if(left instanceof NotYetType && right instanceof NotYetType)
                 r.set(0, NotYetType.INSTANCE);
             else if (node.operator == PLUS && (left instanceof StringType || right instanceof StringType))
                 r.set(0, StringType.INSTANCE);
@@ -592,17 +635,17 @@ public final class TMSemantic {
         .by(r -> {
             Type left  = r.get(0);
             Type right = r.get(1);
-            System.out.printf("Assignement of (%s) %s with (%s) %s%n", left.toString(), node.left.contents(), right.toString(), node.right.contents());
+            System.out.printf("Assignment of (%s) %s with (%s) %s%n", left.toString(), node.left.contents(), right.toString(), node.right.contents());
 
-            r.set(0, r.get(1)); // the type of the assignment is the right-side type
+            r.set(0, right); // the type of the assignment is the right-side type
 
-            if (node.left instanceof ReferenceNode
-            ||  node.left instanceof AttributeAccessNode
-            ||  node.left instanceof ArrayGetNode) {
+            if (node.left instanceof ReferenceNode || node.left instanceof AttributeAccessNode) {
                 if (!isAssignableTo(right, left) && !left.toString().equals("Type") && !left.toString().equals("Type[]")) {
                     r.errorFor("Trying to assign a value to a non-compatible lvalue.", node);
                 }
             }
+            else if (node.left instanceof ArrayMapGetNode)
+                r.errorFor("\"array.get(i) = object\" is not permitted. Instead use array.put(i:object)", node);
             else
                 r.errorFor("Trying to assign to an non-lvalue expression.", node.left);
         });
@@ -653,6 +696,15 @@ public final class TMSemantic {
 
     // ---------------------------------------------------------------------------------------------
 
+    private void mapType (MapTypeNode node)
+    {
+        R.rule(node, "value")
+        .using(node.componentType, "value")
+        .by(r -> r.set(0, new MapType(r.get(0))));
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
     private static boolean isTypeDecl (DeclarationNode decl)
     {
         if (decl instanceof StructDeclarationNode) return true;
@@ -681,6 +733,10 @@ public final class TMSemantic {
         if (a instanceof ArrayType)
             return b instanceof ArrayType
                 && isAssignableTo(((ArrayType)a).componentType, ((ArrayType)b).componentType);
+
+        if (a instanceof MapType)
+            return b instanceof MapType
+                    && isAssignableTo(((MapType)a).componentType, ((MapType)b).componentType);
 
         return a instanceof NullType && b.isReference() || a.equals(b);
     }

@@ -119,6 +119,12 @@ public final class InterpreterTests extends TestFixture {
         put("y", 0L);
     }};
 
+    private final HashMap<String, Object> point1525 = new HashMap<>(){{
+        put("x", 1.5d);
+        put("y", 2.5d);
+    }};
+
+
     @Test
     public void testTests () {
         rule = grammar.root;
@@ -191,14 +197,53 @@ public final class InterpreterTests extends TestFixture {
                 "main{" +
                 "   print(arrayTarget + aString)" +
                 "}", null, "[1.5, 2.5]\r\n");*/
-        check("def createTab(len){" +
+        /*check("def createTab(len){" +
                 "   return (arrayOf(len:len))" +
                 "}" +
                 "main{" +
                 "   print(createTab(3))" +
-                "}", null, "[3, 3, 3]\r\n");
-        check("let tab = arrayOf(false:2)" +
-                "main{tab == [false, false]}", true);
+                "}", null, "[3, 3, 3]\r\n");*/
+        /*check("let tab = arrayOf(false:2)" +
+                "main{tab == [false, false]}", true);*/
+        /*check("let tab = arrayOf(false:2)" +
+                "main{tab.length}", 2);*/
+        /*check("def abs(n){\n" +
+                "    if(n>=0){return (n)}\n" +
+                "    return (0-n);\n" +
+                "}\n" +
+                "\n" +
+                "def getManDiff(p2) {\n" +
+                "   let p1 = {\"x\":aFloat, \"y\":aFloat}" +//{"x":0.0, "y":0.0}
+                "   let dX = abs((p1.get(\"x\") - p2.get(\"x\")))\n" +
+                "   let dY = abs((p1.get(\"y\") - p2.get(\"y\")))\n" +
+                "   return (dX+dY)\n" +
+                "}\n" +
+                "let a2 = #\"x\":1.5, \"y\":2.5#"+
+                "main{" +
+                "   getManDiff(a2)" +
+                "}", 4d);*/
+        /*check("def transferTo(a1, a2) {\n" +
+                "   a1.put(\"x\": a2.get(\"x\")) " +
+                "   a1.put(\"y\": a2.get(\"y\")) " +
+                "}\n" +
+                "let x = \"x\"; let y = \"y\"" +
+                "let arrayTarget = {x:aFloat, y:aFloat} " +
+                "let arrayFrom = {x:1.5, y:2.5} " +
+                "transferTo(arrayTarget, arrayFrom) " +
+                "main{" +
+                "   arrayTarget" +
+                "}", point1525);*/
+        check("def transferWith(a1, a2) {\n" +
+                "   a1.put(\"x\": a2.get(\"x\")) " +
+                "   a1.put(\"y\": a2.get(\"y\")) " +
+                "}\n" +
+                "let x = \"x\"; let y = \"y\"" +
+                "let arrayTarget = {x:aFloat, y:aFloat} " +
+                "let arrayFrom = {x:1.5, y:2.5} " +
+                "transferWith(arrayTarget, arrayFrom) " +
+                "main{" +
+                "   arrayTarget" +
+                "}", point1525);
     }
 
     @Test

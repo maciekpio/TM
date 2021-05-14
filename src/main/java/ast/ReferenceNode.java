@@ -29,9 +29,4 @@ public final class ReferenceNode extends ExpressionNode
     public String getType() {
         return type;
     }
-
-    public void setType(String strType){
-        System.out.printf("The type %s of the node reference \"%s\" was changed to %s%n", this.getType(), name, strType);
-        type = strType;
-    }
 }

@@ -1,8 +1,8 @@
 package utils_static;
 
 import ast.*;
-import com.sun.jdi.BooleanType;
 import interpreter.PassthroughException;
+import interpreter.Void;
 import norswap.autumn.positions.Span;
 import norswap.utils.Util;
 import types.*;
@@ -21,7 +21,13 @@ public class UtilStatic {
         put("rprint", "Void");
     }};
 
-    public static HashMap<String, String> structValuesMap = new HashMap<>();
+    public static void surePut(String key, String value){
+        String getValue = typesMap.get(key);
+        if (getValue != null && !getValue.equals(value))
+            typesMap.put(key, "NotYet");
+        else
+            typesMap.put(key, value);
+    }
 
     /**
      * Used in context to fill typesMap with the type of different nodes.
@@ -36,30 +42,43 @@ public class UtilStatic {
         if (thatExpression==null) return new SimpleTypeNode(span, "Void");
 
         TypeNode type;
-        boolean isAnArray = (isInstanceOf(thatExpression, ArrayLiteralNode.class, ArrayOfNode.class));
-
         SimpleTypeNode simpleTypeNode = new SimpleTypeNode(span, thatExpression.getType());
-        if(isAnArray){
+
+        if(isInstanceOf(thatExpression, ArrayLiteralNode.class, ArrayOfNode.class))
             type = Util.cast(new ArrayTypeNode(span, simpleTypeNode), TypeNode.class);
-        }
-        else {
+        else if(thatExpression instanceof MapLiteralNode)
+            type = Util.cast(new MapTypeNode(span, simpleTypeNode), TypeNode.class);
+        else
             type = Util.cast(simpleTypeNode, TypeNode.class);
-        }
         return type;
     }
 
-    public static Type whichTypeIs(Object literal)
+    public static Type whichTypeIs(Object expr)
     {
-        String str = literal.getClass().toString();
-        System.out.println("whichTypeIs : " + str);
-        switch (literal.getClass().toString()){
-            case "class java.lang.Long": return IntType.INSTANCE;
-            case "class java.lang.Double": return FloatType.INSTANCE;
-            case "class java.lang.String": return StringType.INSTANCE;
-            case "class java.lang.Boolean": return BoolType.INSTANCE;
-            //case "class [Ljava.lang.Object": return new ArrayType(NotYetType.INSTANCE);
-        }
+        if(expr instanceof Long)      return    IntType.INSTANCE;
+        if(expr instanceof Double)    return  FloatType.INSTANCE;
+        if(expr instanceof Boolean)   return   BoolType.INSTANCE;
+        if(expr instanceof String)    return StringType.INSTANCE;
+        if(expr instanceof Void)      return   VoidType.INSTANCE;
+        if(expr instanceof Object[])  return whichArrayTypeIs((Object[]) expr);
+        if(expr instanceof HashMap)   return whichArrayTypeIs(((HashMap<String, Object>) expr).values().toArray());
+
         throw new PassthroughException(new Throwable("whichTypeIs function only supports Long, Double, String and Boolean types"));
+    }
+
+    public static Type whichArrayTypeIs(Object[] literals){
+        Type firstType = whichTypeIs(literals[0]);
+        for (Object literal : literals){
+            Type litType = whichTypeIs(literal);
+            if (!litType.equals(firstType)){
+                if (firstType.name().equals("Int") && litType.name().equals("Float")){
+                    firstType = FloatType.INSTANCE;
+                } else {
+                    throw new PassthroughException(new Throwable(String.format("An array/map can not have incompatibles types as %s and %s", firstType.toString(), litType.toString())));
+                }
+            }
+        }
+        return firstType;
     }
 
     /**Works with numbers*/

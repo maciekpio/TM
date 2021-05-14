@@ -5,7 +5,7 @@ import norswap.utils.Util;
 
 import java.util.List;
 
-import static utils_static.UtilStatic.typesMap;
+import static utils_static.UtilStatic.*;
 
 public class StructDeclarationNode extends DeclarationNode
 {
@@ -17,11 +17,12 @@ public class StructDeclarationNode extends DeclarationNode
         super(span);
         this.name = Util.cast(name, String.class);
         this.attributes = Util.cast(attributes, List.class);
-        typesMap.put(this.name, this.name);
+        surePut(this.name, this.name);
         for (AttributeDeclarationNode attr : this.attributes) {
             attr.structName = this.name;
-            typesMap.put(this.name + "##" + attr.name(), attr.getType());
+            surePut(this.name + "##" + attr.name(), attr.getType());
         }
+        System.out.printf("The current map is %s%n", typesMap.toString());
     }
 
     @Override public String name () {

@@ -17,7 +17,7 @@ public final class LetDeclarationNode extends DeclarationNode
         this.name = Util.cast(name, String.class);
         this.initializer = Util.cast(initializer, ExpressionNode.class);
         this.type = UtilStatic.whichTypeIs(span, this.initializer);
-        typesMap.put(this.name, this.type.contents());
+        surePut(this.name, this.type.contents());
         System.out.printf("The current map is %s%n", typesMap.toString());
     }
 
