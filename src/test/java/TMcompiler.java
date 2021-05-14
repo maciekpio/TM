@@ -17,10 +17,9 @@ import java.util.Arrays;
 
 import static norswap.utils.Util.cast;
 
-public final class TMfileTests
+public final class TMcompiler
 {
     public static void main (String[] args) {
-        System.out.println(Arrays.toString(args));
         String path;
         String src;
         StringBuilder stringBuilder = new StringBuilder("let args = [");
@@ -28,13 +27,13 @@ public final class TMfileTests
         boolean seeWalker = false;
 
         if (args.length == 0){
-            String file = "TMfileRec.tm";
+            String file = "TM_code_samples.tm";
             path = Paths.get("examples/", file).toAbsolutePath().toString();
             src = IO.slurp(path);
         }
         else if (args[0].equals("-walker") && args.length == 1){
             seeWalker = true;
-            String file = "TMfileRec.tm";
+            String file = "TM_code_samples.tm";
             path = Paths.get("examples/", file).toAbsolutePath().toString();
             src = IO.slurp(path);
         }
@@ -87,14 +86,11 @@ public final class TMfileTests
         if (!reactor.errors().isEmpty()) {
             System.out.println(reactor.reportErrors(it ->
                 it.toString() + " (" + ((SighNode) it).span.startString(lineMap) + ")"));
-            // Alternatively, print the whole tree:
-            // System.out.println(
-            //     AttributeTreeFormatter.formatWalkFields(tree, reactor, SighNode.class));
             return;
         }
 
         TMInterpreter interpreter = new TMInterpreter(reactor);
         interpreter.interpret(tree);
-        System.out.println("success");
+        System.out.println("SUCCESS");
     }
 }

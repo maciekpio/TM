@@ -1,4 +1,5 @@
 import ast.*;
+import norswap.utils.Util;
 import scopes.*;
 import types.*;
 import norswap.uranium.Attribute;
@@ -150,11 +151,17 @@ public final class TMSemantic {
             R.rule(node, "type")
             .using(maybeCtx.declaration, "type")
             .by(Rule::copyFirst);
+
+            DeclarationNode decl = maybeCtx.declaration;
+            if (decl instanceof LetDeclarationNode){
+                LetDeclarationNode lDecl = Util.cast(decl, LetDeclarationNode.class);
+                R.set(node, "pinned", lDecl.pinned);
+            }
             return;
         }
 
         // Re-lookup after the scopes have been built.
-        R.rule(node.attr("decl"), node.attr("scope"))
+        R.rule(node.attr("decl"), node.attr("scope"), node.attr("pinned"))
         .by(r -> {
             DeclarationContext ctx = scope.lookup(node.name);
             DeclarationNode decl = ctx == null ? null : ctx.declaration;
@@ -166,6 +173,7 @@ public final class TMSemantic {
             else {
                 r.set(node, "scope", ctx.scope);
                 r.set(node, "decl", decl);
+                r.set(node, "pinned", Boolean.FALSE);
 
                 if (decl instanceof LetDeclarationNode)
                     r.errorFor("variable used before declaration: " + node.name,
@@ -629,6 +637,17 @@ public final class TMSemantic {
 
     private void assignment (AssignmentNode node)
     {
+        if (node.left instanceof ReferenceNode){
+            ReferenceNode ref = Util.cast(node.left, ReferenceNode.class);
+            R.rule()
+            .using(ref, "pinned")
+            .by(r -> {
+                Boolean pinned = Util.cast(r.get(0), Boolean.class);
+                if (pinned)
+                    r.errorFor("Trying to assign a value to a pinned reference.", ref);
+            });
+        }
+
         R.rule(node, "type")
         .using(node.left.attr("type"), node.right.attr("type"))
         .by(r -> {
@@ -638,8 +657,8 @@ public final class TMSemantic {
 
             r.set(0, right); // the type of the assignment is the right-side type
 
-            if (node.left instanceof ReferenceNode || node.left instanceof AttributeAccessNode) {
-                if (!isAssignableTo(right, left) && !left.toString().equals("Type") && !left.toString().equals("Type[]")) {
+            if (isInstanceOf(node.left, ReferenceNode.class, AttributeAccessNode.class)) {
+                if (!isAssignableTo(right, left)) {
                     r.errorFor("Trying to assign a value to a non-compatible lvalue.", node);
                 }
             }
@@ -663,7 +682,9 @@ public final class TMSemantic {
         .by(r -> {
             // type declarations may occur after use
             DeclarationContext ctx = scope.lookup(node.name);
-            DeclarationNode decl = ctx == null ? null : ctx.declaration;
+            DeclarationNode decl = (ctx == null)
+                    ? null
+                    : ctx.declaration;
 
             if (ctx == null)
                 r.errorFor("could not resolve: " + node.name,

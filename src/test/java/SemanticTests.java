@@ -157,8 +157,7 @@ public final class SemanticTests extends UraniumTestFixture
     // ---------------------------------------------------------------------------------------------
 
     @Test public void testLetDecl() {
-        ast = (RootNode) parse("let x = true; let y = x; y = false");
-        System.out.println(ast.contents());
+        successInput("let x = 1; let y = x+1; y = 2.0");
         successInput("let x=1");
         successInput("let x=2.0");
         successInput("let x = 0 ; x=x+1");
@@ -175,21 +174,14 @@ public final class SemanticTests extends UraniumTestFixture
         failureInputWith("x = x + 1; let x = 2", "variable used before declaration: x");
 
         // implicit conversions
-        //successInput("var x: Float = 1 ; x = 2");
+        successInput("let x = 1.0 ; x = 2");
     }
 
     // ---------------------------------------------------------------------------------------------
 
-    @Test public void testTest(){
-        //ast = (RootNode) parse("let x = 1; let matrix[] = [1, x]; matrix = [2.0, 1.0]");
-        //System.out.println(ast.contents());
-        //successInput("let x = 1; let y = x+1; y = 2.0");
-        //successInput("let x = 1; let matrix[] = [1, x]; matrix = [1, 2]");
-        successInput("parseInt(\"5\")");
-    }
-
     @Test public void testArrayAccess() {
         successInput("let matrix = [1, 2];");
+        successInput("let x = 1; let matrix = [1, x]; matrix = [1, 2]");
         successInput("let x = 1.0; let matrix = [1, x]; matrix = [2.0, 1.0]");
         failureInput("let matrix = [1, 1]; let x = 2; x=matrix");
     }
@@ -197,12 +189,10 @@ public final class SemanticTests extends UraniumTestFixture
     // ---------------------------------------------------------------------------------------------
 
     @Test public void testStructDecl() {
-        //String letSomeVariables = "let anInt = 1; let aFloat = 2.0; let aBool = true; let aString = \"text\"; let matrix = [1.0, 2.0]; ";
+        String letSomeVariables = "let anInt = 1; let aFloat = 2.0; let aBool = true; let aString = \"text\"; let matrix = [1.0, 2.0]; ";
         successInput("struct StructName {attr1 = 0.0}");
         successInput("struct StructName {attr1 = anInt}");
         successInput("struct StructName {attr1 = aFloat; attr2 = false; attr3 = aString}");
-        ast = (RootNode) parse("struct Struct_name {attr1 = aFloat; attr2 = false; attr3 = aString}");
-        System.out.println(ast.contents());
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -210,12 +200,10 @@ public final class SemanticTests extends UraniumTestFixture
     @Test public void testStructAccess() {
         String structPerson = "struct Position {x=0; y=0}; ";
         String structPeople = "struct People {age = anInt; size = aFloat; ofAge = true}; ";
-        //successInput(structPeople + "let tibo = new People(21, 175.5, true); let myAge=tibo.age; let mySize=tibo.size; let myOfAge=tibo.ofAge;");
+        successInput(structPeople + "let tibo = new People(21, 175.5, true); let myAge=tibo.age; let mySize=tibo.size; let myOfAge=tibo.ofAge;");
         successInput(structPeople + "let tibo = new People(); tibo.age = 22; let myAge = tibo.age;");
-        //successInput("struct StructName {attr1 = anInt}");
-        //successInput("struct StructName {attr1 = aFloat; attr2 = false; attr3 = aString; attr4 = anArray}");
-        //ast = (RootNode) parse("struct StructName {attr1 = aFloat; attr2 = false; attr3 = aString; attr4 = anArray}");
-        //System.out.println(ast.contents());
+        successInput("struct StructName {attr1 = anInt}");
+        successInput("struct StructName {attr1 = aFloat; attr2 = false; attr3 = aString; attr4 = arrayOf(anInt:10)}");
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -234,11 +222,13 @@ public final class SemanticTests extends UraniumTestFixture
                 "def add (a, b) { return (a || b) }; main{add(4, 7)}"
         );
 
-        /*successInput(
+        successInput(
                 "struct Point {x = anInt; y = anInt }" +
                         "main{(new Point(1, 2))}");
 
-        failureInputWith("main{ print(1) }", "incompatible argument provided for argument 0: expected Int but got String");*/
+        successInput("parseInt(\"5\")");
+
+        failureInputWith("main{ print(1) }", "incompatible argument provided for argument 0: expected String but got Int");
     }
 
     // ---------------------------------------------------------------------------------------------

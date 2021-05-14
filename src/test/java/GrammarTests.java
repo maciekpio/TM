@@ -326,21 +326,18 @@ public class GrammarTests extends AutumnTestFixture {
     @Test
     public void testLetDecl(){
         this.rule = TMParser.let_decl;
-        ast = successExpect("let x = 1", new LetDeclarationNode(new Span(0,0), "x", new IntLiteralNode(null, 1)));
-        System.out.println(ast.valueStack);
+        successExpect("let x = 1", new LetDeclarationNode(new Span(0,0), "x", new IntLiteralNode(null, 1), Boolean.FALSE));
     }
 
     @Test
     public void testReference(){
         this.rule = TMParser.root;
-        ast = success("let x = 1; let matrix= [1, x];");
-        System.out.println(ast.valueStack);
+        success("let x = 1; let matrix= [1, x];");
     }
 
     @Test
     public void testPut(){
         this.rule = TMParser.root;
-        ast = success("x.put(0: 3)");
-        System.out.println(ast.valueStack);
+        success("x.put(0: 3)");
     }
 }

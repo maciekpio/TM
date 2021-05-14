@@ -15,16 +15,14 @@ public final class ParameterNode extends DeclarationNode
         super(span);
         this.name = Util.cast(name, String.class);
 
-        if(maybeType==null){
+        if(maybeType instanceof ReferenceNode){
+            this.type = Util.cast(new SimpleTypeNode(span, ((ReferenceNode)maybeType).getType()), TypeNode.class);
+            UtilStatic.surePut(this.name, type.contents());
+        }
+        else {
             this.type = Util.cast(new SimpleTypeNode(span, "NotYet"), TypeNode.class);
             UtilStatic.surePut(this.name, "NotYet");
         }
-        else {
-            this.type = new SimpleTypeNode(span, ((ReferenceNode)maybeType).getType());
-            UtilStatic.surePut(this.name, type.contents());
-        }
-
-
     }
 
     @Override public String name () {

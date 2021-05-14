@@ -127,11 +127,9 @@ public final class InterpreterTests extends TestFixture {
 
 
     @Test
-    public void testTests () {
+    public void testInContext () {
         rule = grammar.root;
-        //check("let x=anInt; main {x}", 0L);
-        //check("struct P{x=anInt; y=anInt}; main{new P()}", point00);
-        /*check("struct P{x=aFloat; y=aFloat}\n" +
+        check("struct P{x=aFloat; y=aFloat}\n" +
                 "struct P3D{x=aFloat; y=aFloat; z=aFloat}" +
                 "\n" +
                 "def abs(n){\n" +
@@ -145,8 +143,8 @@ public final class InterpreterTests extends TestFixture {
                 "   return (dX+dY)\n" +
                 "}\n" +
                 "\n" +
-                "main{getManDiff(new P(), new P3D(1.5, 2.5, 0.0))}", 4d);*/
-        /*check("struct P2D{\n" +
+                "main{getManDiff(new P(), new P3D(1.5, 2.5, 0.0))}", 4d);
+        check("struct P2D{\n" +
                 "    x=aFloat\n" +
                 "    y=aFloat\n" +
                 "}\n" +
@@ -172,8 +170,8 @@ public final class InterpreterTests extends TestFixture {
                 "\n" +
                 "main{\n" +
                 "    getManDiff(new P2D(), new P3D(1.5, 2.5, -2.0))\n" +
-                "}", 4d);*/
-        /*check("def abs(n){\n" +
+                "}", 4d);
+        check("def abs(n){\n" +
                 "    if(n>=0){return (n)}\n" +
                 "    return (0-n);\n" +
                 "}\n" +
@@ -187,8 +185,8 @@ public final class InterpreterTests extends TestFixture {
                 "let a2 = [1.5, 2.5]"+
                 "main{" +
                 "   getManDiff(a2)" +
-                "}", 4d);*/
-        /*check("def transferTo(a1, a2) {\n" +
+                "}", 4d);
+        check("def transferTo(a1, a2) {\n" +
                 "   a1.put(0: a2.get(0)) " +
                 "   a1.put(1: a2.get(1)) " +
                 "}\n" +
@@ -197,18 +195,14 @@ public final class InterpreterTests extends TestFixture {
                 "transferTo(arrayTarget, arrayFrom) "+
                 "main{" +
                 "   print(arrayTarget + aString)" +
-                "}", null, "[1.5, 2.5]\r\n");*/
-        /*check("def createTab(len){" +
+                "}", null, "[1.5, 2.5]\r\n");
+        check("def createTab(len){" +
                 "   return (arrayOf(len:len))" +
                 "}" +
                 "main{" +
                 "   print(createTab(3))" +
-                "}", null, "[3, 3, 3]\r\n");*/
-        /*check("let tab = arrayOf(false:2)" +
-                "main{tab == [false, false]}", true);*/
-        /*check("let tab = arrayOf(false:2)" +
-                "main{tab.length}", 2);*/
-        /*check("def abs(n){\n" +
+                "}", null, "[3, 3, 3]\r\n");
+        check("def abs(n){\n" +
                 "    if(n>=0){return (n)}\n" +
                 "    return (0-n);\n" +
                 "}\n" +
@@ -219,10 +213,10 @@ public final class InterpreterTests extends TestFixture {
                 "   let dY = abs((p1.get(\"y\") - p2.get(\"y\")))\n" +
                 "   return (dX+dY)\n" +
                 "}\n" +
-                "let a2 = #\"x\":1.5, \"y\":2.5#"+
+                "let a2 = {\"x\":1.5, \"y\":2.5}"+
                 "main{" +
                 "   getManDiff(a2)" +
-                "}", 4d);*/
+                "}", 4d);
         check("def transferTo(a1, a2) {\n" +
                 "   a1.put(\"x\": a2.get(\"x\")) " +
                 "   a1.put(\"y\": a2.get(\"y\")) " +
@@ -255,7 +249,7 @@ public final class InterpreterTests extends TestFixture {
         check("main{ print(\"hello\")}", null, "hello\r\n");
         check("main{ rprint(\"Arithmetic error\")}", null, "Error: Arithmetic error\r\n");
         check("main{ parseInt(\"5\")}",  5,null);
-        checkThrows("main{ parseInt(\"BEBEW\")}",  Throwable.class);
+        checkThrows("main{ parseInt(\"text\")}",  NumberFormatException.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -359,10 +353,6 @@ public final class InterpreterTests extends TestFixture {
 
         checkExpr("\"hi\" != \"hi2\"", true);
         checkExpr("[1.0] != [1]", true);
-
-         // test short circuit
-        //checkExpr("true || print(\"x\") == \"y\"", true, "x\r\n");
-        //checkExpr("false && print(\"x\") == \"y\"", false, "x\r\n");
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -370,14 +360,15 @@ public final class InterpreterTests extends TestFixture {
     @Test
     public void testVarDecl () {
         rule = grammar.root;
-        //check("let x = 1; main{x}", 1L);
-        //check("let x = 2.0; main{x}", 2d);
+        check("let x = 1; main{x}", 1L);
+        check("let x = 2.0; main{x}", 2d);
 
-        //check("let x = 0; main{x = 3}", 3L);
-        //check("let x = \"0\"; main{x = \"S\"}", "S");
+        check("let x = 0; main{x = 3}", 3L);
+        check("let x = \"0\"; main{x = \"S\"}", "S");
 
         // implicit conversions
         check("let x = 1.2; x = 2; main{x}", 2.0d);
+        checkThrows("pinned x = anInt; x = 1", AssertionError.class);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -461,6 +452,15 @@ public final class InterpreterTests extends TestFixture {
                 "p.y = 42;" +
                 "main{p.y}",
             42L);
+
+        check("struct P{x=anInt; y=anInt};" +
+                        " main{new P()}",
+                point00);
+
+        check("let tab = arrayOf(false:2)" +
+                "main{tab == [false, false]}", true);
+        check("let tab = arrayOf(false:2)" +
+                "main{tab.length}", 2L);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -494,5 +494,5 @@ public final class InterpreterTests extends TestFixture {
 
     // ---------------------------------------------------------------------------------------------
 
-    // NOTE(norswap): Not incredibly complete, but should cover the basics.
+    // NOTE(tm): INCREDIBLY complete, cover all features of the world.
 }

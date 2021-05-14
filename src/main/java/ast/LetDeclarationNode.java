@@ -11,14 +11,15 @@ public final class LetDeclarationNode extends DeclarationNode
     public final String name;
     public TypeNode type;
     public final ExpressionNode initializer;
+    public final Boolean pinned;
 
-    public LetDeclarationNode(Span span, Object name, Object initializer) {
+    public LetDeclarationNode(Span span, Object name, Object initializer, Boolean pinned) {
         super(span);
         this.name = Util.cast(name, String.class);
         this.initializer = Util.cast(initializer, ExpressionNode.class);
         this.type = UtilStatic.whichTypeIs(span, this.initializer);
         surePut(this.name, this.type.contents());
-        //System.out.printf("The current map is %s%n", typesMap.toString());
+        this.pinned = pinned;
     }
 
     @Override public String name () {

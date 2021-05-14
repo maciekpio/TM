@@ -58,6 +58,7 @@ public final class TMGrammar extends Grammar {
 
     /*Reserved words*/
     public rule _let         = reserved("let");
+    public rule _pinned      = reserved("pinned");
     public rule _if          = reserved("if");
     public rule _else        = reserved("else");
     public rule _while       = reserved("while");
@@ -254,7 +255,7 @@ public final class TMGrammar extends Grammar {
      */
     public rule statement = lazy(() -> choice(
             this.main_stmt,
-            this.let_decl,
+            this.var_decl,
             this.fct_decl,
             this.struct_decl,
             this.if_stmt,
@@ -263,7 +264,7 @@ public final class TMGrammar extends Grammar {
     ));
 
     public rule block_statements = lazy(() -> choice(
-            this.let_decl,
+            this.var_decl,
             this.if_stmt,
             this.while_stmt,
             this.expression_stmt,
@@ -271,22 +272,28 @@ public final class TMGrammar extends Grammar {
     ));
 
     public rule fct_statements = lazy(() -> choice(
-            this.let_decl,
+            this.var_decl,
             this.if_stmt,
             this.while_stmt,
             this.expression_stmt,
             this.return_stmt,
-            this.fct_decl,
-            this.struct_decl
+            this.fct_decl
     ));
 
     public rule brace_statement =
             seq(LBRACE, block_statements.at_least(0), RBRACE)
                     .as_list(StatementNode.class).push($ -> new BlockNode($.span(), $.$[0]));
 
-    public rule let_decl = lazy(() ->
+    public rule pinned_decl =
+            seq(_pinned, identifier, AS, choice(expression, paren_expression))
+                    .push($ -> new LetDeclarationNode($.span(), $.$[0], $.$[1], Boolean.TRUE));
+
+    public rule let_decl =
             seq(_let, identifier, AS, choice(expression, paren_expression))
-                    .push($ -> new LetDeclarationNode($.span(), $.$[0], $.$[1])));
+                    .push($ -> new LetDeclarationNode($.span(), $.$[0], $.$[1], Boolean.FALSE));
+
+    public rule var_decl =
+            choice(let_decl, pinned_decl);
 
     public rule if_stmt =
             seq(_if, paren_expression, brace_statement, seq(_else, brace_statement).or_push_null())

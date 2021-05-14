@@ -22,7 +22,20 @@ public class UtilStatic {
         put("parseInt", "Int");
     }};
 
+    public static HashMap<String, Boolean> pinnedMap = new HashMap<>();
+
+    /**
+     * Ensure that the put function does not erase the wrong key in {@typesMap}
+     * If the key is already, then NotYet is put instead.
+     * And so the value will be checked during the interpreter phase and NOT during the semantic.
+     * @param key as the key in the put function.
+     * @param value as the value in the put function.
+     */
     public static void surePut(String key, String value){
+        if (value.equals("NotYet")){
+            typesMap.put(key, "NotYet");
+            return;
+        }
         String getValue = typesMap.get(key);
         if (getValue != null && !getValue.equals(value))
             typesMap.put(key, "NotYet");
@@ -31,7 +44,7 @@ public class UtilStatic {
     }
 
     /**
-     * Used in context to fill typesMap with the type of different nodes.
+     * Used in context to fill typesMap with the type of different nodes during the AST construction.
      * @param thatSpan is the span of that expression.
      * @param thatExpression is any expression.
      * @return a {@link TypeNode} that represents the type of the expression.
@@ -54,6 +67,11 @@ public class UtilStatic {
         return type;
     }
 
+    /**
+     * Used in context to know the real type of an {@link NotYetType} during the interpreter phase.
+     * @param expr is any expression and the result of a get(expr) by the interpreter.
+     * @return a {@link Type} that represents the type of the expression.
+     */
     @SuppressWarnings("unchecked")
     public static Type whichTypeIs(Object expr)
     {
@@ -68,15 +86,21 @@ public class UtilStatic {
         throw new PassthroughException(new Throwable("whichTypeIs function only supports Long, Double, String and Boolean types"));
     }
 
-    public static Type whichArrayTypeIs(Object[] literals){
-        Type firstType = whichTypeIs(literals[0]);
-        for (Object literal : literals){
-            Type litType = whichTypeIs(literal);
-            if (!litType.equals(firstType)){
-                if (firstType.name().equals("Int") && litType.name().equals("Float")){
+    /**
+     * Only use by whichTypeIs(Object expr) to know the component type of the array/map.
+     * Also check any type anomalies.
+     * @param expressions
+     * @return
+     */
+    public static Type whichArrayTypeIs(Object[] expressions){
+        Type firstType = whichTypeIs(expressions[0]);
+        for (Object expr : expressions){
+            Type exprType = whichTypeIs(expr);
+            if (!exprType.equals(firstType)){
+                if (firstType.name().equals("Int") && exprType.name().equals("Float")){
                     firstType = FloatType.INSTANCE;
                 } else {
-                    throw new PassthroughException(new Throwable(String.format("An array/map can not have incompatibles types as %s and %s", firstType.toString(), litType.toString())));
+                    throw new PassthroughException(new Throwable(String.format("An array/map can not have incompatibles types as %s and %s", firstType.toString(), exprType.toString())));
                 }
             }
         }
@@ -99,13 +123,13 @@ public class UtilStatic {
         return op == OR || op == AND;
     }
 
-    /**Works with numbers and booleans*/
+    /**Works with numbers xor booleans*/
     public static boolean isEquality (BinaryOperator op) {
         return op == EQUAL || op == DIFF;
     }
 
     /**@return true if {@param o} is one of the instances of all the class types in {@param types}.*/
-    public static boolean isInstanceOf (Object o, Class... types){
+    public static boolean isInstanceOf (Object o, @SuppressWarnings("rawtypes") Class... types){
         boolean b;
         for (Object type : types){
             b = (o.getClass() == type);
