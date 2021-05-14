@@ -312,8 +312,8 @@ public final class InterpreterTests extends TestFixture {
 
         checkExpr("2**3",8L);
         checkExpr("0.5**2",0.25d);
-        checkExpr("2**0.5",1.4142135624d);
-        checkExpr("2.5**0.5",1.5811388301d);
+        checkExpr("2**0.5",1.4142135623730951d);
+        checkExpr("2.5**0.5",1.5811388300841898d);
 
 
         checkExpr("2 * (4-1) * 4.0 / 6 % (2+1)", 1.0d);

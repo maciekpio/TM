@@ -2,6 +2,7 @@ package ast;
 
 import norswap.autumn.positions.Span;
 import norswap.utils.Util;
+import types.NotYetType;
 
 import static utils_static.UtilStatic.typesMap;
 
@@ -14,11 +15,9 @@ public final class ReferenceNode extends ExpressionNode
         super(span);
         this.name = Util.cast(name, String.class);
         this.type = typesMap.get(this.name);
-        /*if(type != null){
-            System.out.printf("The reference \"%s\" was indeed in the map as %s%n", this.name, this.type);
-        }else{
-            //throw new Error(String.format("The reference \"%s\" is not declared%n", this.name));
-        }*/
+        if(type == null) {
+            this.type = "NotYet";
+        }
     }
 
     @Override public String contents() {

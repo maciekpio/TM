@@ -48,101 +48,110 @@ public final class SemanticTests extends UraniumTestFixture
     // ---------------------------------------------------------------------------------------------
 
     @Test public void testLiteralsAndUnary() {
-        successInput("42");
-        successInput("42.0");
-        successInput("\"hello\"");
-        successInput("true");
-        successInput("false");
-        successInput("!!true");
-        successInput("!!false");
-        successInput("!!!!true");
+        testHelpS("42");
+        testHelpS("42.0");
+        testHelpS("\"hello\"");
+        testHelpS("true");
+        testHelpS("false");
+        testHelpS("!true");
+        testHelpS("!false");
+        testHelpS("!!true");
     }
 
     // ---------------------------------------------------------------------------------------------
 
     @Test public void testNumericBinary() {
-        successInput("1 + 2");
-        successInput("2 - 1");
-        successInput("2 * 3");
-        successInput("2 / 3");
-        successInput("3 / 2");
-        successInput("2 % 3");
-        successInput("3 % 2");
+        testHelpS("1 + 2");
+        testHelpS("2 - 1");
+        testHelpS("2 * 3");
+        testHelpS("2 / 3");
+        testHelpS("3 / 2");
+        testHelpS("2 % 3");
+        testHelpS("3 % 2");
 
-        successInput("1.0 + 2.0");
-        successInput("2.0 - 1.0");
-        successInput("2.0 * 3.0");
-        successInput("2.0 / 3.0");
-        successInput("3.0 / 2.0");
-        successInput("2.0 % 3.0");
-        successInput("3.0 % 2.0");
+        testHelpS("1.0 + 2.0");
+        testHelpS("2.0 - 1.0");
+        testHelpS("2.0 * 3.0");
+        testHelpS("2.0 / 3.0");
+        testHelpS("3.0 / 2.0");
+        testHelpS("2.0 % 3.0");
+        testHelpS("3.0 % 2.0");
 
-        successInput("1 + 2.0");
-        successInput("2 - 1.0");
-        successInput("2 * 3.0");
-        successInput("2 / 3.0");
-        successInput("3 / 2.0");
-        successInput("2 % 3.0");
-        successInput("3 % 2.0");
+        testHelpS("1 + 2.0");
+        testHelpS("2 - 1.0");
+        testHelpS("2 * 3.0");
+        testHelpS("2 / 3.0");
+        testHelpS("3 / 2.0");
+        testHelpS("2 % 3.0");
+        testHelpS("3 % 2.0");
 
-        successInput("1.0 + 2");
-        successInput("2.0 - 1");
-        successInput("2.0 * 3");
-        successInput("2.0 / 3");
-        successInput("3.0 / 2");
-        successInput("2.0 % 3");
-        successInput("3.0 % 2");
+        testHelpS("1.0 + 2");
+        testHelpS("2.0 - 1");
+        testHelpS("2.0 * 3");
+        testHelpS("2.0 / 3");
+        testHelpS("3.0 / 2");
+        testHelpS("2.0 % 3");
+        testHelpS("3.0 % 2");
 
-        failureInputWith("2 + true", "Trying to plus int with Bool");
-        failureInputWith("true + 2", "Trying to plus Bool with Int");
+        testHelpF("2 + true", "Trying to plus int with Bool");
+        testHelpF("true + 2", "Trying to plus Bool with Int");
     }
 
     // ---------------------------------------------------------------------------------------------
 
+    public void testHelpS(String testString){
+        successInput("main{"+testString+"}");
+    }
+
+    public void testHelpF(String testString,String mess){
+        failureInputWith("main{"+testString+"}",mess);
+    }
+
     @Test public void testOtherBinary() {
-        successInput("true && false");
-        successInput("false && true");
-        successInput("true && true");
-        successInput("true || false");
-        successInput("false || true");
-        successInput("false || false");
 
-        failureInputWith("false || 1",
+        testHelpS("true && false");
+        testHelpS("false && true");
+        testHelpS("true && true");
+        testHelpS("true || false");
+        testHelpS("false || true");
+        testHelpS("false || false");
+
+        testHelpF("false || 1",
                 "Attempting to perform binary logic on non-boolean type: Int");
-        failureInputWith("2 || true",
+        testHelpF("2 || true",
                 "Attempting to perform binary logic on non-boolean type: Int");
 
-        successInput("1 + \"a\"");
-        successInput("\"a\" + 1");
-        successInput("\"a\" + true");
+        testHelpS("1 + \"a\"");
+        testHelpS("\"a\" + 1");
+        testHelpS("\"a\" + true");
 
-        successInput("1 == 1");
-        successInput("1 == 2");
-        successInput("1.0 == 1.0");
-        successInput("1.0 == 2.0");
-        successInput("true == true");
-        successInput("false == false");
-        successInput("true == false");
-        successInput("1 == 1.0");
+        testHelpS("1 == 1");
+        testHelpS("1 == 2");
+        testHelpS("1.0 == 1.0");
+        testHelpS("1.0 == 2.0");
+        testHelpS("true == true");
+        testHelpS("false == false");
+        testHelpS("true == false");
+        testHelpS("1 == 1.0");
 
-        failureInputWith("true == 1", "Trying to compare incomparable types Bool and Int");
-        failureInputWith("2 == false", "Trying to compare incomparable types Int and Bool");
+        testHelpF("true == 1", "Trying to compare incomparable types Bool and Int");
+        testHelpF("2 == false", "Trying to compare incomparable types Int and Bool");
 
-        successInput("\"hi\" == \"hi\"");
+        testHelpS("\"hi\" == \"hi\"");
 
-        successInput("1 != 1");
-        successInput("1 != 2");
-        successInput("1.0 != 1.0");
-        successInput("1.0 != 2.0");
-        successInput("true != true");
-        successInput("false != false");
-        successInput("true != false");
-        successInput("1 != 1.0");
+        testHelpS("1 != 1");
+        testHelpS("1 != 2");
+        testHelpS("1.0 != 1.0");
+        testHelpS("1.0 != 2.0");
+        testHelpS("true != true");
+        testHelpS("false != false");
+        testHelpS("true != false");
+        testHelpS("1 != 1.0");
 
-        failureInputWith("true != 1", "Trying to compare incomparable types Bool and Int");
-        failureInputWith("2 != false", "Trying to compare incomparable types Int and Bool");
+        testHelpF("true != 1", "Trying to compare incomparable types Bool and Int");
+        testHelpF("2 != false", "Trying to compare incomparable types Int and Bool");
 
-        successInput("\"hi\" != \"hi\"");
+        testHelpS("\"hi\" != \"hi\"");
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -191,8 +200,8 @@ public final class SemanticTests extends UraniumTestFixture
         //String letSomeVariables = "let anInt = 1; let aFloat = 2.0; let aBool = true; let aString = \"text\"; let matrix = [1.0, 2.0]; ";
         successInput("struct StructName {attr1 = 0.0}");
         successInput("struct StructName {attr1 = anInt}");
-        successInput("struct StructName {attr1 = aFloat; attr2 = false; attr3 = aString; attr4 = anArray}");
-        ast = (RootNode) parse("struct Struct_name {attr1 = aFloat; attr2 = false; attr3 = aString; attr4 = anArray}");
+        successInput("struct StructName {attr1 = aFloat; attr2 = false; attr3 = aString}");
+        ast = (RootNode) parse("struct Struct_name {attr1 = aFloat; attr2 = false; attr3 = aString}");
         System.out.println(ast.contents());
     }
 

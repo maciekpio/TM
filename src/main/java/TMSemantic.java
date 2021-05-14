@@ -515,7 +515,7 @@ public final class TMSemantic {
         .using(node.operand, "type")
         .by(r -> {
             Type opType = r.get(0);
-            if (!(isInstanceOf(BoolType.class, NotYetType.class)))
+            if (!(isInstanceOf(opType,BoolType.class, NotYetType.class)))
                 r.error("Trying to negate type: " + opType, node);
         });
     }
