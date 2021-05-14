@@ -3,6 +3,7 @@ package ast;
 public enum BinaryOperator
 {
     TIMES("*"),
+    POW("**"),
     DIVID("/"),
     MODULO("%"),
     PLUS("+"),

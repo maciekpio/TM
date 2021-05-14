@@ -3,4 +3,7 @@
 .classpath
 .project
 .settings
-.build
+.build/classes/java/main/*
+build/classes/java/main/*
+build/reports/tests/test/classes/
+build/test-results/test/TEST-InterpreterTests.xml

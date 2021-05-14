@@ -14,6 +14,7 @@ import norswap.utils.visitors.ValuedVisitor;
 
 import java.util.*;
 
+import static java.lang.Integer.parseInt;
 import static norswap.utils.Util.cast;
 import static norswap.utils.Vanilla.coIterate;
 import static norswap.utils.Vanilla.map;
@@ -315,6 +316,7 @@ public final class TMInterpreter
                 case LOWER_EQUAL:   return fleft <= fright;
                 case EQUAL:         return fleft == fright;
                 case DIFF:          return fleft != fright;
+                case POW:           return Math.pow(fleft,fright);
                 default:
                     throw new Error("should not reach here");
             }
@@ -331,6 +333,7 @@ public final class TMInterpreter
                 case LOWER_EQUAL:   return ileft <= iright;
                 case EQUAL:         return ileft == iright;
                 case DIFF:          return ileft != iright;
+                case POW:           return Math.round(Math.pow(ileft,iright));
                 default:
                     throw new Error("should not reach here");
             }
@@ -605,9 +608,24 @@ public final class TMInterpreter
 
     private Object builtin (String name, Object[] args)
     {
-        assert name.equals("print"); // only one at the moment
-        String out = convertToString(args[0]);
-        System.out.println(out);
+        switch (name){
+            case "print":
+                System.out.println(convertToString(args[0]));
+                break;
+            case "rprint":
+                System.out.println("Error: "+convertToString(args[0]));
+                break;
+            case "parseInt":
+                try{
+                    return parseInt(convertToString(args[0]));
+                }catch (NumberFormatException e){
+                    throw new PassthroughException(new Throwable("String passed in args cannot be converted to int"));
+                }
+
+
+            default:
+                throw new Error("should not reach here");
+        }
         return null;
     }
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="InterpreterTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-05-13T18:14:54" hostname="LAPTOP-TPLG6GOL" time="0.232">
+  <properties/>
+  <testcase name="testBuiltIn" classname="InterpreterTests" time="0.232"/>
+  <system-out><![CDATA[The reference "print" was indeed in the map as Void
+The reference "rprint" was indeed in the map as Void
+The reference "parseInt" was indeed in the map as Integer
+The reference "parseInt" was indeed in the map as Integer
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

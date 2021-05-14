@@ -19,6 +19,7 @@ public class UtilStatic {
     public static HashMap<String, String> typesMap = new HashMap<>(){{
         put("print", "Void");
         put("rprint", "Void");
+        put("parseInt", "Integer");
     }};
 
     public static void surePut(String key, String value){
@@ -83,7 +84,8 @@ public class UtilStatic {
 
     /**Works with numbers*/
     public static boolean isArithmetic (BinaryOperator op) {
-        return op == PLUS || op == TIMES || op == MINUS || op == DIVID || op == MODULO;
+        return op == PLUS || op == TIMES || op == MINUS || op == DIVID || op == MODULO
+                || op == POW;
     }
 
     /**Works with numbers*/

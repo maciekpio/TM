@@ -176,7 +176,7 @@ public final class SemanticTests extends UraniumTestFixture
         //System.out.println(ast.contents());
         //successInput("let x = 1; let y = x+1; y = 2.0");
         //successInput("let x = 1; let matrix[] = [1, x]; matrix = [1, 2]");
-        successInput("main () {print(\"main\")}");
+        successInput("parseInt(\"5\")");
     }
 
     @Test public void testArrayAccess() {
