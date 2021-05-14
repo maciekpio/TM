@@ -1,5 +1,6 @@
 import ast.*;
 import norswap.autumn.ParseResult;
+import norswap.autumn.positions.Span;
 import org.testng.annotations.Test;
 import norswap.autumn.AutumnTestFixture;
 
@@ -8,9 +9,9 @@ public class GrammarTests extends AutumnTestFixture {
     TMGrammar TMParser = new TMGrammar();
     ParseResult ast;
 
-    String structBasic = "struct struct_name {identifier1 = value1}";
-    String structWith3values = "struct struct_name {identifier1 = value1 identifier2 = value2 identifierN = valueN}";
-    String structBackSlashN = "struct struct_name {identifier1 = value1\n identifier2 = value2\n identifierN = valueN}";
+    String structBasic = "struct struct_name {identifier1 = anInt}";
+    String structWith3values = "struct struct_name {identifier1 = anInt identifier2 = aString identifierN = aFloat}";
+    String structBackSlashN = "struct struct_name {identifier1 = anInt\n identifier2 = aString\n identifierN = aFloat}";
     String structWithSpaces = "struct    struct_name    {  identifier1   =   value1     identifier2   =   value2}";
     String structWithError1 = "struct struct_name {identifier1 = value1, identifier2 = value2}";
     String structWithError2 = "struct struct_name {if(true){identifier1 = value1} identifier2 = value2}";
@@ -21,6 +22,7 @@ public class GrammarTests extends AutumnTestFixture {
     String structWithError7 = "struct_name {identifier1 = value1 identifier2 = value2}";
 
     String fctBasicVoid = "def fct_name () {return ()}";
+    String fctVoid = "def fct_name () {}";
     String fctWith1Arg = "def fct_name (arg1) {return (arg1)}";
     String fctComplex = "def fct_name (arg1, arg2, arg3) {if(arg1) {return (false);} return (true)}";
     String fctWithSpaces = "def   fct_name   (  )   {  return   (   )    }";
@@ -28,8 +30,7 @@ public class GrammarTests extends AutumnTestFixture {
     String fctError2 = "def fct_name {return ()}";
     String fctError3 = "def fct_name () {return ()";
     String fctError4 = "def fct_name (if, while) return ()";
-    String fctError5 = "def fct_name () {}";
-    String fctError6 = "def fct_name ()";
+    String fctError5 = "def fct_name ()";
 
     @Test
     public void testIden(){
@@ -207,13 +208,13 @@ public class GrammarTests extends AutumnTestFixture {
         success(fctWith1Arg);
         success(fctComplex);
         success(fctWithSpaces);
+        success(fctVoid);
 
         failure(fctError1);
         failure(fctError2);
         failure(fctError3);
         failure(fctError4);
         failure(fctError5);
-        failure(fctError6);
     }
 
     @Test
@@ -322,125 +323,24 @@ public class GrammarTests extends AutumnTestFixture {
         success("true && false");
     }
 
-    String fib = "def fib(a, b, N){" +
-            "if (N==0){" +
-            "return ()" +
-            "}" +
-            " print(a)" +
-            " return (fib(b, a+b, N-1))" +
-            "}";
-
-    String fizzbuzz =
-            "def fizzbuzz(args) {\n" +
-                    "let i = 1\n" +
-                    "while (i <= 100) {\n" +
-                    "if (i%15 == 0){\n" +
-                    "print(\"FizzBuzz\")" +
-                    "} else {if (i % 3 == 0){\n" +
-                    "print(\"Fizz\")" +
-                    "}\n" +
-                    "else{ if (i % 5 == 0){\n" +
-                    "print(\"Buzz\")" +
-                    "}\n" +
-                    "else {\n" +
-                    "print(i)" +
-                    "}}}\n" +
-                    "i = i + 1\n" +
-                    "}\n" +
-                    "return ()}";
-
-    String prime =
-            "def isPrime(number) {\n" +
-                    "    if (number <= 1) {return (false)}\n" +
-                    "    prime = true\n" +
-                    "    i = 2\n" +
-                    "    while (i < number && prime) {\n" +
-                    "        if (number%i == 0) {prime = false}\n" +
-                    "    i = i + 1\n" +
-                    "    }\n" +
-                    "    return (prime)\n" +
-                    "}\n" +
-                    "\n" +
-                    "def main (args) {\n" +
-                    "    N = Integer.parseInt(args.get(0))\n" +
-                    "    current = 2\n" +
-                    "    count = 0\n" +
-                    "    while (count < N) {\n" +
-                    "        if (isPrime(current)) {\n" +
-                    "        print(current)\n" +
-                    "        count = count + 1\n" +
-                    "        }\n" +
-                    "    current = current + 1\n" +
-                    "    }\n" +
-                    "return ()}";
-
-    String sort =
-            "def swap(a, i, j) {\n" +
-                    "    tmp = a.get(i)\n" +
-                    "    a.put(a.get(j), i)\n" +
-                    "    a.put(tmp, j)\n" +
-                    "    return ()\n" +
-                    "}\n" +
-                    "\n" +
-                    "def sort(numbers) {\n" +
-                    "    i = 0\n" +
-                    "    while (i < length(numbers)) {\n" +
-                    "        j = i+1\n" +
-                    "        while (j < numbers.length) {\n" +
-                    "            if (numbers.get(i) > numbers.get(j)){\n" +
-                    "                swap(numbers, i, j)\n" +
-                    "                j = j + 1\n" +
-                    "            }\n" +
-                    "        i = i + 1\n" +
-                    "        }\n" +
-                    "    }\n" +
-                    "    return ()\n" +
-                    "}\n" +
-                    "\n" +
-                    "def main(args) {\n" +
-                    "    array numbers [length(args)]\n" +
-                    "    i = 0\n" +
-                    "    while (i < args.length) {\n" +
-                    "        numbers.put(Integer.parseInt(args.get(i)), i)\n" +
-                    "        i = i + 1\n" +
-                    "    }\n" +
-                    "    sort(numbers)\n" +
-                    "    i = 0\n" +
-                    "    while (i < numbers.length) {\n" +
-                    "        print(numbers.get(i))\n" +
-                    "        i = i + 1\n" +
-                    "    }\n" +
-                    "    return ()\n" +
-                    "}";
-
-    @Test
-    public void testProg() {
-        this.rule = TMParser.root;
-
-        success(fib);
-        success(fizzbuzz);
-        success(prime);
-        success(sort);
-    }
-
     @Test
     public void testLetDecl(){
         this.rule = TMParser.let_decl;
-        ast = successExpect("let x = 1", new LetDeclarationNode(null, "x", new IntLiteralNode(null, 1)));
+        ast = successExpect("let x = 1", new LetDeclarationNode(new Span(0,0), "x", new IntLiteralNode(null, 1)));
         System.out.println(ast.valueStack);
     }
 
     @Test
     public void testReference(){
         this.rule = TMParser.root;
-        ast = success("let x = 1; let matrix[] = [1, x];");
+        ast = success("let x = 1; let matrix= [1, x];");
         System.out.println(ast.valueStack);
     }
 
     @Test
     public void testPut(){
         this.rule = TMParser.root;
-        ast = success("x.put(0, 3)");
+        ast = success("x.put(0: 3)");
         System.out.println(ast.valueStack);
     }
 }
