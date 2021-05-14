@@ -515,7 +515,7 @@ public final class TMSemantic {
         .using(node.operand, "type")
         .by(r -> {
             Type opType = r.get(0);
-            if (!(isInstanceOf(BoolType.class, NotYetType.class)))
+            if (!(isInstanceOf(opType, BoolType.class, NotYetType.class)))
                 r.error("Trying to negate type: " + opType, node);
         });
     }
@@ -556,7 +556,9 @@ public final class TMSemantic {
 
     private void binaryArithmetic (Rule r, BinaryExpressionNode node, Type left, Type right)
     {
-        if (isInstanceOf(left, NotYetType.class, FloatType.class) && isInstanceOf(right, NotYetType.class, FloatType.class))
+        if (isInstanceOf(left, NotYetType.class, FloatType.class)
+                && isInstanceOf(right, NotYetType.class, FloatType.class)
+                && !atLeastOneNYT(left, right))
             r.set(0, FloatType.INSTANCE);
         else if (atLeastOneNYT(left, right))
             r.set(0, NotYetType.INSTANCE);
@@ -857,8 +859,6 @@ public final class TMSemantic {
     {
         R.set(node, "scope", scope);
         scope.declare(node.name, node); // scope pushed by FunDeclarationNode
-
-        String str = node.getType();
 
         if(node.getType().equals("NotYet")){
             R.rule(node, "type");

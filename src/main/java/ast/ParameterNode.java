@@ -18,12 +18,10 @@ public final class ParameterNode extends DeclarationNode
         if(maybeType==null){
             this.type = Util.cast(new SimpleTypeNode(span, "NotYet"), TypeNode.class);
             UtilStatic.surePut(this.name, "NotYet");
-            //System.out.printf("The current map is %s%n", typesMap.toString());
         }
         else {
-            this.type = new SimpleTypeNode(span, ((ReferenceNode)maybeType).name);
+            this.type = new SimpleTypeNode(span, ((ReferenceNode)maybeType).getType());
             UtilStatic.surePut(this.name, type.contents());
-            //System.out.printf("The current map is %s%n", typesMap.toString());
         }
 
 

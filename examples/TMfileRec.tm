@@ -1,5 +1,13 @@
-##TMfileFct.tm
+#---------------------------------------#
+#--------------TM language--------------#
+#---------------------------------------#
 
+#
+    TM file having multiples examples
+    of functions that work perfectly.
+#
+
+##Example of recursive a function
 def fib(a, b, N){
         print(a)
         if(N!=0){
@@ -9,6 +17,7 @@ def fib(a, b, N){
 
 fib(0, 1, 3)
 
+##Example of a function declaration in another
 def array_add (a){
 
     def add(a,b){
@@ -32,106 +41,107 @@ def array_add (a){
 }
 
 def isPrime(number) {
-            if (number <= 1) {return (false)}
-            let prime = true
-            let i = 2
-            while (i < number && prime) {
-                if (number%i == 0) {prime = false}
-            i = i + 1
-            }
-            return (prime)
+    if (number <= 1) {return (false)}
+    let prime = true
+    let i = 2
+    while (i < number && prime) {
+        if (number%i == 0) {prime = false}
+        i = i + 1
+    }
+    return (prime)
 }
 
 def tricky2 (args) {
-            let N = parseInt(args.get(0))
-            let current = 2
-            let count = 0
-            while (count < N) {
-                if (isPrime(current)) {
-                print(current+aString)
-                count = count + 1
-                }
-            current = current + 1
-            }
+    let N = parseInt(args.get(0))
+    let current = 2
+    let count = 0
+    while (count < N) {
+        if (isPrime(current)) {
+        print(current+aString)
+        count = count + 1
+        }
+    current = current + 1
+    }
 }
 
 def fizzbuzz(args) {
-        let i = 1
-        while (i <= 100) {
-            if (i%15 == 0){
-                print("FizzBuzz")
-            } else {if (i % 3 == 0){
+    let i = 1
+    while (i <= 100) {
+        if (i%15 == 0){
+            print("FizzBuzz")
+        }
+        else {if (i % 3 == 0){
             print("Fizz")
-            }
-            else{ if (i % 5 == 0){
+        }
+        else{ if (i % 5 == 0){
             print("Buzz")
-            }
-            else {
-                print(i+aString)
-            }}}
-            i = i + 1
         }
-        }
+        else {
+            print(i+aString)
+        }}}
+        i = i + 1
+    }
+}
 
 def swap(a, i, j) {
-            let tmp = a.get(i)
-            a.put(i:a.get(j))
-            a.put(j:tmp)
-        }
+    let tmp = a.get(i)
+    a.put(i:a.get(j))
+    a.put(j:tmp)
+}
 
-        def sort(numbers) {
-            let i = 0
-            while (i < numbers.length) {
-                let j = i+1
-                while (j < numbers.length) {
-                    if (numbers.get(i) > numbers.get(j)){
-                        swap(numbers, i, j)
-                        j = j + 1
-                    }
-                i = i + 1
-                }
+def sort(numbers) {
+    let i = 0
+    while (i < numbers.length) {
+        let j = i+1
+        while (j < numbers.length) {
+            if (numbers.get(i) > numbers.get(j)){
+                swap(numbers, i, j)
+                j = j + 1
             }
+        i = i + 1
         }
-
-        def man(args) {
-            let numbers=arrayOf(anInt:args.length)
-            let i = 0
-            while (i < args.length) {
-                numbers.put(parseInt(args.get(i)): i)
-                i = i + 1
-            }
-            sort(numbers)
-            i = 0
-            while (i < numbers.length) {
-                print(numbers.get(i)+aString)
-                i = i + 1
-            }
-        }
-
-
-    def sum(a,b){
-        return (a+b)
     }
+}
 
-    let a=sum(5,10)
-    let b=sum(5.5,9.5)
-    let c=sum("additioner"," des")
-    let d=sum(c," Strings")
-    print(a)
-    print(b)
-    print(c)
-    print(d)
-
-    def equals (a, b) { return (a == b) }
-
-    struct Pair {
-        a=anInt
-        b=anInt
+def man(args) {
+    let numbers=arrayOf(anInt:args.length)
+    let i = 0
+    while (i < args.length) {
+        numbers.put(parseInt(args.get(i)): i)
+        i = i + 1
     }
+    sort(numbers)
+    i = 0
+    while (i < numbers.length) {
+        print(numbers.get(i)+aString)
+        i = i + 1
+    }
+}
 
-    let e = equals("text", "text")
-    let g = equals(5, 5)
-    let h = equals(new Pair(1,2), new Pair(1,2))
+
+def sum(a,b){
+    return (a+b)
+}
+
+let a=sum(5,10)
+let b=sum(5.5,9.5)
+let c=sum("additioner"," des")
+let d=sum(c," Strings")
+print(a)
+print(b)
+print(c)
+print(d)
+
+def equals (a, b) { return (a == b) }
+
+struct Pair {
+    a=anInt
+    b=anInt
+}
+
+let e = equals("text", "text")
+let g = equals(5, 5)
+let h = equals(new Pair(1,2), new Pair(1,2))
 
 let total= array_add([1, 2, 3])
 let float_total = total + 0.0
@@ -156,10 +166,8 @@ def validate5(value)
 validate5(math)
 validate5(6)
 
-
 let type = new Pair()
 print(type + aString) 
-
 
 def sum_pair (pair){
     return (pair.a + pair.b)
@@ -172,3 +180,7 @@ def use_array (array) {}
 let intArray= arrayOf(anInt:0)
 let stringArray= arrayOf(aString:0)
 use_array(arrayOf(0:0))
+
+#---------------------------------------#
+#--------------TM language--------------#
+#---------------------------------------#

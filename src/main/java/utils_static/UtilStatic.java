@@ -54,6 +54,7 @@ public class UtilStatic {
         return type;
     }
 
+    @SuppressWarnings("unchecked")
     public static Type whichTypeIs(Object expr)
     {
         if(expr instanceof Long)      return    IntType.INSTANCE;

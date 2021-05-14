@@ -171,7 +171,7 @@ public final class TMInterpreter
             len = get(node.length);
         }
         catch (ClassCastException e) {
-            throw new PassthroughException(new Throwable("Initializing an array using a non-int-valued expression as length."));
+            throw new PassthroughException(new Error("Initializing an array using a non-int-valued expression as length."));
         }
 
         Object init = get(node.initializer);
@@ -189,7 +189,7 @@ public final class TMInterpreter
             try {
                 key = get(entry.key);
             } catch (ClassCastException e){
-                throw new PassthroughException(new Throwable("Trying to use a non-string as key for a map entry"));
+                throw new PassthroughException(new Error("Trying to use a non-string as key for a map entry"));
             }
             map.put(key, get(entry.value));
         }
@@ -217,10 +217,10 @@ public final class TMInterpreter
 
         if (isArithmetic(node.operator) || isComparison(node.operator)) {
             if (!isNumber(leftType) || !isNumber(rightType))
-                throw new PassthroughException(new Throwable(errorCause));
+                throw new PassthroughException(new Error(errorCause));
         } else if (isLogic(node.operator)) {
             if (!(leftType instanceof BoolType && rightType instanceof BoolType))
-                throw new PassthroughException(new Throwable(errorCause));
+                throw new PassthroughException(new Error(errorCause));
         }
 
         // Cases where both operands should not be evaluated.
@@ -345,7 +345,7 @@ public final class TMInterpreter
             rightType = whichTypeIs(get(node.right));
         }
         if (!isAssignableTo(rightType, leftType))
-            throw new PassthroughException(new Throwable(String.format("Trying to assign %s to a %s variable", rightType.toString(), leftType.toString())));
+            throw new PassthroughException(new Error(String.format("Trying to assign %s to a %s variable", rightType.toString(), leftType.toString())));
 
         if (node.left instanceof ReferenceNode) {
             Scope scope = reactor.get(node.left, "scope");
@@ -392,7 +392,7 @@ public final class TMInterpreter
         try{
             return ! (boolean) o;
         } catch (ClassCastException e){
-            throw new PassthroughException(new Throwable(String.format("Trying to inverse an non-boolean object as !%s", whichTypeIs(o).toString())));
+            throw new PassthroughException(new Error(String.format("Trying to inverse an non-boolean object as !%s", whichTypeIs(o).toString())));
         }
 
     }
@@ -410,12 +410,12 @@ public final class TMInterpreter
             try {
                 map = (HashMap <String, Object>) array_map;
             } catch (ClassCastException e){
-                throw new PassthroughException(new Throwable("Reading a non-map object."));
+                throw new PassthroughException(new Error("Reading a non-map object."));
             }
             try {
                 key = get(node.index_key);
             } catch (ClassCastException e){
-                throw new PassthroughException(new Throwable("Trying to use a non-string as key to read."));
+                throw new PassthroughException(new Error("Trying to use a non-string as key to read."));
             }
             Object o = map.get(key);
             if (o==null){
@@ -430,12 +430,12 @@ public final class TMInterpreter
             try {
                 array = (Object[]) array_map;
             } catch (ClassCastException e) {
-                throw new PassthroughException(new Throwable("Indexing a non-array object."));
+                throw new PassthroughException(new Error("Indexing a non-array object."));
             }
             try{
                 index = getIndex(node.index_key);
             } catch (ClassCastException e){
-                throw new PassthroughException(new Throwable("Indexing with a non-int index."));
+                throw new PassthroughException(new Error("Indexing with a non-int index."));
             }
             try{
                 return array[index];
@@ -444,7 +444,7 @@ public final class TMInterpreter
             }
         }
 
-        throw new PassthroughException(new Throwable("Getting on a non-array/non-map object."));
+        throw new PassthroughException(new Error("Getting on a non-array/non-map object."));
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -457,7 +457,7 @@ public final class TMInterpreter
         Type putType = whichTypeIs(o);
 
         if (!isInstanceOf(arrayMapType, ArrayType.class, MapType.class))
-            throw new PassthroughException(new Throwable("Putting on a non-array/non-map object."));
+            throw new PassthroughException(new Error("Putting on a non-array/non-map object."));
 
         if (arrayMapType instanceof ArrayType)
             arrayMapType = ((ArrayType) arrayMapType).componentType;
@@ -466,7 +466,7 @@ public final class TMInterpreter
             arrayMapType = ((MapType) arrayMapType).componentType;
 
         if (!arrayMapType.equals(putType))
-            throw new PassthroughException(new Throwable(String.format("Trying to put a %s object in an array/map of %s", putType.toString(), arrayMapType.toString())));
+            throw new PassthroughException(new Error(String.format("Trying to put a %s object in an array/map of %s", putType.toString(), arrayMapType.toString())));
 
         Object array_map = get(node.array_map);
 
@@ -477,12 +477,12 @@ public final class TMInterpreter
             try {
                 map = (HashMap <String, Object>) array_map;
             } catch (ClassCastException e){
-                throw new PassthroughException(new Throwable("Writing in a non-map object."));
+                throw new PassthroughException(new Error("Writing in a non-map object."));
             }
             try {
                 key = get(node.index_key);
             } catch (ClassCastException e){
-                throw new PassthroughException(new Throwable("Trying to use a non-string as key to read."));
+                throw new PassthroughException(new Error("Trying to use a non-string as key to read."));
             }
 
             Object previous = map.put(key, o);
@@ -495,12 +495,12 @@ public final class TMInterpreter
             try {
                 array = (Object[]) array_map;
             } catch (ClassCastException e) {
-                throw new PassthroughException(new Throwable("Indexing a non-array object."));
+                throw new PassthroughException(new Error("Indexing a non-array object."));
             }
             try{
                 index = getIndex(node.index_key);
             } catch (ClassCastException e){
-                throw new PassthroughException(new Throwable("Indexing with a non-int index."));
+                throw new PassthroughException(new Error("Indexing with a non-int index."));
             }
 
             try{
@@ -511,7 +511,7 @@ public final class TMInterpreter
                 return Boolean.FALSE;
             }
         }
-        throw new PassthroughException(new Throwable("Putting on a non-array/non-map object."));
+        throw new PassthroughException(new Error("Putting on a non-array/non-map object."));
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -622,7 +622,7 @@ public final class TMInterpreter
                 try{
                     return parseInt(convertToString(args[0]));
                 }catch (NumberFormatException e){
-                    throw new PassthroughException(new Throwable("String passed in args cannot be converted to int"));
+                    throw new PassthroughException(new Error("String passed in args cannot be converted to int"));
                 }
 
 

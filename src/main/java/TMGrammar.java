@@ -5,12 +5,24 @@ import norswap.autumn.actions.ActionContext;
 public final class TMGrammar extends Grammar {
     // ==== LEXICAL ===========================================================
 
-    public rule line_comment =
-            seq("##", seq(not("\n"), any).at_least(0));
+    /*public rule not_line            = seq(str("\n").not(), any);
+    public rule line_comment        = seq("//", not_line.at_least(0), str("\n").opt());
+    public rule not_comment_term    = seq(str("*bar").not(), any);
+    public rule multi_comment       = seq("/*", not_comment_term.at_least(0), "*bar");*/
+
+    public rule not_line            = seq(str("\n").not(), any);
+    public rule line_comment        = seq("##", not_line.at_least(0), str("\n").opt());
+    public rule not_comment_term    = seq(str("#").not(), any);
+    public rule multi_comment       = seq("#", not_comment_term.at_least(0), "#");
+
+    /*public rule line_comment =
+            seq("#", seq(not("\n"), any).at_least(0));*/
 
     public rule ws_item = choice(
             set(" \t\n\r;"),
-            line_comment);
+            line_comment,
+            multi_comment
+            );
 
     {
         ws = ws_item.at_least(0);
@@ -43,7 +55,6 @@ public final class TMGrammar extends Grammar {
     public rule COMMA        = word(",");
     public rule DOT          = word(".");
     public rule COLON        = word(":");
-    public rule HASH         = word("#");
 
     /*Reserved words*/
     public rule _let         = reserved("let");
