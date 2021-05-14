@@ -22,7 +22,7 @@ public class StructDeclarationNode extends DeclarationNode
             attr.structName = this.name;
             surePut(this.name + "##" + attr.name(), attr.getType());
         }
-        System.out.printf("The current map is %s%n", typesMap.toString());
+        //System.out.printf("The current map is %s%n", typesMap.toString());
     }
 
     @Override public String name () {

@@ -26,7 +26,7 @@ public class FctDeclarationNode extends DeclarationNode
         this.returnType = Util.cast(new SimpleTypeNode(span, "NotYet"), TypeNode.class);
 
         UtilStatic.surePut(this.name, returnType.contents());
-        System.out.printf("The current map is %s%n", typesMap.toString());
+        //System.out.printf("The current map is %s%n", typesMap.toString());
     }
 
     @Override public String name () {

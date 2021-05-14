@@ -223,7 +223,7 @@ public final class InterpreterTests extends TestFixture {
                 "main{" +
                 "   getManDiff(a2)" +
                 "}", 4d);*/
-        /*check("def transferTo(a1, a2) {\n" +
+        check("def transferTo(a1, a2) {\n" +
                 "   a1.put(\"x\": a2.get(\"x\")) " +
                 "   a1.put(\"y\": a2.get(\"y\")) " +
                 "}\n" +
@@ -233,7 +233,7 @@ public final class InterpreterTests extends TestFixture {
                 "transferTo(arrayTarget, arrayFrom) " +
                 "main{" +
                 "   arrayTarget" +
-                "}", point1525);*/
+                "}", point1525);
         check("def transferWith(a1, a2) {\n" +
                 "   a1.put(\"x\": a2.get(\"x\")) " +
                 "   a1.put(\"y\": a2.get(\"y\")) " +

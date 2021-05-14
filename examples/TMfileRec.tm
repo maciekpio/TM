@@ -1,3 +1,36 @@
+##TMfileFct.tm
+
+def fib(a, b, N){
+        print(a)
+        if(N!=0){
+            fib(b, a+b, N-1)
+        }
+}
+
+fib(0, 1, 3)
+
+def array_add (a){
+
+    def add(a,b){
+        return (add2(a, b))
+        def add2 (a, b){
+            return (a+b)
+        }
+    }
+
+    if (a.length == 0){
+        return (0)
+    }
+    let i = 1
+    let result = a.get(0)
+
+    while (i < a.length) {
+        result = add(result, a.get(i))
+        i = i + 1
+    }
+    return (result)
+}
+
 def isPrime(number) {
             if (number <= 1) {return (false)}
             let prime = true
@@ -37,20 +70,6 @@ def fizzbuzz(args) {
                 print(i+aString)
             }}}
             i = i + 1
-        }
-        }
-
-def fib(a, b, N){
-        print(a)
-        let x=a
-        let y=b
-        let z=0
-        while(N>0){
-        z=x+y
-        x=y
-        y=z
-        N=N-1
-        print(y)
         }
         }
 
@@ -113,26 +132,6 @@ def swap(a, i, j) {
     let e = equals("text", "text")
     let g = equals(5, 5)
     let h = equals(new Pair(1,2), new Pair(1,2))
-
-def add2(a,b){
-    return (a+b)
-}
-
-def array_add (a){
-    if (a.length == 0){
-        return (0)
-    }
-
-    let i = 1
-    let result = a.get(0)
-
-    while (i < a.length) {
-        result = add2(result, a.get(i))
-        i = i + 1
-    }
-
-    return (result)
-}
 
 let total= array_add([1, 2, 3])
 let float_total = total + 0.0

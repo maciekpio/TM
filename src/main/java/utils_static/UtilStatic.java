@@ -19,7 +19,7 @@ public class UtilStatic {
     public static HashMap<String, String> typesMap = new HashMap<>(){{
         put("print", "Void");
         put("rprint", "Void");
-        put("parseInt", "Integer");
+        put("parseInt", "Int");
     }};
 
     public static void surePut(String key, String value){
@@ -61,8 +61,8 @@ public class UtilStatic {
         if(expr instanceof Boolean)   return   BoolType.INSTANCE;
         if(expr instanceof String)    return StringType.INSTANCE;
         if(expr instanceof Void)      return   VoidType.INSTANCE;
-        if(expr instanceof Object[])  return whichArrayTypeIs((Object[]) expr);
-        if(expr instanceof HashMap)   return whichArrayTypeIs(((HashMap<String, Object>) expr).values().toArray());
+        if(expr instanceof Object[])  return new ArrayType(whichArrayTypeIs((Object[]) expr));
+        if(expr instanceof HashMap)   return new MapType(whichArrayTypeIs(((HashMap<String, Object>) expr).values().toArray()));
 
         throw new PassthroughException(new Throwable("whichTypeIs function only supports Long, Double, String and Boolean types"));
     }

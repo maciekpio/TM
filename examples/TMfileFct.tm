@@ -1,3 +1,25 @@
+def array_add (a){
+
+    def add(a,b){
+        return (add2(a, b))
+        def add2 (a, b){
+            return (a+b)
+        }
+    }
+
+    if (a.length == 0){
+        return (0)
+    }
+    let i = 1
+    let result = a.get(0)
+
+    while (i < a.length) {
+        result = add(result, a.get(i))
+        i = i + 1
+    }
+    return (result)
+}
+
 def isPrime(number) {
             if (number <= 1) {return (false)}
             let prime = true
@@ -113,26 +135,6 @@ def swap(a, i, j) {
     let e = equals("text", "text")
     let g = equals(5, 5)
     let h = equals(new Pair(1,2), new Pair(1,2))
-
-def add2(a,b){
-    return (a+b)
-}
-
-def array_add (a){
-    if (a.length == 0){
-        return (0)
-    }
-
-    let i = 1
-    let result = a.get(0)
-
-    while (i < a.length) {
-        result = add2(result, a.get(i))
-        i = i + 1
-    }
-
-    return (result)
-}
 
 let total= array_add([1, 2, 3])
 let float_total = total + 0.0

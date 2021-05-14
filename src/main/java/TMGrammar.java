@@ -232,11 +232,9 @@ public final class TMGrammar extends Grammar {
     public rule expression_stmt =
             expression.filter($ -> {
                 if (!($.$[0] instanceof AssignmentNode || $.$[0] instanceof FctCallNode || $.$[0] instanceof ArrayMapPutNode)){
-                    System.out.println($.$[0] + " filter false");
                     return false;
                 }
                 $.push(new ExpressionStatementNode($.span(), $.$[0]));
-                System.out.println($.$[0] + " filter true");
                 return true;
             });
 
@@ -261,6 +259,16 @@ public final class TMGrammar extends Grammar {
             this.return_stmt
     ));
 
+    public rule fct_statements = lazy(() -> choice(
+            this.let_decl,
+            this.if_stmt,
+            this.while_stmt,
+            this.expression_stmt,
+            this.return_stmt,
+            this.fct_decl,
+            this.struct_decl
+    ));
+
     public rule brace_statement =
             seq(LBRACE, block_statements.at_least(0), RBRACE)
                     .as_list(StatementNode.class).push($ -> new BlockNode($.span(), $.$[0]));
@@ -282,7 +290,7 @@ public final class TMGrammar extends Grammar {
                     .push($ -> new ReturnNode($.span(), $.$[0]));
 
     public rule fct_block =
-            block_statements.at_least(0)
+            fct_statements.at_least(0)
                     .as_list(StatementNode.class).push($ -> new BlockNode($.span(), $.$[0]));
 
     public rule arg_type =

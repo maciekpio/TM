@@ -18,7 +18,7 @@ public final class LetDeclarationNode extends DeclarationNode
         this.initializer = Util.cast(initializer, ExpressionNode.class);
         this.type = UtilStatic.whichTypeIs(span, this.initializer);
         surePut(this.name, this.type.contents());
-        System.out.printf("The current map is %s%n", typesMap.toString());
+        //System.out.printf("The current map is %s%n", typesMap.toString());
     }
 
     @Override public String name () {
@@ -44,7 +44,6 @@ public final class LetDeclarationNode extends DeclarationNode
     }
 
     public void setType(String strType){
-        System.out.printf("The type \"%s\" was changed to \"%s\"%n", type.contents(), strType);
         SimpleTypeNode simpleTypeNode = new SimpleTypeNode(this.type.span, strType);
         this.type = Util.cast(simpleTypeNode, TypeNode.class);
     }

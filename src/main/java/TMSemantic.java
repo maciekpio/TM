@@ -182,7 +182,6 @@ public final class TMSemantic {
 
     private void constructor (ConstructorNode node)
     {
-        System.out.println("TMSemantic.constructor");
         R.rule()
         .using(node.ref, "decl")
         .by(r -> {
@@ -499,7 +498,7 @@ public final class TMSemantic {
                 if (!isAssignableTo(argType, paramType))
                     r.errorFor(format(
                             "incompatible argument provided for argument %d: expected %s but got %s",
-                            i, argType, paramType),
+                            i, paramType, argType),
                         node.arguments.get(i));
             }
         });
@@ -635,7 +634,7 @@ public final class TMSemantic {
         .by(r -> {
             Type left  = r.get(0);
             Type right = r.get(1);
-            System.out.printf("Assignment of (%s) %s with (%s) %s%n", left.toString(), node.left.contents(), right.toString(), node.right.contents());
+            //System.out.printf("Assignment of (%s) %s with (%s) %s%n", left.toString(), node.left.contents(), right.toString(), node.right.contents());
 
             r.set(0, right); // the type of the assignment is the right-side type
 
@@ -828,7 +827,7 @@ public final class TMSemantic {
             Type expected = r.get(0);
             Type actual = r.get(1);
 
-            System.out.printf("expected %s and got %s%n", expected.toString(), actual.toString());
+            //System.out.printf("expected %s and got %s%n", expected.toString(), actual.toString());
 
             if (!isAssignableTo(actual, expected))
                     r.error(format(
@@ -932,7 +931,7 @@ public final class TMSemantic {
         .using(node.condition, "type")
         .by(r -> {
             Type type = r.get(0);
-            if (!(type instanceof BoolType)) {
+            if (!isInstanceOf(type, BoolType.class, NotYetType.class)) {
                 r.error("If statement with a non-boolean condition of type: " + type,
                     node.condition);
             }
@@ -951,7 +950,7 @@ public final class TMSemantic {
         .using(node.condition, "type")
         .by(r -> {
             Type type = r.get(0);
-            if (!(type instanceof BoolType)) {
+            if (!isInstanceOf(type, BoolType.class, NotYetType.class)) {
                 r.error("While statement with a non-boolean condition of type: " + type,
                     node.condition);
             }

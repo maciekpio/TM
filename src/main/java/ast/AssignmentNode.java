@@ -18,7 +18,7 @@ public class AssignmentNode extends ExpressionNode
         if (left instanceof ReferenceNode)
             surePut(((ReferenceNode) this.left).name, this.right.getType());
 
-        System.out.printf("The current map is %s%n", typesMap.toString());
+        //System.out.printf("The current map is %s%n", typesMap.toString());
     }
 
     @Override public String contents ()

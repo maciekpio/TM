@@ -182,7 +182,7 @@ public final class TMInterpreter
 
     // ---------------------------------------------------------------------------------------------
 
-    private HashMap mapLiteral (MapLiteralNode node) {
+    private Object mapLiteral (MapLiteralNode node) {
         HashMap<String, Object> map = new HashMap<>();
         for (MapEntryNode entry : node.entries){
             String key;
@@ -204,29 +204,24 @@ public final class TMInterpreter
         Type rightType = reactor.get(node.right, "type");
         Object left  = get(node.left);
         Object right = get(node.right);
-        boolean notYetTyped = (atLeastOneNYT(leftType, rightType));
-        boolean stringFormatted = (node.operator == BinaryOperator.PLUS && (left instanceof String || right instanceof String));
 
-        if(stringFormatted) return convertToString(left) + convertToString(right);
-
-        if(notYetTyped) {
-            String errorCause = String.format("%s %s %s not permitted", left.toString(), node.operator.string, right.toString());
-            String str = (left.getClass().toString() + " --- " + right.getClass().toString());
-
-            if (isArithmetic(node.operator) || isComparison(node.operator)) {
-                if (!isInstanceOf(left, Long.class, Double.class) || !isInstanceOf(right, Long.class, Double.class))
-                    throw new PassthroughException(new Throwable(errorCause));
-            } else if (isLogic(node.operator)) {
-                if (!(left instanceof Boolean && right instanceof Boolean))
-                    throw new PassthroughException(new Throwable(errorCause));
-            }
-        }
-
-        if(notYetTyped){
+        if (atLeastOneNYT(leftType, rightType)){
             leftType = whichTypeIs(left);
             rightType = whichTypeIs(right);
         }
 
+        boolean stringFormatted = (node.operator == BinaryOperator.PLUS && (leftType instanceof StringType || rightType instanceof StringType));
+        if(stringFormatted) return convertToString(left) + convertToString(right);
+
+        String errorCause = String.format("Trying to do : (%s)%s %s (%s)%s", leftType.toString(), left.toString(), node.operator.string, rightType.toString(), right.toString());
+
+        if (isArithmetic(node.operator) || isComparison(node.operator)) {
+            if (!isNumber(leftType) || !isNumber(rightType))
+                throw new PassthroughException(new Throwable(errorCause));
+        } else if (isLogic(node.operator)) {
+            if (!(leftType instanceof BoolType && rightType instanceof BoolType))
+                throw new PassthroughException(new Throwable(errorCause));
+        }
 
         // Cases where both operands should not be evaluated.
         switch (node.operator) {
@@ -404,6 +399,7 @@ public final class TMInterpreter
 
     // ---------------------------------------------------------------------------------------------
 
+    @SuppressWarnings("unchecked")
     private Object arrayMapGet(ArrayMapGetNode node)
     {
         Object array_map = get(node.array_map);
@@ -459,6 +455,16 @@ public final class TMInterpreter
         Object o = get(node.object_valuePut);
         Type arrayMapType = whichTypeIs(get(node.array_map));
         Type putType = whichTypeIs(o);
+
+        if (!isInstanceOf(arrayMapType, ArrayType.class, MapType.class))
+            throw new PassthroughException(new Throwable("Putting on a non-array/non-map object."));
+
+        if (arrayMapType instanceof ArrayType)
+            arrayMapType = ((ArrayType) arrayMapType).componentType;
+
+        if (arrayMapType instanceof MapType)
+            arrayMapType = ((MapType) arrayMapType).componentType;
+
         if (!arrayMapType.equals(putType))
             throw new PassthroughException(new Throwable(String.format("Trying to put a %s object in an array/map of %s", putType.toString(), arrayMapType.toString())));
 
@@ -557,9 +563,6 @@ public final class TMInterpreter
     private Object attrAccess(AttributeAccessNode node)
     {
         Object stem = get(node.parent);
-
-        if (!isInstanceOf(stem, Map.class, Object[].class))
-            throw new PassthroughException(new Throwable("Accessing an attribute of non-structure nor array object."));
 
         if (stem == Null.INSTANCE)
             throw new PassthroughException(

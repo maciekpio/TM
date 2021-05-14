@@ -68,8 +68,8 @@ public final class RootScope extends Scope
         //reactor.set(_false, "type",       BoolType.INSTANCE);
         //reactor.set(_null,  "type",       NullType.INSTANCE);
 
-        reactor.set(print,  "type", new FunType(VoidType.INSTANCE, StringType.INSTANCE));
-        reactor.set(rprint, "type", new FunType(VoidType.INSTANCE, StringType.INSTANCE));
+        reactor.set(print,  "type",   new FunType(VoidType.INSTANCE, StringType.INSTANCE));
+        reactor.set(rprint, "type",   new FunType(VoidType.INSTANCE, StringType.INSTANCE));
         reactor.set(parseInt, "type", new FunType(IntType.INSTANCE, StringType.INSTANCE));
         //reactor.set(is,     "type", new FunType(BoolType.INSTANCE, StringType.INSTANCE));
     }
