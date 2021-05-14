@@ -15,7 +15,7 @@ import static norswap.utils.Util.cast;
 public final class Test
 {
     public static void main (String[] args) {
-        String file = "TMfile";
+        String file = "TMfile.tm";
         String path = Paths.get("examples/", file).toAbsolutePath().toString();
         String src = IO.slurp(path);
         TMGrammar grammar = new TMGrammar();
