@@ -58,6 +58,7 @@ public class UtilStatic {
     public static Type whichTypeIs(Object expr)
     {
         if(expr instanceof Long)      return    IntType.INSTANCE;
+        if(expr instanceof Integer)   return    IntType.INSTANCE;
         if(expr instanceof Double)    return  FloatType.INSTANCE;
         if(expr instanceof Boolean)   return   BoolType.INSTANCE;
         if(expr instanceof String)    return StringType.INSTANCE;
